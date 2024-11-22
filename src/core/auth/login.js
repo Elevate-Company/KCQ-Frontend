@@ -11,25 +11,7 @@ function Login() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         navigate('/dashboard');
-     /*   try {
-            const response = await fetch('http://127.0.0.1:8000/api/login/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                localStorage.setItem('accessToken', data.accessToken);
-                navigate('/dashboard'); // Navigate to dashboard on successful login
-            } else {
-                alert(data.detail || 'Invalid credentials');
-            }
-        } catch (error) {
-            console.error('Error logging in:', error);
-            alert('Something went wrong. Please try again.');
-        } */
+    
     };
 
     return (
