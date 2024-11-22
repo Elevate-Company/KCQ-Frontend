@@ -1,22 +1,45 @@
-.body{
-background-color: #003161;
-}
-
-
 .login-container {
   max-width: 400px;
-  width: 90%;
+  width: 100%;
   padding: 20px;
   text-align: center;
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
 }
 
-input, button {
+.login-container .logo {
+  display: block;
+  margin: 0 auto 20px auto; /* Center the logo and add margin below */
+  width: 200px; /* Adjust the size of the logo */
+  height: auto; /* Maintain aspect ratio */
+}
+
+.title {
+  font-size: 22px; /* Reduced header size */
+  margin-bottom: 10px; /* Add space below the header */
+}
+
+p {
+  font-size: 14px; /* Reduced paragraph size */
+  color: #555; /* Slightly lighter color for the paragraph */
+  margin-bottom: 20px; /* Add space below the paragraph */
+}
+
+label {
+  display: block;
+  text-align: left;
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+input,
+button {
   width: 100%;
   padding: 12px;
-  margin: 8px 0;
+  margin: 12px 0; /* Added space between fields */
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -30,14 +53,33 @@ button {
   cursor: pointer;
 }
 
-@media (max-width: 600px) {
-  .login-container {
-    padding: 10px;
-    box-shadow: none;
-  }
+a {
+  color: #091057;
+  text-decoration: none;
+}
 
-  input, button {
-    font-size: 14px;
-    padding: 10px;
-  }
+/* Styling for remember me and forgot password links */
+.remember-forgot-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 15px; /* Added space between inputs and buttons */
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  font-size: 14px; /* Smaller text for remember me */
+  white-space: nowrap; /* Prevent wrapping of text */
+}
+
+.remember-me input {
+  margin-right: 8px; /* Space between the checkbox and text */
+}
+
+.forgot-password {
+  text-align: right;
+  font-size: 12px; /* Smaller text for forgot password */
+  color: #ccc
 }
