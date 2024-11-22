@@ -1,0 +1,137 @@
+.empty-card {
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-left: 0;
+    position: relative;
+    margin: 20px auto;
+    width: 100%;
+    max-width: 1350px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    height: auto;
+}
+
+.card-checkbox {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.boat-logo {
+    position: absolute;
+    left: 45px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: auto;
+}
+
+.card-body1 {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    padding-left: 70px;
+}
+
+.from-component,
+.to-component {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 20px;
+}
+
+.from-text,
+.to-text {
+    font-size: 10px;
+    color: #666;
+    margin-bottom: 2px;
+}
+
+.from-destination,
+.to-destination {
+    font-size: 18px;
+    color: #091057;
+}
+
+.separator {
+    width: 5%;
+    border-top: 1px dashed grey;
+    margin: 15px 15px;
+}
+
+.departure-date-component {
+    display: flex;
+    align-items: center;
+    margin-left: 40px;
+}
+
+.departure-date,
+.departure-id,
+.departure-text,
+.departure-capacity {
+    font-size: 14px;
+    color: #091057;
+    margin-right: 70px;
+}
+
+.departure-id {
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.departure-text {
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.departure-capacity {
+    font-size: 14px;
+    color: #091057;
+    font-weight: normal;
+    margin-right: 30px;
+}
+
+.vertical-separator {
+    height: 30px;
+    border-left: 2px solid grey;
+    margin-left: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+}
+
+.trash-button {
+    background: none;
+    border: none;
+    color: #091057;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 50px;
+    padding: 0;
+}
+
+.trash-button:hover {
+    color: #dc3545;
+}
+
+.view-details-button {
+    background-color: rgb(189, 189, 189);
+    border: 1px solid grey;
+    border-radius: 25px;
+    color: #091057;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    margin-left: 30px;
+}
+
+.view-details-button:hover {
+    background-color: #e2e3e5;
+}

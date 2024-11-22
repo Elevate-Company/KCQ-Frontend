@@ -1,0 +1,139 @@
+.profile-card-container {
+    width: 600px;
+    height: 400px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-card-content {
+    width: 100%;
+    font-size: 25px;
+}
+
+.profile-info-container {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.profile-avatar-holder {
+    position: relative;
+    display: inline-block;
+    padding: 2px;
+    border-radius: 50%;
+    background-color: black;
+}
+
+.profile-avatar-settings {
+    width: 60px;
+    height: auto;
+    border-radius: 50%;
+    display: block;
+}
+
+.camera-icon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: rgb(219, 213, 213);
+    color: black;
+    border-radius: 50%;
+    padding: 5px;
+    font-size: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    z-index: 10;
+}
+
+.profile-text {
+    margin-left: 20px;
+}
+
+.profile-text h4 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.profile-position {
+    margin: 0 0 0 0;
+    font-size: 15px;
+    color: #888;
+}
+
+.profile-name-section {
+    display: flex;
+    margin-top: 20px;
+}
+
+.profile-name-label {
+    font-size: 18px;
+    margin-right: 10px;
+    color: #888;
+}
+
+.profile-name {
+    font-size: 18px;
+    text-align: right;
+    margin-left: auto;
+}
+
+hr {
+    margin-top: 0px;
+    border: 1px solid #ccc;
+    width: 100%;
+}
+
+.profile-email-section {
+    display: flex;
+    margin-top: 20px;
+}
+
+.profile-email-label {
+    font-size: 18px;
+    margin-right: 10px;
+    color: #888;
+}
+
+.profile-email {
+    font-size: 18px;
+    text-align: right;
+    margin-left: auto;
+}
+
+.profile-number-section {
+    display: flex;
+    margin-top: 20px;
+}
+
+.profile-number-label {
+    font-size: 18px;
+    margin-right: 10px;
+    color: #888;
+}
+
+.profile-number {
+    font-size: 18px;
+    text-align: right;
+    margin-left: auto;
+}
+
+.profile-location-section {
+    display: flex;
+    margin-top: 20px;
+}
+
+.profile-location-label {
+    font-size: 18px;
+    margin-right: 10px;
+    color: #888;
+}
+
+.profile-location {
+    font-size: 18px;
+    text-align: right;
+    margin-left: auto;
+}

@@ -1,0 +1,80 @@
+.card-content {
+    font-size: 18px;
+    color: #555;
+}
+
+.card-content p {
+    margin: 10px 0;
+}
+
+.light-shadow {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.card {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.d-flex.flex-md-row {
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.d-flex.flex-column {
+    flex-direction: column;
+}
+
+.card-body > .d-flex > div {
+    flex: 1;
+    margin: 10px;
+}
+
+.container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.card.no-shadow-no-border {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.d-flex {
+    gap: 20px;
+}
+
+@media (min-width: 768px) {
+    .d-flex {
+        justify-content: space-evenly;
+    }
+}
+
+@media (max-width: 767px) {
+    .card-body > .d-flex > div {
+        margin: 10px 0;
+    }
+
+    .d-flex {
+        flex-direction: column;
+    }
+}

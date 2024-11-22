@@ -1,0 +1,104 @@
+.select-trip-container {
+    margin-top: 10px;
+    width: 100%;
+}
+
+.card-select-empty {
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    position: relative;
+}
+
+.round-checkbox {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #091057;
+    background-color: white;
+    cursor: pointer;
+}
+
+.boat-from-to-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.selectriplogo {
+    width: 25px;
+    height: auto;
+}
+
+.from-to-component {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    justify-content: flex-start;
+}
+
+.from-section, .to-section {
+    text-align: left;
+}
+
+.from-section p, .to-section p {
+    font-size: 12px;
+    color: #555;
+    margin: 0;
+}
+
+.from-section h4, .to-section h4 {
+    font-size: 16px;
+    color: #091057;
+    margin-top: 5px;
+}
+
+.dashed-separator {
+    width: 40%;
+    border-top: 2px dashed #091057;
+    margin: 10px 0;
+}
+
+.additional-info {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.additional-info div {
+    flex-basis: 23%;
+    text-align: left;
+}
+
+.date-section h4,
+.boat-number-section h4,
+.boat-type-section h4 {
+    font-size: 14px;
+    color: #091057;
+    margin-top: 5px;
+    font-weight: normal;
+    margin-left: 5px;
+}
+
+.price-section h4 {
+    font-size: 14px;
+    margin-left: 20px;
+    color: white;
+}
+
+.price {
+    padding: 5px 10px;
+    background-color: #091057;
+    border-radius: 5px;
+    display: inline-block;
+}

@@ -1,0 +1,26 @@
+.available-boat-card {
+  position: relative;
+}
+
+.boat-image {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 50px;
+  height: auto;
+  z-index: 1;
+}
+
+.card-body-content {
+  margin-top: 50px;
+}
+
+.available-boat-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.boat-count {
+  font-size: 1.5rem;
+  font-weight: bold;
+}

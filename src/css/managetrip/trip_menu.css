@@ -1,0 +1,53 @@
+.navbar-card2 {
+  background-color: #091057;
+  width: 100%;
+  max-width: 1350px;
+  margin: 20px auto;
+  padding: 10px 15px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  color: white;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.trip-info-row {
+  display: flex;
+  width: 100%;
+  margin-top: 15px;
+  align-items: center;
+}
+
+/* Specific styles for each item */
+.destination {
+  text-align: left;
+  margin-left: 12%; /* Set to zero to align with the left edge */
+  font-size: 12px;
+}
+
+.date {
+  text-align: center;
+  font-size: 12px;
+  width: 20%;
+  margin-left: 3%;
+}
+
+.ID {
+  text-align: center;
+  font-size: 12px;
+  margin-left: 3%;
+}
+
+.boat {
+  text-align: center;
+  font-size: 12px;
+  margin-left: 10%;
+}
+
+.capacity {
+  text-align: center;
+  font-size: 12px;
+  width: 18%;
+}

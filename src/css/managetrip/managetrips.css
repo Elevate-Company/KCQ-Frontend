@@ -1,0 +1,35 @@
+.manage-trips-container {
+  padding: 20px;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.header {
+  font-size: 24px;
+  color: #333;
+  margin-right: 20px;
+  flex-grow: 1;
+}
+
+.search-inputt {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 180px;
+  margin-right: 10px;
+}
+
+.filter-dropdown {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 150px;
+  cursor: pointer;
+}
