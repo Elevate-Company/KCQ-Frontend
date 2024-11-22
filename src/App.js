@@ -27,11 +27,19 @@ function App() {
                 {/* Redirect unauthenticated users to /login */}
                 <Route
                     path="/"
+                    // element={
+                    //     isAuthenticated() ? (
+                    //         <ProtectedRoute isAuthenticated={isAuthenticated}>
+                    //             <Dashboard />
+                    //         </ProtectedRoute>
+                    //     ) : (
+                    //         <Navigate to="/login" replace /> // Redirect to login if not authenticated
+                    //     )
+                    // }
                     element={
-                        isAuthenticated() ? (
-                            <ProtectedRoute isAuthenticated={isAuthenticated}>
+                        true ? (
+
                                 <Dashboard />
-                            </ProtectedRoute>
                         ) : (
                             <Navigate to="/login" replace /> // Redirect to login if not authenticated
                         )
