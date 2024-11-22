@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './core/auth/login';
+import ForgotPassword from './core/auth/forgotpassword'; // Import the ForgotPassword component
 import Dashboard from './core/components';
 import DashboardScreen from './core/dashboard/dashboard';
 import IssueTicket from './core/issueticket/issue_ticket';
@@ -19,8 +20,9 @@ function App() {
     return (
         <Router>
             <Routes>
-                {/* Public Route - Login */}
+                {/* Public Routes */}
                 <Route path="/login" element={<Login />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} /> {/* Forgot Password Route */}
 
                 {/* Redirect unauthenticated users to /login */}
                 <Route

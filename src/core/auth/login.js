@@ -10,8 +10,8 @@ function Login() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
-        try {
+        navigate('/dashboard');
+     /*   try {
             const response = await fetch('http://127.0.0.1:8000/api/login/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -29,7 +29,7 @@ function Login() {
         } catch (error) {
             console.error('Error logging in:', error);
             alert('Something went wrong. Please try again.');
-        }
+        } */
     };
 
     return (
@@ -69,7 +69,14 @@ function Login() {
                             <label htmlFor="rememberMe">Remember me</label>
                         </div>
                         <div className="forgot-password">
-                            <a href="/forgot-password">Forgot Password?</a>
+                            <button
+                                type="button"
+                                className="btn btn-link p-0"
+                                onClick={() => navigate('/forgot-password')}
+                                style={{ textDecoration: 'none', color: '#ccc' }}
+                            >
+                                Forgot Password?
+                            </button>
                         </div>
                     </div>
 
