@@ -7,14 +7,6 @@ function ChangePassword() {
   const [repeatPasswordVisible, setRepeatPasswordVisible] = useState(false);
   const navigate = useNavigate(); // Initialize useNavigate hook
 
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
-
-  const toggleRepeatPasswordVisibility = () => {
-    setRepeatPasswordVisible(!repeatPasswordVisible);
-  };
-
   const handleLogout = () => {
     // Navigate to the Login page after logging out
     navigate('/login'); // This will route to Login page
@@ -27,7 +19,7 @@ function ChangePassword() {
 
         <div className="password-fields-container">
           <div className="password-field">
-            <label htmlFor="current-password" className="change-password-label">CURRENT PASSWORD:</label>
+            <label htmlFor="current-password" className="change-password-label">CURRENT PASSWORD</label>
             <div className="password-input-container">
               <input
                 type={passwordVisible ? "text" : "password"}
@@ -35,15 +27,11 @@ function ChangePassword() {
                 className="change-password-input current-password-input"
                 placeholder="Enter current password"
               />
-              <i
-                className={`fa${passwordVisible ? 's fa-eye-slash' : 's fa-eye'} eye-icon`}
-                onClick={togglePasswordVisibility}
-              ></i>
             </div>
           </div>
 
           <div className="password-field">
-            <label htmlFor="new-password" className="change-password-label">NEW PASSWORD:</label>
+            <label htmlFor="new-password" className="change-password-label">NEW PASSWORD</label>
             <div className="password-input-container">
               <input
                 type={passwordVisible ? "text" : "password"}
@@ -51,17 +39,13 @@ function ChangePassword() {
                 className="change-password-input new-password-input"
                 placeholder="Enter new password"
               />
-              <i
-                className={`fa${passwordVisible ? 's fa-eye-slash' : 's fa-eye'} eye-icon`}
-                onClick={togglePasswordVisibility}
-              ></i>
             </div>
           </div>
         </div>
 
-        <div className="password-field last">
+        <div className="password-field last w-200">
           <div className="repeat-password-field">
-            <label htmlFor="repeat-new-password" className="change-password-label">REPEAT NEW PASSWORD:</label>
+            <label htmlFor="repeat-new-password" className="change-password-label">REPEAT NEW PASSWORD</label>
             <div className="password-input-container">
               <input
                 type={repeatPasswordVisible ? "text" : "password"}
@@ -69,10 +53,6 @@ function ChangePassword() {
                 className="change-password-input repeat-password-input"
                 placeholder="Repeat new password"
               />
-              <i
-                className={`fa${repeatPasswordVisible ? 's fa-eye-slash' : 's fa-eye'} eye-icon`}
-                onClick={toggleRepeatPasswordVisibility}
-              ></i>
             </div>
           </div>
           <button className="change-password-button mt-3">Change Password</button>
