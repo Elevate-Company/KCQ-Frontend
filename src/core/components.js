@@ -7,6 +7,7 @@ import dashboardIcon from '../assets/dashboard.png';
 import issueTicketIcon from '../assets/issueticket.png';
 import manageTicketsIcon from '../assets/managetickets.png';
 import manageTripsIcon from '../assets/managetrips.png';
+import profileIcon from '../assets/profile.png';
 import reportsIcon from '../assets/reports.png';
 import settingsIcon from '../assets/setting.png';
 import needHelpIcon from '../assets/needhelp.png';
@@ -65,6 +66,12 @@ function Components() {
               <NavLink to="/manage-tickets" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
                 <img src={manageTicketsIcon} alt="Manage Tickets" className="sidebar-icon" />
                 {isSidebarExpanded && 'Manage Tickets'}
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink to="/profile" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                <img src={profileIcon} alt="Profile" className="sidebar-icon" />
+                {isSidebarExpanded && 'Profile'}
               </NavLink>
             </li>
             <li className="nav-item">
