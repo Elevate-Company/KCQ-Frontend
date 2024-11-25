@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../css/editcard.css';
+import '../../css/settings/editcard.css';
 
 function EditCard() {
   return (

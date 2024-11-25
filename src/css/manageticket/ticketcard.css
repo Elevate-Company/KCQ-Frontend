@@ -30,7 +30,7 @@
     height: auto;
 }
 
-.card-body1-ticketcard {
+.card-body-ticketcard {
     display: flex;
     align-items: center;
     justify-content: flex-start;

@@ -6,7 +6,7 @@ import boatLogo from '../../assets/boatlogo.png'; // Import your logo
 function TicketCard() {
   return (
     <div className="card empty-card-ticketcard">
-      <div className="card-body1">
+      <div className="card-body-ticketcard">
         {/* Checkbox on the left */}
         <input type="checkbox" className="card-checkbox-ticketcard" />
 
@@ -24,8 +24,8 @@ function TicketCard() {
 
         {/* To component with text on the left */}
         <div className="to-component-ticketcard">
-          <p className="to-text">To</p>
-          <h4 className="to-destination">Cebu</h4>
+          <p className="to-text-ticketcard">To</p>
+          <h4 className="to-destination-ticketcard">Cebu</h4>
         </div>
 
         {/* Departure date component with ID */}

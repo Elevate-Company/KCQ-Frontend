@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
-import '../../css/changepassword.css';
+import '../../css/settings/changepassword.css';
 
 function ChangePassword() {
   const [passwordVisible, setPasswordVisible] = useState(false);

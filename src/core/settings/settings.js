@@ -3,7 +3,7 @@ import Navbar from '../navbar';
 import ProfileCard from './profilecard';
 import EditCard from './editcard'; 
 import ChangePassword from './changepassword'; // Import the ChangePassword component
-import '../../css/settings.css'; 
+import '../../css//settings/settings.css'; 
 
 function Settings() {
   return (
