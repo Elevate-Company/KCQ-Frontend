@@ -3,10 +3,10 @@
     color: white;
     height: 100vh;
     padding-top: 20px;
-    position: sticky;
+    position: sticky; /* Ensure the sidebar is sticky */
     top: 0;
     z-index: 10;
-    transition: width 0.3s;
+    transition: width 0.3s, opacity 0.3s;
     display: flex;
     flex-direction: column;
 }
@@ -17,6 +17,12 @@
 
 .sidebar.collapsed {
     width: 80px;
+}
+
+.sidebar.closed {
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
 }
 
 .sidebar-header {
@@ -101,4 +107,52 @@
 
 .sidebar.collapsed .need-help span {
     display: none;
+}
+
+/* Add this to handle mobile view */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 80px;
+    position: sticky; /* Ensure the sidebar is sticky */
+    top: 0; /* Ensure the sidebar sticks to the top */
+    transition: width 0.3s, opacity 0.3s;
+  }
+
+  .sidebar.expanded {
+    width: 80px;
+  }
+
+  .sidebar.collapsed {
+    width: 80px;
+  }
+
+  .sidebar.closed {
+    width: 0;
+    opacity: 0;
+    position: fixed; /* Ensure the sidebar does not affect other content */
+  }
+
+  .btn-toggle-sidebar.arrow-right {
+    color: black;
+    position: fixed;
+    top: 20px;
+    left: 10px;
+    z-index: 1000;
+  }
+
+  .btn-toggle-sidebar.arrow-left {
+    transform: rotate(0deg);
+  }
+
+  .sidebar-logo {
+    display: none;
+  }
+
+  .nav-link {
+    justify-content: center;
+  }
+
+  .nav-link span {
+    display: none;
+  }
 }

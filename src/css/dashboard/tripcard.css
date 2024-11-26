@@ -15,17 +15,14 @@
 }
 
 .card-checkbox-tripcard {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
+    position: relative;
+    margin-right: 15px; /* Adds spacing between checkbox and next element */
+    margin-left: 0;     /* Aligns the checkbox to the left */
 }
 
 .boat-logo-tripcard {
-    position: absolute;
-    left: 45px;
-    top: 50%;
-    transform: translateY(-50%);
+    position: relative;
+    left: 10px;  /* Adjusted to align with the flex layout */
     width: 30px;
     height: auto;
 }
@@ -34,8 +31,8 @@
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    width: 100%;
-    padding-left: 70px;
+    width: 20%;
+    padding-left: 15px; /* Adjusted padding to accommodate checkbox */
 }
 
 .from-component-tripcard,
@@ -61,7 +58,7 @@
 
 .separator-tripcard {
     width: 5%;
-    border-top: 1px dashed grey;
+    border-top: 1px dashed #091057;
     margin: 15px 15px;
 }
 
