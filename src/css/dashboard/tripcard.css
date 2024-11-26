@@ -57,9 +57,10 @@
 }
 
 .separator-tripcard {
-    width: 5%;
+    width: 20%;
     border-top: 1px dashed #091057;
     margin: 15px 15px;
+    flex-shrink: 0; /* Ensure the separator does not shrink */
 }
 
 .departure-date-component-tripcard {
@@ -91,7 +92,7 @@
     font-size: 14px;
     color: #091057;
     font-weight: normal;
-    margin-right: 30px;
+    margin-left: 80px;
 }
 
 .view-details-button-tripcard {
@@ -102,7 +103,7 @@
     padding: 5px 10px;
     font-size: 12px;
     cursor: pointer;
-    margin-left: 80px;
+    margin-left: 50px;
 }
 
 .view-details-button-tripcard:hover {
