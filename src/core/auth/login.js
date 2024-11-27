@@ -3,15 +3,53 @@ import { useNavigate } from 'react-router-dom';
 import '../../css/auth/login.css';
 import logo from '../../assets/Logo1.png';
 
+
 function Login() {
-    const [username, setUsername] = useState('');
+    const [employeeNumber, setEmployeeNumber] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        navigate('/dashboard');
-    
+        setError('');
+
+        console.log('Submitting login form');
+
+        try {
+            const response = await fetch('https://api.kcq-express.co/api/auth/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ employee_number: employeeNumber, password }),
+            });
+
+            console.log('Response received:', response);
+
+            const data = await response.json();
+
+            console.log('Response data:', data);
+
+            if (!response.ok) {
+                console.error('Login failed:', data);
+                throw new Error(data.message || 'Login failed');
+            }
+
+            localStorage.setItem('accessToken', data.token);
+            console.log('TOKEN:',data.token);
+            localStorage.setItem('firstName', data.first_name);
+            localStorage.setItem('lastName', data.last_name);
+            localStorage.setItem('username', data.username);
+            localStorage.setItem('employeeNumber', data.employee_number);
+
+            console.log('Login successful, navigating to dashboard');
+            navigate('/dashboard');
+            
+        } catch (error) {
+            console.error('Error during login:', error);
+            setError('Login failed. Please check your credentials and try again.');
+        }
     };
 
     return (
@@ -20,15 +58,16 @@ function Login() {
                 <img src={logo} alt="Logo" className="logo mt-4" />
                 <h2 className="title">Welcome to KCQ Express!</h2>
                 <p>Welcome back! Please login to access your account</p>
+                {error && <div className="alert alert-danger">{error}</div>}
                 <form onSubmit={handleSubmit}>
                     <div>
-                        <label htmlFor="username">Email or Username</label>
+                        <label htmlFor="employeeNumber">Employee Number</label>
                         <input
                             type="text"
-                            id="username"
-                            placeholder="Enter your email or username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            id="employeeNumber"
+                            placeholder="Enter your employee number"
+                            value={employeeNumber}
+                            onChange={(e) => setEmployeeNumber(e.target.value)}
                             required
                         />
                     </div>

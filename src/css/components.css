@@ -112,7 +112,7 @@
 /* Add this to handle mobile view */
 @media (max-width: 768px) {
   .sidebar {
-    width: 80px;
+    width: 125px; /* Half-closed width */
     position: fixed; /* Ensure the sidebar is fixed on mobile view */
     top: 0; /* Ensure the sidebar sticks to the top */
     transition: width 0.3s, opacity 0.3s;
@@ -123,7 +123,7 @@
   }
 
   .sidebar.collapsed {
-    width: 80px;
+    width: 80px; /* Half-closed width */
   }
 
   .sidebar.closed {
@@ -157,7 +157,7 @@
   }
 
   .main-content {
-    margin-left: 80px; /* Ensure the main content does not move */
+    margin-left: 125px; /* Ensure the main content does not move */
     transition: margin-left 0.3s;
   }
 

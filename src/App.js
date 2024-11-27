@@ -14,7 +14,7 @@ import ProtectedRoute from './components/protectedroute'; // Ensure correct path
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Authentication checker
-const isAuthenticated = () => !!localStorage.getItem('accessToken'); // Check for token in localStorage
+const isAuthenticated = () => localStorage.getItem('accessToken'); // Check for token in localStorage
 
 function App() {
     return (
@@ -27,19 +27,11 @@ function App() {
                 {/* Redirect unauthenticated users to /login */}
                 <Route
                     path="/"
-                    // element={
-                    //     isAuthenticated() ? (
-                    //         <ProtectedRoute isAuthenticated={isAuthenticated}>
-                    //             <Dashboard />
-                    //         </ProtectedRoute>
-                    //     ) : (
-                    //         <Navigate to="/login" replace /> // Redirect to login if not authenticated
-                    //     )
-                    // }
                     element={
-                        true ? (
-
+                        isAuthenticated() ? (
+                            <ProtectedRoute isAuthenticated={isAuthenticated}>
                                 <Dashboard />
+                            </ProtectedRoute>
                         ) : (
                             <Navigate to="/login" replace /> // Redirect to login if not authenticated
                         )

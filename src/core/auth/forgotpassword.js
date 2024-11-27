@@ -9,7 +9,6 @@ function ForgotPassword() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        // Here you can implement the actual request to send the reset link
         alert("Reset link sent to: " + email);
     };
 
