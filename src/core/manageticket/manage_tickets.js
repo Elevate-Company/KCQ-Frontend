@@ -8,7 +8,7 @@ function ManageTrips() {
       <div className="header-search-dropdown-row">
         <h1 className="header-ticket">Manage Ticket</h1>
         <div className="search-dropdown-container">
-          <input type="text" className="search-input-ticket" placeholder="Search Trip..." />
+          <input type="text" className="search-input-ticket" placeholder="Search Ticket..." />
           <select className="filter-dropdown-ticket">
             <option value="all">All</option>
             <option value="upcoming">Upcoming</option>

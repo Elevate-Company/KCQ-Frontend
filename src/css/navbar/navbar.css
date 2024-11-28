@@ -1,0 +1,111 @@
+.navbar-card1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  margin-right: 10px;
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.notification-profile {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.menu-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+.notification-icon {
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+.profile-avatar {
+  cursor: pointer;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.profile-menu {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 200px; /* Increased width */
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.profile-menu-header {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.profile-menu-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.profile-menu-name {
+  font-weight: bold;
+}
+
+.profile-menu-role {
+  display: block;
+  color: grey;
+  font-size: 12px;
+}
+
+.profile-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.profile-menu-item:hover {
+  background-color: #f1f1f1;
+}
+
+.profile-menu-icon {
+  margin-right: 10px;
+}
+
+.profile-menu-logout {
+  color: #d9534f; /* Danger color for logout */
+}
+
+.profile-menu-logout:hover {
+  background-color: #f1f1f1;
+}

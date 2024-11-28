@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../css/dashboard/dashboard.css';
 import DashCard from './dashcard';
-import Navbar from '../navbar';
+import Navbar from '../navbar/navbar';
 
 function Dashboard() {
   return (

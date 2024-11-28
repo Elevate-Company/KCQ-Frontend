@@ -10,30 +10,18 @@ const DashCard = () => {
   return (
     <div className="container mt-4">
       <div className="row justify-content-center">
-        <div className="col-md-12 col-lg-15"> {}
-          <div className="card no-shadow-no-border mb-4">  {}
+        <div className="col-md-12 col-lg-15">
+          <div className="card no-shadow-no-border mb-4">
             <div className="card-body">
               <h2 className="card-title">Welcome, Employee Name!</h2>
 
-              {}
-              <div className="d-flex flex-column flex-md-row justify-content-between">
-                {}
-                <TicketSales />  
-
-                {}
-                <TicketSold />   
-              </div>
-
-              {}
-              <div className="d-flex flex-column flex-md-row mt-4 justify-content-between">
-                {}
+              <div className="d-flex flex-wrap justify-content-between">
+                <TicketSales />
+                <TicketSold />
                 <AvailableBoat />
-                
-                {}
                 <Passenger />
               </div>
 
-              {}
               <div className="mt-4">
                 <UpcomingTripCard />
               </div>

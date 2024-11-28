@@ -21,6 +21,5 @@
 }
 
 .change-password {
-  width: 100%; /* Ensure the ChangePassword card takes the full width */
-  margin-top: 20px; /* Add margin for spacing */
+  max-width: 48%; /* Ensure the ChangePassword card takes the full width */
 }

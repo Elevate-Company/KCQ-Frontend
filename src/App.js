@@ -1,30 +1,28 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './core/auth/login';
-import ForgotPassword from './core/auth/forgotpassword'; // Import the ForgotPassword component
+import ForgotPassword from './core/auth/forgotpassword';
 import Dashboard from './core/components';
 import DashboardScreen from './core/dashboard/dashboard';
 import IssueTicket from './core/issueticket/issue_ticket';
 import ManageTrips from './core/managetrip/manage_trips';
 import ManageTickets from './core/manageticket/manage_tickets';
-import Profile from './core/profile';
-import Reports from './core/reports';
+import Passenger from './core/passenger';
+import Reports from './core/report/reports';
 import Settings from './core/settings/settings';
-import ProtectedRoute from './components/protectedroute'; // Ensure correct path
+import ProfileCard from './core/navbar/profilecard';
+import ProtectedRoute from './components/protectedroute';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-// Authentication checker
-const isAuthenticated = () => localStorage.getItem('accessToken'); // Check for token in localStorage
+const isAuthenticated = () => localStorage.getItem('accessToken');
 
 function App() {
     return (
         <Router>
             <Routes>
-                {/* Public Routes */}
                 <Route path="/login" element={<Login />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} /> {/* Forgot Password Route */}
+                <Route path="/forgot-password" element={<ForgotPassword />} />
 
-                {/* Redirect unauthenticated users to /login */}
                 <Route
                     path="/"
                     element={
@@ -33,19 +31,19 @@ function App() {
                                 <Dashboard />
                             </ProtectedRoute>
                         ) : (
-                            <Navigate to="/login" replace /> // Redirect to login if not authenticated
+                            <Navigate to="/login" replace />
                         )
                     }
                 >
-                    {/* Nested Routes for the dashboard */}
                     <Route index element={<Navigate to="dashboard" replace />} />
                     <Route path="dashboard" element={<DashboardScreen />} />
                     <Route path="issue-ticket" element={<IssueTicket />} />
                     <Route path="manage-trips" element={<ManageTrips />} />
                     <Route path="manage-tickets" element={<ManageTickets />} />
-                    <Route path="profile" element={<Profile />} />
+                    <Route path="passenger" element={<Passenger />} />
                     <Route path="reports" element={<Reports />} />
                     <Route path="settings" element={<Settings />} />
+                    <Route path="profile" element={<ProfileCard />} />
                 </Route>
             </Routes>
         </Router>

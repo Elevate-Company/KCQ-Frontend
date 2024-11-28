@@ -1,7 +1,7 @@
 import React from 'react';
-import Navbar from './navbar'; 
+import Navbar from './navbar/navbar'; 
 
-function Profile() {
+function Passenger() {
   return (
     <div>
       <Navbar /> {}
@@ -10,4 +10,4 @@ function Profile() {
   );
 }
 
-export default Profile;
+export default Passenger;

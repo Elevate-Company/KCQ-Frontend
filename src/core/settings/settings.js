@@ -1,20 +1,16 @@
 import React from 'react';
-import Navbar from '../navbar';
-import ProfileCard from './profilecard';
+import Navbar from '../navbar/navbar';
 import EditCard from './editcard'; 
 import ChangePassword from './changepassword'; // Import the ChangePassword component
-import '../../css//settings/settings.css'; 
+import '../../css/settings/settings.css'; 
 
 function Settings() {
   return (
     <div>
       <Navbar />
       <div className="settings-container">
-        <ProfileCard />
         <EditCard />
-      </div>
-      <div className="settings-container">
-        <ChangePassword /> {/* Display ChangePassword below */}
+        <ChangePassword /> {/* Display ChangePassword next to EditCard */}
       </div>
     </div>
   );

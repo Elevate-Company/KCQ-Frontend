@@ -92,9 +92,9 @@ function Components() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/profile" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <NavLink to="/passenger" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
                 <img src={profileIcon} alt="Profile" className="sidebar-icon" />
-                {isSidebarExpanded && <span>Profile</span>}
+                {isSidebarExpanded && <span>Passenger</span>}
               </NavLink>
             </li>
             <li className="nav-item">

@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../css/settings/profilecard.css';
+import '../../css/navbar/profilecard.css';
 import avatar from '../../assets/avatar.png';
 
 function ProfileCard() {
