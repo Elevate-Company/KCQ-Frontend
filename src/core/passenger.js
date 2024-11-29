@@ -11,7 +11,7 @@ function PassengerList() {
       phone: '+1-555-123-4567',
       totalBookings: 15,
       lastBooking: 'Nov 15, 2024',
-      status: 'Active',
+      status: 'Boarded',
     },
     {
       id: 'P123457',
@@ -20,7 +20,7 @@ function PassengerList() {
       phone: '+1-555-987-6543',
       totalBookings: 8,
       lastBooking: 'Oct 30, 2024',
-      status: 'Inactive',
+      status: 'In Transit',
     },
     {
       id: 'P123458',
@@ -29,26 +29,35 @@ function PassengerList() {
       phone: '+1-555-222-3344',
       totalBookings: 12,
       lastBooking: 'Nov 10, 2024',
-      status: 'Active',
+      status: 'Disembarked',
     },
   ];
 
   return (
     <div>
+      {/* Navbar */}
       <Navbar />
 
+      {/* Page Content */}
       <div className="container mt-4">
-        {/* Page Title */}
         <h1 className="text-center mb-4">Passenger Management</h1>
 
-        {/* Passenger List */}
+        {/* Card */}
         <div className="card">
-          <div className="card-header bg-primary text-white">
+          {/* Custom Card Header */}
+          <div
+            className="card-header text-white"
+            style={{ backgroundColor: '#091057' }}
+          >
             List of Passengers
           </div>
+
+          {/* Card Body */}
           <div className="card-body">
+            {/* Table */}
             <table className="table table-striped table-responsive-sm">
-              <thead style={{ backgroundColor: '#091057',}}>
+              {/* Table Header */}
+              <thead style={{ backgroundColor: '#091057', color: 'white' }}>
                 <tr>
                   <th>Passenger ID</th>
                   <th>Name</th>
@@ -72,8 +81,10 @@ function PassengerList() {
                     <td>
                       <span
                         className={`badge ${
-                          passenger.status === 'Active'
+                          passenger.status === 'Boarded'
                             ? 'bg-success'
+                            : passenger.status === 'In Transit'
+                            ? 'bg-warning text-dark'
                             : 'bg-secondary'
                         }`}
                       >
