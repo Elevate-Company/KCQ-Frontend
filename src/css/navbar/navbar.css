@@ -1,26 +1,10 @@
 .navbar-card1 {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end; /* Align items to the right */
   align-items: center;
   padding: 10px 20px;
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.search-container {
-  display: flex;
-  align-items: center;
-}
-
-.search-icon {
-  margin-right: 10px;
-}
-
-.search-input {
-  border: none;
-  outline: none;
-  padding: 5px 10px;
-  border-radius: 4px;
 }
 
 .notification-profile {
@@ -55,7 +39,7 @@
   position: absolute;
   top: 60px;
   right: 0;
-  width: 200px; /* Increased width */
+  width: 200px;
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-radius: 8px;

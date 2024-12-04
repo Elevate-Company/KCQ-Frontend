@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../../css/issueticket/issueticket.css';
 import SelectTrip from './selectrip';
 import axios from 'axios';
+import Navbar from '../navbar/navbar';
 
 function IssueTicket() {
   const [trips, setTrips] = useState([]);
@@ -80,76 +81,79 @@ function IssueTicket() {
   };
 
   return (
-    <div className="issue-ticket-container mt-5">
-      <div className="cards-row">
-        <div className="card-select-issue select-card">
-          <div className="card-select">
-            Select Trip
-          </div>
-          <SelectTrip trips={trips} onSelect={setSelectedTrip} error={error} />
-          <div className="arrow-container">
-            <button className="arrow" onClick={() => alert('Arrow button clicked!')}>
-              &gt;
-            </button>
-          </div>
-        </div>
-
-        <div className="card-contact-issue contact-card">
-          <div className="card-contact">
-            <h3>Contact Info</h3>
-            <form className="contact-form">
-              <label>
-                Passenger Name:
-                <input
-                  type="text"
-                  placeholder="Name"
-                  value={passengerName}
-                  onChange={(e) => setPassengerName(e.target.value)}
-                />
-              </label>
-              <label>
-                Phone Number:
-                <input
-                  type="tel"
-                  placeholder="Contact number"
-                  value={contactNumber}
-                  onChange={(e) => setContactNumber(e.target.value)}
-                />
-              </label>
-              <label>
-                Passenger Email:
-                <input
-                  type="email"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </label>
-              <label>
-                Number of Tickets:
-                <input
-                  type="number"
-                  placeholder="Number"
-                  value={numberOfTickets}
-                  onChange={(e) => setNumberOfTickets(e.target.value)}
-                />
-              </label>
-              <hr />
-              <p></p>
-              <div className="total-section">
-                <p>Total</p>
-                <p>PHP 1,999</p>
-              </div>
-              <hr />
-              <button
-                type="button"
-                className="generate-btn"
-                onClick={handleGenerateTicket}
-              >
-                Generate Ticket
+    <div>
+      <Navbar />
+      <div className="issue-ticket-container mt-5">
+        <div className="cards-row">
+          <div className="card-select-issue select-card">
+            <div className="card-select">
+              Select Trip
+            </div>
+            <SelectTrip trips={trips} onSelect={setSelectedTrip} error={error} />
+            <div className="arrow-container">
+              <button className="arrow" onClick={() => alert('Arrow button clicked!')}>
+                &gt;
               </button>
-              {error && <p className="text-danger">{error}</p>}
-            </form>
+            </div>
+          </div>
+
+          <div className="card-contact-issue contact-card">
+            <div className="card-contact">
+              <h3>Contact Info</h3>
+              <form className="contact-form">
+                <label>
+                  Passenger Name:
+                  <input
+                    type="text"
+                    placeholder="Name"
+                    value={passengerName}
+                    onChange={(e) => setPassengerName(e.target.value)}
+                  />
+                </label>
+                <label>
+                  Phone Number:
+                  <input
+                    type="tel"
+                    placeholder="Contact number"
+                    value={contactNumber}
+                    onChange={(e) => setContactNumber(e.target.value)}
+                  />
+                </label>
+                <label>
+                  Passenger Email:
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </label>
+                <label>
+                  Number of Tickets:
+                  <input
+                    type="number"
+                    placeholder="Number"
+                    value={numberOfTickets}
+                    onChange={(e) => setNumberOfTickets(e.target.value)}
+                  />
+                </label>
+                <hr />
+                <p></p>
+                <div className="total-section">
+                  <p>Total</p>
+                  <p>PHP 1,999</p>
+                </div>
+                <hr />
+                <button
+                  type="button"
+                  className="generate-btn"
+                  onClick={handleGenerateTicket}
+                >
+                  Generate Ticket
+                </button>
+                {error && <p className="text-danger">{error}</p>}
+              </form>
+            </div>
           </div>
         </div>
       </div>

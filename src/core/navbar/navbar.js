@@ -23,7 +23,6 @@ function Navbar() {
       alert('Logout canceled.');
     }
   };
-  
 
   const handleProfileClick = () => {
     navigate('/profile');
@@ -35,10 +34,6 @@ function Navbar() {
 
   return (
     <div className="navbar-card1">
-      <div className="search-container">
-        <i className="fas fa-search search-icon"></i>
-        <input type="text" placeholder="Search..." className="search-input" />
-      </div>
       <div className="notification-profile">
         <img src={menuImage} alt="Menu" className="menu-icon" />
         <i className="fas fa-bell notification-icon"></i>

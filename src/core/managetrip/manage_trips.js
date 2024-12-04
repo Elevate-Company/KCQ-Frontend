@@ -3,6 +3,7 @@ import axios from 'axios';
 import '../../css/managetrip/managetrips.css';  // Import the CSS file for ManageTrips
 import TripMenu from './trip_menu';  // Import TripMenu component
 import ManageTripCard from './managetripcard';  // Correct path for ManageTripCard
+import Navbar from '../navbar/navbar';  // Import Navbar component
 
 function ManageTrips() {
   const [trips, setTrips] = useState([]);
@@ -54,45 +55,48 @@ function ManageTrips() {
   const displayedTrips = filteredTrips.slice(0, cardCount);
 
   return (
-    <div className="manage-trips-container">
-      {/* Header and Search */}
-      <div className="header-container">
-        <h1 className="header">All Trips</h1>
+    <div>
+      <Navbar /> {/* Display Navbar at the very top */}
+      <div className="manage-trips-container">
+        {/* Header and Search */}
+        <div className="header-container">
+          <h1 className="header">All Trips</h1>
 
-        {/* Search component */}
-        <input
-          type="text"
-          className="search-inputt"
-          placeholder="Search Trip..."
-          // You can implement a search feature if needed
-        />
+          {/* Search component */}
+          <input
+            type="text"
+            className="search-inputt"
+            placeholder="Search Trip..."
+            // You can implement a search feature if needed
+          />
 
-        {/* Dropdown filter */}
-        <select
-          className="filter-dropdown"
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}  // Update filter state when selection changes
-        >
-          <option value="all">All</option>
-          <option value="upcoming">Upcoming</option>
-          <option value="completed">Completed</option>
-          <option value="cancelled">Cancelled</option>
-        </select>
-      </div>
+          {/* Dropdown filter */}
+          <select
+            className="filter-dropdown"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}  // Update filter state when selection changes
+          >
+            <option value="all">All</option>
+            <option value="upcoming">Upcoming</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
 
-      {/* TripMenu.js */}
-      <TripMenu className="mt-5" />
+        {/* TripMenu.js */}
+        <TripMenu className="mt-5" />
 
-      {/* ManagetripCard.js */}
-      <div className="card-container mt-3">
-        {/* Loop through the displayedTrips array and render ManageTripCard for each trip */}
-        {displayedTrips.length > 0 ? (
-          displayedTrips.map((trip) => (
-            <ManageTripCard key={trip.id} trip={trip} />
-          ))
-        ) : (
-          <p>No trips available</p>
-        )}
+        {/* ManagetripCard.js */}
+        <div className="card-container mt-3">
+          {/* Loop through the displayedTrips array and render ManageTripCard for each trip */}
+          {displayedTrips.length > 0 ? (
+            displayedTrips.map((trip) => (
+              <ManageTripCard key={trip.id} trip={trip} />
+            ))
+          ) : (
+            <p>No trips available</p>
+          )}
+        </div>
       </div>
     </div>
   );
