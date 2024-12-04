@@ -26,7 +26,17 @@ function IssueTicket() {
 
         const data = response.data;
         console.log('Response data:', data);
-        setTrips(data); // Assuming the API returns an array of trips
+
+        // Filter trips to only include future and present trips
+        const filteredTrips = data.filter(trip => {
+          const departureDate = new Date(trip.departure_time);
+          const currentDate = new Date();
+
+          // Compare the departure date with the current date and time
+          return departureDate >= currentDate;
+        });
+
+        setTrips(filteredTrips); // Only set trips that are future or present
       } catch (error) {
         console.error('Error fetching trips:', error);
         setError('Failed to fetch trips');
@@ -76,19 +86,7 @@ function IssueTicket() {
           <div className="card-select">
             Select Trip
           </div>
-          {error && <p className="text-danger">{error}</p>}
-          {trips.map((trip) => (
-            <SelectTrip
-              key={trip.id}
-              from={trip.origin}
-              destination={trip.destination}
-              date={trip.departure_time}
-              boatNumber={trip.ferry_boat.slug}
-              boatType="Pumboat Express" // Assuming this is a constant value
-              price="PHP 1,999" // Assuming this is a constant value
-              onSelect={() => setSelectedTrip(trip)}
-            />
-          ))}
+          <SelectTrip trips={trips} onSelect={setSelectedTrip} error={error} />
           <div className="arrow-container">
             <button className="arrow" onClick={() => alert('Arrow button clicked!')}>
               &gt;

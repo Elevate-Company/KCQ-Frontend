@@ -22,7 +22,14 @@ function UpcomingTripCard() {
 
         const data = response.data;
         console.log('Response data:', data);
-        setTrips(data); // Assuming the API returns an array of trips
+
+        // Filter trips to only show those with a future departure_time
+        const filteredTrips = data.filter((trip) => {
+          const departureDate = new Date(trip.departure_time);
+          return departureDate > new Date(); // Only include trips with future departure times
+        });
+
+        setTrips(filteredTrips); // Set filtered trips
       } catch (error) {
         console.error('Error fetching trips:', error);
         setError('Failed to fetch trips');
@@ -40,17 +47,21 @@ function UpcomingTripCard() {
             <div className="card-body">
               <h5 className="mb-4 text-center">Upcoming Trips</h5>
               {error && <p className="text-danger">{error}</p>}
-              {trips.map((trip) => (
-                <Tripcard
-                  key={trip.id}
-                  from={trip.origin}
-                  destination={trip.destination}
-                  boatImage={require(`../../assets/boatlogo.png`)} // Default image
-                  dashImage={require(`../../assets/dash.png`)} // Default image
-                  date={trip.departure_time}
-                  boatNumber={trip.ferry_boat.slug}
-                />
-              ))}
+              {trips.length === 0 ? (
+                <p className="text-center">No upcoming trips available</p>
+              ) : (
+                trips.map((trip) => (
+                  <Tripcard
+                    key={trip.id}
+                    from={trip.origin}
+                    destination={trip.destination}
+                    boatImage={require(`../../assets/boatlogo.png`)} // Default image
+                    dashImage={require(`../../assets/dash.png`)} // Default image
+                    date={trip.departure_time}
+                    boatNumber={trip.ferry_boat.slug}
+                  />
+                ))
+              )}
             </div>
           </div>
         </div>

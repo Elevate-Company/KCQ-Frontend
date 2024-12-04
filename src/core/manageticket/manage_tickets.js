@@ -33,8 +33,6 @@ function ManageTrips() {
 
       <div className="ticket-cards-container">
         <TicketCard />
-        <TicketCard />
-        <TicketCard />
       </div>
     </div>
   );

@@ -25,6 +25,7 @@
   text-align: left;
   margin-left: 12%; /* Set to zero to align with the left edge */
   font-size: 12px;
+  color: white;
 }
 
 .date {
@@ -32,22 +33,26 @@
   font-size: 12px;
   width: 20%;
   margin-left: 3%;
+  color: white;
 }
 
 .ID {
   text-align: center;
   font-size: 12px;
   margin-left: 3%;
+  color: white;
 }
 
 .boat {
   text-align: center;
   font-size: 12px;
   margin-left: 10%;
+  color: white;
 }
 
 .capacity {
   text-align: center;
   font-size: 12px;
   width: 18%;
+  color: white;
 }

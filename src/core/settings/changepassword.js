@@ -8,7 +8,14 @@ function ChangePassword() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    navigate('/login');
+    const confirmLogout = window.confirm('Are you sure you want to log out?');
+    if (confirmLogout) {
+      localStorage.clear(); // Clears all items in localStorage
+      alert('Logged out!');
+      navigate('/login'); // Navigate to the login screen
+    } else {
+      alert('Logout canceled.');
+    }
   };
 
   return (

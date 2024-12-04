@@ -42,9 +42,9 @@ function Login() {
             localStorage.setItem('lastName', data.last_name);
             localStorage.setItem('username', data.username);
             localStorage.setItem('employeeNumber', data.employee_number);
-
             console.log('Login successful, navigating to dashboard');
             navigate('/dashboard');
+            
             
         } catch (error) {
             console.error('Error during login:', error);
