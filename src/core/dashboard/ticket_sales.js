@@ -7,7 +7,7 @@ function TicketSales() {
   return (
     <div className="card shadow-sm ticket-card border-0 mb-4 col-12 col-md-6 col-lg-4">
       <div className="card-body position-relative">
-        <h5 className="card-title-ticketsales">Recent Sales</h5>
+        <h3 className="card-title-ticketsales">Recent Sales</h3>
         <p>Total sales this month</p>
         <p className="card-text">${totalSales}</p>
 

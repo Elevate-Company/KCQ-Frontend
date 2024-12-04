@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../css/dashboard/available_boat.css';
 import boatImage from '../../assets/boat.png';
 import axios from 'axios';
@@ -34,19 +33,17 @@ function AvailableBoat() {
 
   return (
     <div className="card available-boat-card shadow-sm border-0 mb-4 col-12 col-md-6 col-lg-4">
-      <img 
-        src={boatImage} 
-        alt="Boat" 
-        className="boat-image" 
-      />
+      <div className="d-flex align-items-center p-3">
+        <img 
+          src={boatImage} 
+          alt="Boat" 
+          className="boat-image" 
+        />
+        <span className="boat-count ms-3">{error ? <span className="text-danger">{error}</span> : `${boatCount} Boats`}</span>
+      </div>
       <div className="card-body card-body-content">
         <h4 className="available-boat-title">Number of Available Boats</h4>
         <p>Today</p>
-        {error ? (
-          <p className="card-text boat-count text-danger">{error}</p>
-        ) : (
-          <p className="card-text boat-count">{boatCount}</p>
-        )}
       </div>
     </div>
   );

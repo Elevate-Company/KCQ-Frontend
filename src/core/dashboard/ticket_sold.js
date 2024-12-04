@@ -7,7 +7,7 @@ function TicketSold() {
 
   return (
     <div className="card shadow-sm border-0 mb-4 col-12 col-md-6 col-lg-4 position-relative ticket-card">
-      <div className="d-flex align-items-center p-3">
+      <div className="d-flex align-items-center ticket-header">
         <img 
           src={ticketImage} 
           alt="Ticket" 
