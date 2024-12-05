@@ -12,90 +12,84 @@
     padding: 10px 15px;
     border-radius: 10px;
     height: auto;
-}
-
-.card-checkbox-tripcard {
+    overflow: hidden; /* Ensure content does not overflow */
+  }
+  
+  .boat-logo-tripcard {
     position: relative;
-    margin-right: 15px; /* Adds spacing between checkbox and next element */
-    margin-left: 0;     /* Aligns the checkbox to the left */
-}
-
-.boat-logo-tripcard {
-    position: relative;
-    left: 10px;  /* Adjusted to align with the flex layout */
+    left: 0;  /* Adjusted to align with the flex layout */
     width: 30px;
     height: auto;
-}
-
-.card-body-tripcard {
+  }
+  
+  .card-body-tripcard {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    width: 20%;
-    padding-left: 15px; /* Adjusted padding to accommodate checkbox */
-}
-
-.from-component-tripcard,
-.to-component-tripcard {
+    justify-content: space-between; /* Ensure content is spaced out */
+    width: 100%; /* Ensure the card body takes full width */
+    flex-wrap: wrap; /* Ensure content wraps if necessary */
+  }
+  
+  .from-component-tripcard,
+  .to-component-tripcard {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin-left: 20px;
-}
-
-.from-text-tripcard,
-.to-text-tripcard {
+  }
+  
+  .from-text-tripcard,
+  .to-text-tripcard {
     font-size: 10px;
     color: #666;
     margin-bottom: 2px;
-}
-
-.from-destination-tripcard,
-.to-destination-tripcard {
+  }
+  
+  .from-destination-tripcard,
+  .to-destination-tripcard {
     font-size: 18px;
     color: #091057;
-}
-
-.separator-tripcard {
-    width: 20%;
-    border-top: 1px dashed #091057;
-    margin: 15px 15px;
+  }
+  
+  .separator-tripcard {
+    width: 10%;
+    border-top: 2px dashed #091057;
     flex-shrink: 0; /* Ensure the separator does not shrink */
-}
-
-.departure-date-component-tripcard {
+    margin: 0 10px; /* Adjust margin to make it closer to the components */
+  }
+  
+  .departure-date-component-tripcard {
     display: flex;
     align-items: center;
-    margin-left: 40px;
-}
-
-.departure-date-tripcard,
-.departure-id-tripcard,
-.departure-text-tripcardcard,
-.departure-capacity-tripcard {
+    margin-left: 20px; /* Reduced margin to make it closer to the separator */
+    flex-wrap: wrap; /* Ensure content wraps if necessary */
+  }
+  
+  .departure-date-tripcard,
+  .departure-id-tripcard,
+  .departure-text-tripcard,
+  .departure-capacity-tripcard {
     font-size: 14px;
     color: #091057;
-    margin-right: 70px;
-}
-
-.departure-id-tripcard {
+    margin-right: 20px; /* Adjust margin to ensure proper spacing */
+  }
+  
+  .departure-id-tripcard {
     font-size: 14px;
     font-weight: normal;
-}
-
-.departure-text-tripcard {
+  }
+  
+  .departure-text-tripcard {
     font-size: 14px;
     font-weight: normal;
-}
-
-.departure-capacity-tripcard {
+  }
+  
+  .departure-capacity-tripcard {
     font-size: 14px;
     color: #091057;
     font-weight: normal;
-    margin-left: 80px;
-}
-
-.view-details-button-tripcard {
+  }
+  
+  .view-details-button-tripcard {
     background-color: rgb(189, 189, 189);
     border: 1px solid grey;
     border-radius: 25px;
@@ -103,9 +97,24 @@
     padding: 5px 10px;
     font-size: 12px;
     cursor: pointer;
-    margin-left: 50px;
-}
-
-.view-details-button-tripcard:hover {
+  }
+  
+  .view-details-button-tripcard:hover {
     background-color: #e2e3e5;
-}
+  }
+  
+  @media (max-width: 768px) {
+    .card-body-tripcard {
+      flex-direction: column; /* Stack items vertically on smaller screens */
+      align-items: flex-start;
+    }
+  
+    .departure-date-component-tripcard {
+      margin-left: 0; /* Remove left margin on smaller screens */
+    }
+  
+    .view-details-button-tripcard {
+      margin-left: 0; /* Remove left margin on smaller screens */
+      margin-top: 10px; /* Add top margin for spacing */
+    }
+  }
