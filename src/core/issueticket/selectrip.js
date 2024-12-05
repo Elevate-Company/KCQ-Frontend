@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../../css/issueticket/selectrip.css';
 import boatLogo from '../../assets/boatlogo.png';
-import axios from 'axios';
 
 function SelectTrip({ trips, onSelect, error }) {
+  const [selectedTripId, setSelectedTripId] = useState(null);
+
   if (error) {
     return <p>{error}</p>;
   }
@@ -11,6 +12,11 @@ function SelectTrip({ trips, onSelect, error }) {
   if (!trips || trips.length === 0) {
     return <p>Loading...</p>;
   }
+
+  const handleSelect = (trip) => {
+    setSelectedTripId(trip.id);
+    onSelect(trip);
+  };
 
   return (
     <div className="select-trip-container">
@@ -21,11 +27,12 @@ function SelectTrip({ trips, onSelect, error }) {
         });
 
         return (
-          <div key={trip.id} className="card-select-empty">
+          <div key={trip.id} className="card-select-empty mb-4">
             <input
               type="checkbox"
               className="round-checkbox"
-              onChange={() => onSelect(trip)}
+              checked={selectedTripId === trip.id}
+              onChange={() => handleSelect(trip)}
             />
             <div className="card-content-selecttrip">
               <div className="boat-from-to-container">

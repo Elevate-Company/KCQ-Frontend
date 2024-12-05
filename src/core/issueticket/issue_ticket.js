@@ -101,6 +101,11 @@ function IssueTicket() {
     return tickets.reduce((total, ticket) => total + ticket.amount, 0);
   };
 
+  const handleProceedToCheckout = () => {
+    // Implement the logic for proceeding to checkout
+    alert('Proceeding to checkout...');
+  };
+
   return (
     <div>
       <Navbar />
@@ -111,16 +116,11 @@ function IssueTicket() {
               Select Trip
             </div>
             <SelectTrip trips={trips} onSelect={setSelectedTrip} error={error} />
-            <div className="arrow-container">
-              <button className="arrow" onClick={() => alert('Arrow button clicked!')}>
-                &gt;
-              </button>
-            </div>
           </div>
 
           <div className="card-contact-issue contact-card">
             <div className="card-contact">
-              <h3>Contact Info</h3>
+              <h3>New Ticket</h3>
               <form className="contact-form">
                 <label>
                   Passenger Name:
@@ -217,6 +217,15 @@ function IssueTicket() {
                 </tr>
               </tbody>
             </table>
+            <div className="checkout-btn-container">
+              <button
+                type="button"
+                className="checkout-btn mt-3"
+                onClick={handleProceedToCheckout}
+              >
+                Proceed to Checkout
+              </button>
+            </div>
           </div>
         )}
       </div>

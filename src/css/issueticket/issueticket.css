@@ -43,7 +43,7 @@
   align-items: center;
   background-color: #fff;
   position: relative;
-  height: 650px;
+  height: 700px; /* Increased height */
   padding: 20px;
 }
 
@@ -154,6 +154,29 @@ hr {
   transform: scale(1.05);
 }
 
+.checkout-btn {
+  width: 200px;
+  padding: 12px;
+  font-size: 16px;
+  background-color: #091057;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.checkout-btn:hover {
+  background-color: #071540;
+  transform: scale(1.05);
+}
+
+.checkout-btn-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
 .tickets-table-container {
   margin-top: 40px; /* Increased margin from the top */
 }
@@ -190,4 +213,13 @@ hr {
 .fa-trash {
   cursor: pointer;
   color: red;
+}
+
+.select-trip-container {
+  max-height: 600px; /* Adjust this value as needed */
+  overflow-y: auto;
+}
+
+.card-select-empty {
+  margin-bottom: 20px; /* Space between each trip card */
 }
