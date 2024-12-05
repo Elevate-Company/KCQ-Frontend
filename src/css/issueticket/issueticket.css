@@ -153,3 +153,24 @@ hr {
   background-color: #071540;
   transform: scale(1.05);
 }
+
+.tickets-table-container {
+  margin-top: 40px; /* Increased margin from the top */
+}
+
+.tickets-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tickets-table th,
+.tickets-table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+.tickets-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
