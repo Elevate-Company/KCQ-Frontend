@@ -92,6 +92,11 @@ function IssueTicket() {
     setPrice(400);
   };
 
+  const handleDeleteTicket = (index) => {
+    const updatedTickets = tickets.filter((_, i) => i !== index);
+    setTickets(updatedTickets);
+  };
+
   const calculateTotalAmount = () => {
     return tickets.reduce((total, ticket) => total + ticket.amount, 0);
   };
@@ -182,6 +187,7 @@ function IssueTicket() {
             <table className="tickets-table mt-2">
               <thead>
                 <tr>
+                  <th className="action-column">Action</th>
                   <th>Name</th>
                   <th>Contact Number</th>
                   <th>Email</th>
@@ -192,6 +198,12 @@ function IssueTicket() {
               <tbody>
                 {tickets.map((ticket, index) => (
                   <tr key={index}>
+                    <td className="action-column">
+                      <i
+                        className="fa fa-trash"
+                        onClick={() => handleDeleteTicket(index)}
+                      ></i>
+                    </td>
                     <td>{ticket.passenger.name}</td>
                     <td>{ticket.passenger.contact}</td>
                     <td>{ticket.passenger.email}</td>
@@ -200,7 +212,7 @@ function IssueTicket() {
                   </tr>
                 ))}
                 <tr>
-                  <td colSpan="4" style={{ textAlign: 'right', fontWeight: 'bold' }}>Total</td>
+                  <td colSpan="5" style={{ textAlign: 'right', fontWeight: 'bold' }}>Total</td>
                   <td style={{ fontWeight: 'bold' }}>PHP {calculateTotalAmount()}</td>
                 </tr>
               </tbody>

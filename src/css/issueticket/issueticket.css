@@ -174,3 +174,20 @@ hr {
   background-color: #f4f4f4;
   font-weight: bold;
 }
+
+.action-column {
+  width: 50px;
+  text-align: center;
+}
+
+.action-column i {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.fa-trash {
+  cursor: pointer;
+  color: red;
+}
