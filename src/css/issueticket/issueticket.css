@@ -110,7 +110,8 @@
   width: 100%;
 }
 
-.contact-form input {
+.contact-form input,
+.contact-form select {
   width: 500px;
   max-width: 500px;
   padding: 10px;
