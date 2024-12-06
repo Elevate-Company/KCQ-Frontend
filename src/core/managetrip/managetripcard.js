@@ -12,40 +12,24 @@ function ManageTripCard({ trip }) {
   return (
     <div className="card managetrip">
       <div className="card-body-managetrip">
-        {/* Boat logo */}
-        <img src={boatLogo} alt="Boat Logo" className="boat-logo-managetrip" />
-
-        {/* From component with text on the left */}
-        <div className="from-component-managetrip">
-          <p className="from-text-managetrip">From</p>
-          <h4 className="from-destination-managetrip">{origin}</h4>
-        </div>
-
-        {/* Horizontal dashed line separator */}
-        <div className="separator-managetrip" />
-
-        {/* To component with text on the left */}
-        <div className="to-component-managetrip">
-          <p className="to-text-managetrip">To</p>
-          <h4 className="to-destination-managetrip">{destination}</h4>
-        </div>
-
-        {/* Departure date component with ID */}
-        <div className="departure-date-component-managetrip mt-3">
-          <h4 className="departure-date-managetrip">{departureDate}</h4>
-          <h4 className="departure-id-managetrip">{trip.id}</h4>
-          <h4 className="departure-text-managetrip">{boatType}</h4>
-          <h4 className="departure-capacity-managetrip">{available_seats}</h4>
-        </div>
-
-        {/* Vertical separator, trash icon, and View Details button */}
-        <div className="vertical-separator-managetrip">
-          <button type="button" className="trash-button-managetrip">
-            <i className="fas fa-trash"></i>
-          </button>
-          <button type="button" className="view-details-button-managetrip">
-            View Details
-          </button>
+        <div className="row">
+          <div className="col">
+            <img src={boatLogo} alt="Boat Logo" className="boat-logo-managetrip" />
+          </div>
+          <div className="col">From: {origin}</div>
+          <div className="col">To: {destination}</div>
+          <div className="col">Departure Date: {departureDate}</div>
+          <div className="col">ID: {trip.id}</div>
+          <div className="col">Boat Type: {boatType}</div>
+          <div className="col">Available Seats: {available_seats}</div>
+          <div className="col actions">
+            <button type="button" className="trash-button-managetrip">
+              <i className="fas fa-trash"></i>
+            </button>
+            <button type="button" className="view-details-button-managetrip">
+              View Details
+            </button>
+          </div>
         </div>
       </div>
     </div>
