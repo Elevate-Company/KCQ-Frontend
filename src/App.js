@@ -7,7 +7,7 @@ import DashboardScreen from './core/dashboard/dashboard';
 import IssueTicket from './core/issueticket/issue_ticket';
 import ManageTrips from './core/managetrip/manage_trips';
 import ManageTickets from './core/manageticket/manage_tickets';
-import Passenger from './core/passenger';
+import Passenger from './core/passenger/passenger';
 import Reports from './core/report/reports';
 import Settings from './core/settings/settings';
 import ProfileCard from './core/navbar/profilecard';

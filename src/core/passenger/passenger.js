@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from './navbar/navbar';
+import Navbar from '../navbar/navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function PassengerList() {
@@ -92,8 +92,8 @@ function PassengerList() {
                       </span>
                     </td>
                     <td>
-                      <button className="btn btn-success btn-sm me-2">View</button>
-                      <button className="btn btn-danger btn-sm">Delete</button>
+                      <button className="btn btn-success btn-sm me-2 p-1" style={{ fontSize: '0.60rem' }}>View</button>
+                      <button className="btn btn-danger btn-sm p-1" style={{ fontSize: '0.60rem' }}>Delete</button>
                     </td>
                   </tr>
                 ))}
