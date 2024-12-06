@@ -12,9 +12,6 @@ function ManageTripCard({ trip }) {
   return (
     <div className="card managetrip">
       <div className="card-body-managetrip">
-        {/* Checkbox on the left */}
-        <input type="checkbox" className="card-checkbox-managetrip" />
-
         {/* Boat logo */}
         <img src={boatLogo} alt="Boat Logo" className="boat-logo-managetrip" />
 
@@ -38,7 +35,7 @@ function ManageTripCard({ trip }) {
           <h4 className="departure-date-managetrip">{departureDate}</h4>
           <h4 className="departure-id-managetrip">{trip.id}</h4>
           <h4 className="departure-text-managetrip">{boatType}</h4>
-          <h4 className="departure-capacity-managetrip">{available_seats} seats available</h4>
+          <h4 className="departure-capacity-managetrip">{available_seats}</h4>
         </div>
 
         {/* Vertical separator, trash icon, and View Details button */}

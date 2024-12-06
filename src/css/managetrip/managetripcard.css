@@ -14,13 +14,6 @@
     height: auto;
 }
 
-.card-checkbox-managetrip {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
 .boat-logo-managetrip{
     position: absolute;
     left: 45px;
