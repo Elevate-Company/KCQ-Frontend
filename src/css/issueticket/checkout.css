@@ -3,21 +3,100 @@
     max-width: 1200px;
     margin: 0 auto;
     text-align: center;
-  }
-  
-  .checkout-table {
+}
+
+.checkout-table {
     width: 100%;
     border-collapse: collapse;
-  }
-  
-  .checkout-table th,
-  .checkout-table td {
+}
+
+.checkout-table th,
+.checkout-table td {
     border: 1px solid #ccc;
     padding: 10px;
     text-align: left;
-  }
-  
-  .checkout-table th {
+}
+
+.checkout-table th {
     background-color: #f4f4f4;
     font-weight: bold;
-  }
+}
+
+.payment-section {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    gap: 20px; /* Ensure spacing between the children */
+    height: auto; /* Let the section adjust based on content */
+}
+
+.payment-methods {
+    width: 48%; /* Ensure both sides take equal width */
+    text-align: left;
+}
+
+.payment-methods label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 10px;
+    margin-top: 10px; /* Add margin to the top of each label */
+}
+
+.vertical-line {
+    width: 1px; /* Ensure line is visible */
+    background-color: grey; /* Bold color for visibility */
+    align-self: stretch; /* Stretch to match the height of the flex container */
+    margin: 0 20px; /* Add spacing around the separator */
+}
+
+.payment-details {
+    width: 48%; /* Ensure both sides take equal width */
+    text-align: left;
+    display: flex;
+    flex-direction: column; /* Arrange items vertically */
+    justify-content: space-between; /* Ensure items are spaced out, with button at the bottom */
+    height: 100%; /* Ensure it takes up available height */
+    padding-right: 10px; /* Adjust right padding for button space */
+}
+
+.cash-payment,
+.online-payment {
+    margin-top: 0px;
+}
+
+.cash-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.payment-btn-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: auto; /* Push button to the bottom */
+}
+
+.payment-btn {
+    width: 150px; /* Adjust width for button */
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #091057;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.payment-btn:hover {
+    background-color: #071540;
+    transform: scale(1.05);
+}

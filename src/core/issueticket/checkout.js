@@ -5,6 +5,8 @@ import '../../css/issueticket/checkout.css';
 function Checkout() {
   const [tickets, setTickets] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState('cash');
+  const [cashAmount, setCashAmount] = useState('');
 
   useEffect(() => {
     const savedTickets = localStorage.getItem('tickets');
@@ -16,6 +18,20 @@ function Checkout() {
       setTotalAmount(parseFloat(savedTotalAmount));
     }
   }, []);
+
+  const handlePaymentMethodChange = (e) => {
+    setPaymentMethod(e.target.value);
+  };
+
+  const handleCashAmountChange = (e) => {
+    setCashAmount(e.target.value);
+  };
+
+  const handleProceedToPayment = (e) => {
+    e.preventDefault();
+    // Implement the logic for proceeding to payment
+    alert(`Proceeding to payment with ${paymentMethod} method`);
+  };
 
   return (
     <div>
@@ -48,6 +64,58 @@ function Checkout() {
             </tr>
           </tbody>
         </table>
+        <div className="payment-section mt-4">
+          <div className="payment-methods">
+            <label>
+              <input
+                type="radio"
+                value="cash"
+                checked={paymentMethod === 'cash'}
+                onChange={handlePaymentMethodChange}
+              />
+              Cash Payment
+            </label>
+            <label>
+              <input
+                type="radio"
+                value="online"
+                checked={paymentMethod === 'online'}
+                onChange={handlePaymentMethodChange}
+              />
+              Online Payment
+            </label>
+          </div>
+          <div className="vertical-line"></div>
+          <div className="payment-details">
+            {paymentMethod === 'cash' && (
+              <div className="cash-payment">
+                <label>
+                  Enter Amount:
+                  <input
+                    type="number"
+                    value={cashAmount}
+                    onChange={handleCashAmountChange}
+                    className="cash-input"
+                  />
+                </label>
+              </div>
+            )}
+            {paymentMethod === 'online' && (
+              <div className="online-payment">
+                <p>Proceed with Online payment.</p>
+              </div>
+            )}
+            <div className="payment-btn-container">
+              <button
+                type="button"
+                className="payment-btn mt-3"
+                onClick={handleProceedToPayment}
+              >
+                Proceed to Payment
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
