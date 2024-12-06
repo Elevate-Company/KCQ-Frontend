@@ -12,6 +12,7 @@ import Reports from './core/report/reports';
 import Settings from './core/settings/settings';
 import ProfileCard from './core/navbar/profilecard';
 import ProtectedRoute from './components/protectedroute';
+import Checkout from './core/issueticket/checkout'; // Import Checkout component
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const isAuthenticated = () => localStorage.getItem('accessToken');
@@ -44,6 +45,7 @@ function App() {
                     <Route path="reports" element={<Reports />} />
                     <Route path="settings" element={<Settings />} />
                     <Route path="profile" element={<ProfileCard />} />
+                    <Route path="checkout" element={<Checkout />} /> {/* Add Checkout route */}
                 </Route>
             </Routes>
         </Router>

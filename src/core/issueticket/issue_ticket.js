@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../css/issueticket/issueticket.css';
 import SelectTrip from './selectrip';
 import axios from 'axios';
@@ -12,8 +13,12 @@ function IssueTicket() {
   const [contactNumber, setContactNumber] = useState('');
   const [email, setEmail] = useState('');
   const [passengerType, setPassengerType] = useState('adult');
-  const [tickets, setTickets] = useState([]);
+  const [tickets, setTickets] = useState(() => {
+    const savedTickets = localStorage.getItem('tickets');
+    return savedTickets ? JSON.parse(savedTickets) : [];
+  });
   const [price, setPrice] = useState(400);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTrips = async () => {
@@ -48,6 +53,10 @@ function IssueTicket() {
 
     fetchTrips();
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('tickets', JSON.stringify(tickets));
+  }, [tickets]);
 
   const calculateAmount = (type) => {
     const basePrice = 400;
@@ -102,8 +111,9 @@ function IssueTicket() {
   };
 
   const handleProceedToCheckout = () => {
-    // Implement the logic for proceeding to checkout
-    alert('Proceeding to checkout...');
+    localStorage.setItem('tickets', JSON.stringify(tickets));
+    localStorage.setItem('totalAmount', calculateTotalAmount());
+    navigate('/checkout');
   };
 
   return (
@@ -171,7 +181,7 @@ function IssueTicket() {
                 <hr />
                 <button
                   type="button"
-                  className="generate-btn"
+                  className="generate-btn mt-5"
                   onClick={handleAddTicket}
                 >
                   Add Ticket
