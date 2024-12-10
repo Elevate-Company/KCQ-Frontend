@@ -12,25 +12,36 @@ function ManageTripCard({ trip }) {
   return (
     <div className="card managetrip">
       <div className="card-body-managetrip">
-        <div className="row">
-          <div className="col">
-            <img src={boatLogo} alt="Boat Logo" className="boat-logo-managetrip" />
-          </div>
-          <div className="col">From: {origin}</div>
-          <div className="col">To: {destination}</div>
-          <div className="col">Departure Date: {departureDate}</div>
-          <div className="col">ID: {trip.id}</div>
-          <div className="col">Boat Type: {boatType}</div>
-          <div className="col">Available Seats: {available_seats}</div>
-          <div className="col actions">
-            <button type="button" className="trash-button-managetrip">
-              <i className="fas fa-trash"></i>
-            </button>
-            <button type="button" className="view-details-button-managetrip">
-              View Details
-            </button>
-          </div>
-        </div>
+        <table className="table table-bordered">
+          <thead>
+            <tr>
+              <th>Logo</th>
+              <th>From</th>
+              <th>To</th>
+              <th>Departure Date</th>
+              <th>ID</th>
+              <th>Boat Type</th>
+              <th>Available Seats</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><img src={boatLogo} alt="Boat Logo" className="boat-logo-managetrip" /></td>
+              <td>{origin}</td>
+              <td>{destination}</td>
+              <td>{departureDate}</td>
+              <td>{trip.id}</td>
+              <td>{boatType}</td>
+              <td>{available_seats}</td>
+              <td>
+                <button type="button" className="view-details-button-managetrip">
+                  View Details
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   );
