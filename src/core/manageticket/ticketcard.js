@@ -2,11 +2,15 @@ import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap is loaded
 import '../../css/manageticket/ticketcard.css'; // Import the custom CSS
 import boatLogo from '../../assets/boatlogo.png'; // Import your logo
+import { Modal, Button, Form } from 'react-bootstrap'; // Import Bootstrap components
 
 function TicketCard() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [reason, setReason] = useState('');
+  const [selectedTicket, setSelectedTicket] = useState(null);
 
   useEffect(() => {
     const fetchTickets = async () => {
@@ -34,6 +38,12 @@ function TicketCard() {
 
     fetchTickets();
   }, []);
+
+  const handleDelete = () => {
+    // Handle the delete action here, e.g., make an API call to delete the ticket
+    console.log('Deleting ticket with reason:', reason);
+    setShowModal(false);
+  };
 
   if (loading) return <p>Loading tickets...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -73,7 +83,14 @@ function TicketCard() {
                   <td>{typeBoat}</td>
                   <td>{capacity}</td>
                   <td>
-                    <button type="button" className="trash-button-ticketcard">
+                    <button
+                      type="button"
+                      className="trash-button-ticketcard"
+                      onClick={() => {
+                        setSelectedTicket(id);
+                        setShowModal(true);
+                      }}
+                    >
                       <i className="fas fa-trash"></i>
                     </button>
                     <button type="button" className="view-details-button-ticketcard">
@@ -85,6 +102,34 @@ function TicketCard() {
             })}
         </tbody>
       </table>
+
+      {/* Modal for delete confirmation */}
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Ticket</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group controlId="reason">
+              <Form.Label>Reason for deletion</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter reason"
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDelete}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
