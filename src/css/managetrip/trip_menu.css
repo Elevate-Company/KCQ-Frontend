@@ -32,27 +32,28 @@
   text-align: center;
   font-size: 12px;
   width: 20%;
-  margin-left: 3%;
+  margin-left: 5%;
   color: white;
 }
 
 .ID {
   text-align: center;
   font-size: 12px;
-  margin-left: 3%;
+  margin-left: 2%;
   color: white;
 }
 
 .boat {
   text-align: center;
   font-size: 12px;
-  margin-left: 5%; /* Adjusted to move it to the left */
+  margin-left: 6%; /* Adjusted to move it to the left */
   color: white;
 }
 
 .capacity {
   text-align: center;
   font-size: 12px;
+  margin-left: 3%;
   width: 18%;
   color: white;
 }

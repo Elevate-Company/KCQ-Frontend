@@ -28,6 +28,8 @@
 .table-bordered th,
 .table-bordered td {
     border: 1px solid #dee2e6;
+    text-align: center; /* Center the content of the table cells */
+    vertical-align: middle; /* Center the content vertically */
 }
 
 .boat-logo-managetrip {
