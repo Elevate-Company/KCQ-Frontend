@@ -46,7 +46,7 @@
 .boat {
   text-align: center;
   font-size: 12px;
-  margin-left: 10%;
+  margin-left: 5%; /* Adjusted to move it to the left */
   color: white;
 }
 

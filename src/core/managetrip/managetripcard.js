@@ -15,7 +15,7 @@ function ManageTripCard({ trip }) {
         <table className="table table-bordered">
           <thead>
             <tr>
-              <th>Logo</th>
+              <th>KCQ</th>
               <th>From</th>
               <th>To</th>
               <th>Departure Date</th>
