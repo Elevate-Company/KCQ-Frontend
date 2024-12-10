@@ -35,6 +35,9 @@ function ManageTripCard({ trip }) {
               <td>{boatType}</td>
               <td>{available_seats}</td>
               <td>
+                <button type="button" className="trash-button-managetrip">
+                  <i className="fas fa-trash"></i>
+                </button>
                 <button type="button" className="view-details-button-managetrip">
                   View Details
                 </button>

@@ -21,18 +21,7 @@ function ManageTickets() {
           </div>
         </div>
 
-        <div className="empty-card-ticket">
-          <div className="card-content-ticket">
-            <div className="destination-ticket">DESTINATION</div>
-            <div className="destination-ticket">
-              CUSTOMER
-              <i className="fas fa-sort unsorted-icon-ticket"></i>
-            </div>
-            <div className="destination-ticket">ID</div>
-            <div className="boat-type-ticket">TYPE BOAT</div>
-            <div className="capacity-ticket">CAPACITY</div>
-          </div>
-        </div>
+        
 
         <div className="ticket-cards-container">
           <TicketCard />

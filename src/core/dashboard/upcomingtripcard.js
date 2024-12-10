@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../css/dashboard/upcomingtripcard.css';
-import Tripcard from './tripcard';
 import axios from 'axios';
 
 function UpcomingTripCard() {
@@ -50,17 +49,32 @@ function UpcomingTripCard() {
               {trips.length === 0 ? (
                 <p className="text-center">No upcoming trips available</p>
               ) : (
-                trips.map((trip) => (
-                  <Tripcard
-                    key={trip.id}
-                    from={trip.origin}
-                    destination={trip.destination}
-                    boatImage={require(`../../assets/boatlogo.png`)} // Default image
-                    dashImage={require(`../../assets/dash.png`)} // Default image
-                    date={trip.departure_time}
-                    boatNumber={trip.ferry_boat.slug}
-                  />
-                ))
+                <table className="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>From</th>
+                      <th>Destination</th>
+                      <th>Departure Date</th>
+                      <th>Boat Number</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {trips.map((trip) => (
+                      <tr key={trip.id}>
+                        <td>{trip.origin}</td>
+                        <td>{trip.destination}</td>
+                        <td>{new Date(trip.departure_time).toLocaleDateString()}</td>
+                        <td>{trip.ferry_boat.slug}</td>
+                        <td>
+                          <button type="button" className="view-details-button-upcomingtripcard">
+                            View Details
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               )}
             </div>
           </div>

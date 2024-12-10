@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../../css/managetrip/managetrips.css';  // Import the CSS file for ManageTrips
-import TripMenu from './trip_menu';  // Import TripMenu component
 import ManageTripCard from './managetripcard';  // Correct path for ManageTripCard
 import Navbar from '../navbar/navbar';  // Import Navbar component
 
@@ -82,9 +81,6 @@ function ManageTrips() {
             <option value="cancelled">Cancelled</option>
           </select>
         </div>
-
-        {/* TripMenu.js */}
-        <TripMenu className="mt-5" />
 
         {/* ManagetripCard.js */}
         <div className="card-container mt-3">

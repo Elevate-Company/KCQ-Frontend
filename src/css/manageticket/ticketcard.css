@@ -1,11 +1,6 @@
 .empty-card-ticketcard {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     border: none;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding-left: 0;
-    position: relative;
     margin: 20px auto;
     width: 100%;
     max-width: 1350px;
@@ -14,97 +9,39 @@
     height: auto;
 }
 
-.card-checkbox-ticketcard {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
+.card-body-ticketcard {
+    width: 100%;
+    padding: 0;
+}
+
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #212529;
+    border-collapse: collapse; /* Ensure borders are collapsed */
+}
+
+.table-bordered {
+    border: 1px solid #dee2e6;
+}
+
+.table-bordered th,
+.table-bordered td {
+    border: 1px solid #dee2e6;
+    text-align: center; /* Center the content of the table cells */
+    vertical-align: middle; /* Center the content vertically */
+}
+
+.table-bordered th {
+    background-color: #131a6b; /* Set the background color */
+    color: white; /* Set the text color */
 }
 
 .boat-logo-ticketcard {
-    position: absolute;
-    left: 45px;
-    top: 50%;
-    transform: translateY(-50%);
     width: 30px;
     height: auto;
-}
-
-.card-body-ticketcard {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-    padding-left: 70px;
-}
-
-.from-component-ticketcard,
-.to-component-ticketcard {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-left: 20px;
-}
-
-.from-text-ticketcard,
-.to-text-ticketcard {
-    font-size: 10px;
-    color: #666;
-    margin-bottom: 2px;
-}
-
-.from-destination-ticketcard,
-.to-destination-ticketcard {
-    font-size: 18px;
-    color: #091057;
-}
-
-.separator-ticketcard {
-    width: 5%;
-    border-top: 1px dashed grey;
-    margin: 15px 15px;
-}
-
-.departure-date-component-ticketcard {
-    display: flex;
-    align-items: center;
-    margin-left: 40px;
-}
-
-.departure-date-ticketcard,
-.departure-id-ticketcard,
-.departure-text-ticketcard,
-.departure-capacity-ticketcard {
-    font-size: 14px;
-    color: #091057;
-    margin-right: 70px;
-}
-
-.departure-id-ticketcard {
-    font-size: 14px;
-    font-weight: normal;
-}
-
-.departure-text-ticketcard {
-    font-size: 14px;
-    font-weight: normal;
-}
-
-.departure-capacity-ticketcard {
-    font-size: 14px;
-    color: #091057;
-    font-weight: normal;
-    margin-right: 30px;
-}
-
-.vertical-separator-ticketcard {
-    height: 30px;
-    border-left: 2px solid grey;
-    margin-left: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 10px;
+    display: block;
+    margin: auto;
 }
 
 .trash-button-ticketcard {
@@ -113,7 +50,7 @@
     color: #091057;
     font-size: 14px;
     cursor: pointer;
-    margin-left: 50px;
+    margin-right: 10px;
     padding: 0;
 }
 
@@ -129,7 +66,8 @@
     padding: 5px 10px;
     font-size: 12px;
     cursor: pointer;
-    margin-left: 30px;
+    width: 150px; /* Set a fixed width */
+    text-align: center; /* Center the text */
 }
 
 .view-details-button-ticketcard:hover {

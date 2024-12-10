@@ -37,6 +37,20 @@
     height: auto;
 }
 
+.trash-button-managetrip {
+    background: none;
+    border: none;
+    color: #091057;
+    font-size: 14px;
+    cursor: pointer;
+    margin-right: 10px;
+    padding: 0;
+}
+
+.trash-button-managetrip:hover {
+    color: #dc3545;
+}
+
 .view-details-button-managetrip {
     background-color: rgb(228, 228, 228);
     border: 1px solid #091057;
@@ -49,6 +63,6 @@
     text-align: center; /* Center the text */
 }
 
-.view-details-button:hover {
+.view-details-button-managetrip:hover {
     background-color: #e2e3e5;
 }
