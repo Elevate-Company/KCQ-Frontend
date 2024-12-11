@@ -35,16 +35,16 @@ function IssueTicket() {
         const data = response.data;
         console.log('Response data:', data);
 
-        // Filter trips to only include future and present trips
+        
         const filteredTrips = data.filter(trip => {
           const departureDate = new Date(trip.departure_time);
           const currentDate = new Date();
 
-          // Compare the departure date with the current date and time
+          
           return departureDate >= currentDate;
         });
 
-        setTrips(filteredTrips); // Only set trips that are future or present
+        setTrips(filteredTrips); 
       } catch (error) {
         console.error('Error fetching trips:', error);
         setError('Failed to fetch trips');
@@ -90,10 +90,10 @@ function IssueTicket() {
       amount: calculateAmount(passengerType),
     };
 
-    // Add the new ticket to the list of tickets
+    
     setTickets([...tickets, newTicket]);
 
-    // Clear the form fields
+    
     setPassengerName('');
     setContactNumber('');
     setEmail('');

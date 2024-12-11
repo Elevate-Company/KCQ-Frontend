@@ -21,7 +21,7 @@ function AvailableBoat() {
 
         const data = response.data;
         console.log('Response data:', data);
-        setBoatCount(data.length); // Assuming the API returns an array of boats
+        setBoatCount(data.length); 
       } catch (error) {
         console.error('Error fetching boat count:', error);
         setError('Failed to fetch boat count');

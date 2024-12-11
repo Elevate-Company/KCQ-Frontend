@@ -40,7 +40,6 @@ function TicketCard() {
   }, []);
 
   const handleDelete = () => {
-    // Handle the delete action here, e.g., make an API call to delete the ticket
     console.log('Deleting ticket with reason:', reason);
     setShowModal(false);
   };
@@ -71,8 +70,8 @@ function TicketCard() {
                 passenger: { name: customer },
               } = ticket;
 
-              const capacity = ticket.trip.available_seats; // Assuming capacity means available seats
-              const typeBoat = ferry_boat.slug; // Assuming type_boat is the slug
+              const capacity = ticket.trip.available_seats; 
+              const typeBoat = ferry_boat.slug; 
 
               return (
                 <tr key={id}>
@@ -103,7 +102,6 @@ function TicketCard() {
         </tbody>
       </table>
 
-      {/* Modal for delete confirmation */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Delete Ticket</Modal.Title>

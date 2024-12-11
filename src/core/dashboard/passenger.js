@@ -4,7 +4,7 @@ import '../../css/dashboard/passenger.css';
 import personImage from '../../assets/person.png';
 
 function Passenger() {
-  const sampleDataAmount = 150; // Sample data amount
+  const sampleDataAmount = 150;
 
   return (
     <div className="card passenger-card border-0 mb-4 col-12 col-md-6 col-lg-4 position-relative">

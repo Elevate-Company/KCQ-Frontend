@@ -29,7 +29,6 @@ function Checkout() {
 
   const handleProceedToPayment = (e) => {
     e.preventDefault();
-    // Implement the logic for proceeding to payment
     alert(`Proceeding to payment with ${paymentMethod} method`);
   };
 

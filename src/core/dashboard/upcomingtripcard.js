@@ -15,20 +15,19 @@ function UpcomingTripCard() {
         const response = await axios.get('https://api.kcq-express.co/api/trips/', {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Token ${token}`,
+            Authorization: `Token ${token}`,
           },
         });
 
         const data = response.data;
         console.log('Response data:', data);
 
-        // Filter trips to only show those with a future departure_time
         const filteredTrips = data.filter((trip) => {
           const departureDate = new Date(trip.departure_time);
-          return departureDate > new Date(); // Only include trips with future departure times
+          return departureDate > new Date();
         });
 
-        setTrips(filteredTrips); // Set filtered trips
+        setTrips(filteredTrips);
       } catch (error) {
         console.error('Error fetching trips:', error);
         setError('Failed to fetch trips');

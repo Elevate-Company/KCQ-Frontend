@@ -35,16 +35,16 @@ function PassengerList() {
 
   return (
     <div>
-      {/* Navbar */}
+      
       <Navbar />
 
-      {/* Page Content */}
+      
       <div className="container mt-4">
         <h1 className="text-center mb-4">Passenger Management</h1>
 
-        {/* Card */}
+        
         <div className="card">
-          {/* Custom Card Header */}
+         
           <div
             className="card-header text-white"
             style={{ backgroundColor: '#091057' }}
@@ -52,11 +52,11 @@ function PassengerList() {
             List of Passengers
           </div>
 
-          {/* Card Body */}
+          
           <div className="card-body">
-            {/* Table */}
+            
             <table className="table table-striped table-responsive-sm">
-              {/* Table Header */}
+            
               <thead style={{ backgroundColor: '#091057', color: 'white' }}>
                 <tr>
                   <th>Passenger ID</th>

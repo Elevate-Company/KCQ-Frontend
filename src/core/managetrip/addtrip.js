@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Form, Button, Col, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../../css/managetrip/addtrip.css'; // Import the custom CSS
+import '../../css/managetrip/addtrip.css';
 
 function AddTrip() {
   const [boat, setBoat] = useState('');
@@ -14,7 +14,7 @@ function AddTrip() {
   const [arrival, setArrival] = useState('');
   const [availableSeats, setAvailableSeats] = useState('');
   const [createdBy, setCreatedBy] = useState('');
-  const navigate = useNavigate(); // Use useNavigate hook
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBoats = async () => {
@@ -23,7 +23,7 @@ function AddTrip() {
         const response = await axios.get('https://api.kcq-express.co/api/ferry-boats/', {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization' : `Token ${token}`,
+            Authorization: `Token ${token}`,
           },
         });
         setBoats(response.data);
@@ -32,8 +32,8 @@ function AddTrip() {
       }
     };
 
-    const usernameID = localStorage.getItem('username'); // Get username from localStorage
-    setCreatedBy(usernameID); // Set the createdBy state with the username
+    const usernameID = localStorage.getItem('username');
+    setCreatedBy(usernameID);
 
     fetchBoats();
   }, []);
@@ -45,26 +45,26 @@ function AddTrip() {
       const response = await axios.post(
         'https://api.kcq-express.co/api/trips/',
         {
-          ferry_boat: { slug: boat }, // Map boat to ferry_boat object
+          ferry_boat: { slug: boat },
           origin,
           destination,
           departure_time: departure,
           arrival_time: arrival,
-          available_seats: parseInt(availableSeats, 10), // Ensure available_seats is an integer
-          created_by: createdBy, // Include the created_by field
+          available_seats: parseInt(availableSeats, 10),
+          created_by: createdBy,
         },
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization' : `Token ${token}`,
+            Authorization: `Token ${token}`,
           },
         }
       );
       console.log('Trip created:', response.data);
-      navigate('/manage-trips'); // Navigate to ManageTrips page
+      navigate('/manage-trips');
     } catch (error) {
       console.error('Error creating trip:', error);
-      console.error('Response data:', error.response.data); // Log the response data for debugging
+      console.error('Response data:', error.response.data);
     }
   };
 

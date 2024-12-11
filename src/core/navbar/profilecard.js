@@ -6,8 +6,8 @@ function ProfileCard() {
   const [username, setUsername] = useState('');
 
   useEffect(() => {
-    const usernameID = localStorage.getItem('username'); // Get username from localStorage
-    setUsername(usernameID); // Set the username state with the fetched username
+    const usernameID = localStorage.getItem('username');
+    setUsername(usernameID);
   }, []);
 
   return (

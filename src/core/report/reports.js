@@ -1,22 +1,22 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Navbar from '../navbar/navbar'; // Import Navbar component
+import Navbar from '../navbar/navbar'; 
 
 function Reports() {
-  const [filter, setFilter] = useState('daily'); // State to manage the filter type
+  const [filter, setFilter] = useState('daily'); 
 
   const handleFilterChange = (e) => {
     setFilter(e.target.value);
-    // You can add logic here to fetch or filter data based on the selected filter
+    
   };
 
   return (
     <div>
-      <Navbar /> {/* Display Navbar at the very top */}
+      <Navbar /> 
       <div className="container my-4">
         <h1 className="text-center mb-4">Ferry Ticketing Management System Report</h1>
 
-        {/* Filter Dropdown */}
+        
         <div className="d-flex justify-content-end mb-4">
           <select className="form-select w-auto" value={filter} onChange={handleFilterChange}>
             <option value="daily">Daily</option>
@@ -25,7 +25,7 @@ function Reports() {
           </select>
         </div>
 
-        {/* Overview Section */}
+        
         <div className="card mb-4">
           <div
             className="card-header text-white"
@@ -42,7 +42,7 @@ function Reports() {
           </div>
         </div>
 
-        {/* Financial Summary Section */}
+        
         <div className="card mb-4">
           <div className="card-header bg-success text-white">Financial Summary</div>
           <div className="card-body">
@@ -75,7 +75,7 @@ function Reports() {
           </div>
         </div>
 
-        {/* Passenger Statistics Section */}
+        
         <div className="card mb-4">
           <div className="card-header bg-info text-white">Passenger Statistics</div>
           <div className="card-body">
@@ -108,7 +108,7 @@ function Reports() {
           </div>
         </div>
 
-        {/* Route Analysis Section */}
+        
         <div className="card mb-4">
           <div className="card-header bg-warning text-dark">Route Analysis</div>
           <div className="card-body">
@@ -145,7 +145,7 @@ function Reports() {
           </div>
         </div>
 
-        {/* Operational Metrics Section */}
+        
         <div className="card mb-4">
           <div className="card-header bg-secondary text-white">Operational Metrics</div>
           <div className="card-body">

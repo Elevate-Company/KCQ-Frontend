@@ -1,12 +1,12 @@
 import React from 'react';
 import '../../css/manageticket/manageticket.css';
 import TicketCard from './ticketcard';
-import Navbar from '../navbar/navbar'; // Import Navbar component
+import Navbar from '../navbar/navbar';
 
 function ManageTickets() {
   return (
     <div>
-      <Navbar /> {/* Display Navbar at the very top */}
+      <Navbar />
       <div className="manage-tickets-container">
         <div className="header-search-dropdown-row">
           <h1 className="header-ticket mt-3">Manage Ticket</h1>
@@ -20,8 +20,6 @@ function ManageTickets() {
             </select>
           </div>
         </div>
-
-        
 
         <div className="ticket-cards-container">
           <TicketCard />

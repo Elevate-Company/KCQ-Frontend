@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '../navbar/navbar';
 import EditCard from './editcard'; 
-import ChangePassword from './changepassword'; // Import the ChangePassword component
+import ChangePassword from './changepassword'; 
 import '../../css/settings/settings.css'; 
 
 function Settings() {
@@ -10,7 +10,7 @@ function Settings() {
       <Navbar />
       <div className="settings-container">
         <EditCard />
-        <ChangePassword /> {/* Display ChangePassword next to EditCard */}
+        <ChangePassword />
       </div>
     </div>
   );

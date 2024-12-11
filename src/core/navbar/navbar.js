@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../css/navbar/navbar.css';
 import profileImage from '../../assets/avatar.png';
-import menuImage from '../../assets/menu.png'; // Import the menu image
-import { FaUser, FaCog, FaSignOutAlt } from 'react-icons/fa'; // Import the icons
+import menuImage from '../../assets/menu.png';
+import { FaUser, FaCog, FaSignOutAlt } from 'react-icons/fa';
 
 function Navbar() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -11,8 +11,8 @@ function Navbar() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const usernameID = localStorage.getItem('username'); // Get username from localStorage
-    setUsername(usernameID); // Set the username state with the fetched username
+    const usernameID = localStorage.getItem('username');
+    setUsername(usernameID);
   }, []);
 
   const toggleProfileMenu = () => {
@@ -22,9 +22,9 @@ function Navbar() {
   const handleLogout = () => {
     const confirmLogout = window.confirm('Are you sure you want to log out?');
     if (confirmLogout) {
-      localStorage.clear(); // Clears all items in localStorage
+      localStorage.clear();
       alert('Logged out!');
-      navigate('/login'); // Navigate to the login screen
+      navigate('/login');
     } else {
       alert('Logout canceled.');
     }

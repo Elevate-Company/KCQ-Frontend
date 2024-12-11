@@ -1,7 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../css/settings/editcard.css';
 
 function EditCard() {
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    const usernameID = localStorage.getItem('username');
+    setUsername(usernameID); 
+  }, []);
+
   return (
     <div className="editcard-container ms-3 mt-4">
       <div className="editcard-content">
@@ -12,7 +19,7 @@ function EditCard() {
           type="text"
           id="fullname"
           className="editcard-input"
-          defaultValue="Elevate"
+          defaultValue={username}
         />
 
         <label htmlFor="phone" className="editcard-label">PHONE NUMBER:</label>

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap is loaded
-import '../../css/managetrip/managetripcard.css'; // Import the custom CSS
-import boatLogo from '../../assets/boatlogo.png'; // Import your logo
-import { Modal, Button, Form } from 'react-bootstrap'; // Import Bootstrap components
+import 'bootstrap/dist/css/bootstrap.min.css'; 
+import '../../css/managetrip/managetripcard.css'; 
+import boatLogo from '../../assets/boatlogo.png'; 
+import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 
 function ManageTripCard({ trip }) {
@@ -10,8 +10,8 @@ function ManageTripCard({ trip }) {
   const [showModal, setShowModal] = useState(false);
   const [reason, setReason] = useState('');
 
-  const departureDate = new Date(departure_time).toLocaleDateString(); // Format the date
-  const boatType = ferry_boat.slug;  // Assuming 'slug' contains the type of boat
+  const departureDate = new Date(departure_time).toLocaleDateString();
+  const boatType = ferry_boat.slug; 
 
   const handleDelete = async () => {
     try {
@@ -22,12 +22,11 @@ function ManageTripCard({ trip }) {
           Authorization: `Token ${token}`,
         },
         data: {
-          reason, // Include the reason for deletion
+          reason,
         },
       });
       console.log('Trip deleted with reason:', reason);
       setShowModal(false);
-      // Optionally, you can refresh the trips list or update the UI here
     } catch (error) {
       console.error('Error deleting trip:', error);
     }
@@ -53,7 +52,6 @@ function ManageTripCard({ trip }) {
         </td>
       </tr>
 
-      {/* Modal for delete confirmation */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Delete Trip</Modal.Title>

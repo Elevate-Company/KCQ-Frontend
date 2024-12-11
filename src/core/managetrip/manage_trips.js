@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../../css/managetrip/managetrips.css';  // Import the CSS file for ManageTrips
-import ManageTripCard from './managetripcard';  // Correct path for ManageTripCard
-import Navbar from '../navbar/navbar';  // Import Navbar component
+import '../../css/managetrip/managetrips.css';
+import ManageTripCard from './managetripcard';
+import Navbar from '../navbar/navbar';
 
 function ManageTrips() {
   const [trips, setTrips] = useState([]);
   const [filteredTrips, setFilteredTrips] = useState([]);
-  const [filter, setFilter] = useState('all');  // For managing the filter state
-  const cardCount = 100;  // You can change this value to display more or fewer cards
+  const [filter, setFilter] = useState('all');
+  const cardCount = 100;
   const token = localStorage.getItem('accessToken');
-  const navigate = useNavigate();  // Use useNavigate hook
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch trips from the API
     axios.get('https://api.kcq-express.co/api/trips/', {
       headers: {
         'Authorization': `Token ${token}`,
@@ -22,61 +21,55 @@ function ManageTrips() {
     })
     .then(response => {
       const fetchedTrips = response.data;
-      setTrips(fetchedTrips);  // Set the fetched trips data
-      filterTrips(fetchedTrips, filter);  // Apply filtering based on initial state
+      setTrips(fetchedTrips);
+      filterTrips(fetchedTrips, filter);
     })
     .catch(error => {
       console.error("Error fetching trips:", error);
     });
-  }, [filter]);  // Re-fetch data when filter state changes
+  }, [filter]);
 
-  // Function to filter trips based on the current date and selected filter
   const filterTrips = (trips, filter) => {
-    const currentDate = new Date();  // Get current date and time
+    const currentDate = new Date();
     let filtered = [];
 
     if (filter === 'upcoming') {
       filtered = trips.filter((trip) => {
         const departureDate = new Date(trip.departure_time);
-        return departureDate > currentDate;  // Only trips with a future departure time
+        return departureDate > currentDate;
       });
     } else if (filter === 'completed') {
       filtered = trips.filter((trip) => {
         const departureDate = new Date(trip.departure_time);
-        return departureDate < currentDate;  // Only trips that have already departed
+        return departureDate < currentDate;
       });
     } else {
-      filtered = trips;  // 'all' filter, show all trips
+      filtered = trips;
     }
 
-    setFilteredTrips(filtered);  // Set filtered trips
+    setFilteredTrips(filtered);
   };
 
-  // Slice the array based on the cardCount value
   const displayedTrips = filteredTrips.slice(0, cardCount);
 
   return (
     <div>
-      <Navbar /> {/* Display Navbar at the very top */}
+      <Navbar />
       <div className="manage-trips-container">
-        {/* Header and Search */}
         <div className="header-container">
           <h1 className="header">All Trips</h1>
 
-          {/* Search component */}
           <input
             type="text"
             className="search-inputt"
             placeholder="Search Trip..."
-            // You can implement a search feature if needed
           />
 
           <div className="d-flex align-items-center">
-            {/* Dropdown filter */}
             <select
               className="filter-dropdown form-select me-2"
               value={filter}
-              onChange={(e) => setFilter(e.target.value)}  // Update filter state when selection changes
+              onChange={(e) => setFilter(e.target.value)}
             >
               <option value="all">All</option>
               <option value="upcoming">Upcoming</option>
@@ -84,18 +77,16 @@ function ManageTrips() {
               <option value="cancelled">Cancelled</option>
             </select>
 
-            {/* Add Trip button */}
             <button 
               type="button" 
               className="btn btn-primary"
-              onClick={() => navigate('/addtrip')}  // Navigate to AddTrip component
+              onClick={() => navigate('/addtrip')}
             >
               +Add Trip
             </button>
           </div>
         </div>
 
-        {/* ManagetripCard.js */}
         <div className="card-container mt-3">
           <table className="table table-bordered">
             <thead>
