@@ -1,0 +1,15 @@
+.input-width {
+    max-width: 70%; /* Reduce the width of the inputs */
+}
+
+.create-trip-button {
+    background-color: #091057; /* Set the button color */
+    border-color: #091057; /* Set the button border color */
+    width: 58%;
+    margin-left: 17%;
+}
+
+.create-trip-button:hover {
+    background-color: #070b3a; /* Darken the button color on hover */
+    border-color: #070b3a; /* Darken the button border color on hover */
+}

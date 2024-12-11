@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap is loaded
 import '../../css/managetrip/managetripcard.css'; // Import the custom CSS
 import boatLogo from '../../assets/boatlogo.png'; // Import your logo
 import { Modal, Button, Form } from 'react-bootstrap'; // Import Bootstrap components
+import axios from 'axios';
 
 function ManageTripCard({ trip }) {
   const { origin, destination, departure_time, available_seats, ferry_boat } = trip;
@@ -12,10 +13,24 @@ function ManageTripCard({ trip }) {
   const departureDate = new Date(departure_time).toLocaleDateString(); // Format the date
   const boatType = ferry_boat.slug;  // Assuming 'slug' contains the type of boat
 
-  const handleDelete = () => {
-    // Handle the delete action here, e.g., make an API call to delete the trip
-    console.log('Deleting trip with reason:', reason);
-    setShowModal(false);
+  const handleDelete = async () => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      await axios.delete(`https://api.kcq-express.co/api/trips/${trip.id}/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Token ${token}`,
+        },
+        data: {
+          reason, // Include the reason for deletion
+        },
+      });
+      console.log('Trip deleted with reason:', reason);
+      setShowModal(false);
+      // Optionally, you can refresh the trips list or update the UI here
+    } catch (error) {
+      console.error('Error deleting trip:', error);
+    }
   };
 
   return (

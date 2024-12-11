@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import '../../css/managetrip/managetrips.css';  // Import the CSS file for ManageTrips
 import ManageTripCard from './managetripcard';  // Correct path for ManageTripCard
 import Navbar from '../navbar/navbar';  // Import Navbar component
@@ -8,8 +9,9 @@ function ManageTrips() {
   const [trips, setTrips] = useState([]);
   const [filteredTrips, setFilteredTrips] = useState([]);
   const [filter, setFilter] = useState('all');  // For managing the filter state
-  const cardCount = 5;  // You can change this value to display more or fewer cards
+  const cardCount = 100;  // You can change this value to display more or fewer cards
   const token = localStorage.getItem('accessToken');
+  const navigate = useNavigate();  // Use useNavigate hook
 
   useEffect(() => {
     // Fetch trips from the API
@@ -69,17 +71,28 @@ function ManageTrips() {
             // You can implement a search feature if needed
           />
 
-          {/* Dropdown filter */}
-          <select
-            className="filter-dropdown"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}  // Update filter state when selection changes
-          >
-            <option value="all">All</option>
-            <option value="upcoming">Upcoming</option>
-            <option value="completed">Completed</option>
-            <option value="cancelled">Cancelled</option>
-          </select>
+          <div className="d-flex align-items-center">
+            {/* Dropdown filter */}
+            <select
+              className="filter-dropdown form-select me-2"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}  // Update filter state when selection changes
+            >
+              <option value="all">All</option>
+              <option value="upcoming">Upcoming</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+
+            {/* Add Trip button */}
+            <button 
+              type="button" 
+              className="btn btn-primary"
+              onClick={() => navigate('/addtrip')}  // Navigate to AddTrip component
+            >
+              +Add Trip
+            </button>
+          </div>
         </div>
 
         {/* ManagetripCard.js */}

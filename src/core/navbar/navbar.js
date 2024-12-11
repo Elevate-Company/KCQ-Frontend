@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../css/navbar/navbar.css';
 import profileImage from '../../assets/avatar.png';
@@ -7,7 +7,13 @@ import { FaUser, FaCog, FaSignOutAlt } from 'react-icons/fa'; // Import the icon
 
 function Navbar() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [username, setUsername] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const usernameID = localStorage.getItem('username'); // Get username from localStorage
+    setUsername(usernameID); // Set the username state with the fetched username
+  }, []);
 
   const toggleProfileMenu = () => {
     setShowProfileMenu(!showProfileMenu);
@@ -45,7 +51,7 @@ function Navbar() {
             <div className="profile-menu-header">
               <img src={profileImage} alt="Profile" className="profile-menu-avatar" />
               <div>
-                <span className="profile-menu-name">John Doe</span>
+                <span className="profile-menu-name">{username}</span>
                 <span className="profile-menu-role">Employee</span>
               </div>
             </div>

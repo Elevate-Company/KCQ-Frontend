@@ -55,7 +55,7 @@ function UpcomingTripCard() {
                       <th>From</th>
                       <th>Destination</th>
                       <th>Departure Date</th>
-                      <th>Boat Number</th>
+                      <th>Boat Type</th>
                       <th>Actions</th>
                     </tr>
                   </thead>

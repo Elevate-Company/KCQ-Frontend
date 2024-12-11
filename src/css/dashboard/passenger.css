@@ -1,26 +1,53 @@
-.passenger-image {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    width: 50px;
-    height: auto;
-    z-index: 1;
+.passenger-card {
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 20px; /* Add margin from the top */
+    margin-left: 20px; /* Add margin from the start */
 }
 
-.passenger-card {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+.passenger-image {
+    width: 50px;
+    height: auto;
+    margin-top: 15px; /* Add margin from the top */
+    margin-left: 15px; /* Add margin from the left */
+}
+
+.sample-data-amount {
+    font-size: 20px;
+    color: #091057;
+    margin-left: 20px; /* Adjust the margin to position it correctly */
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .passenger-card-body {
-    margin-top: 50px;
+    text-align: center;
+    margin-top: 15px;
 }
 
 .passenger-title {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
-.passenger-text {
-    font-size: 1.5rem;
-    font-weight: bold;
+@media (max-width: 768px) {
+    .passenger-image {
+        width: 35px;
+    }
+
+    .sample-data-amount {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .passenger-image {
+        width: 30px;
+    }
+
+    .sample-data-amount {
+        font-size: 1rem;
+    }
 }

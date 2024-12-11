@@ -1,8 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../css/navbar/profilecard.css';
 import avatar from '../../assets/avatar.png';
 
 function ProfileCard() {
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    const usernameID = localStorage.getItem('username'); // Get username from localStorage
+    setUsername(usernameID); // Set the username state with the fetched username
+  }, []);
+
   return (
     <div className="profile-card-container ms-1 mt-4">
       <div className="profile-card-content">
@@ -15,13 +22,13 @@ function ProfileCard() {
             </div>
           </div>
           <div className="profile-text">
-            <h4>Elevate</h4>
+            <h4>{username}</h4>
             <p className="profile-position">EMPLOYEE</p>
           </div>
         </div>
         <div className="profile-name-section">
           <p className="profile-name-label">Name:</p>
-          <p className="profile-name">Elevate</p>
+          <p className="profile-name">{username}</p>
         </div>
         <hr />
         <div className="profile-email-section">

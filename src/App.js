@@ -13,6 +13,7 @@ import Settings from './core/settings/settings';
 import ProfileCard from './core/navbar/profilecard';
 import ProtectedRoute from './components/protectedroute';
 import Checkout from './core/issueticket/checkout'; // Import Checkout component
+import AddTrip from './core/managetrip/addtrip'; // Import AddTrip component
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const isAuthenticated = () => localStorage.getItem('accessToken');
@@ -46,6 +47,7 @@ function App() {
                     <Route path="settings" element={<Settings />} />
                     <Route path="profile" element={<ProfileCard />} />
                     <Route path="checkout" element={<Checkout />} /> {/* Add Checkout route */}
+                    <Route path="addtrip" element={<AddTrip />} /> {/* Add AddTrip route */}
                 </Route>
             </Routes>
         </Router>
