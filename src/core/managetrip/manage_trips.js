@@ -84,14 +84,31 @@ function ManageTrips() {
 
         {/* ManagetripCard.js */}
         <div className="card-container mt-3">
-          {/* Loop through the displayedTrips array and render ManageTripCard for each trip */}
-          {displayedTrips.length > 0 ? (
-            displayedTrips.map((trip) => (
-              <ManageTripCard key={trip.id} trip={trip} />
-            ))
-          ) : (
-            <p>No trips available</p>
-          )}
+          <table className="table table-bordered">
+            <thead>
+              <tr>
+                <th>KCQ</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Departure Date</th>
+                <th>ID</th>
+                <th>Boat Type</th>
+                <th>Available Seats</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {displayedTrips.length > 0 ? (
+                displayedTrips.map((trip) => (
+                  <ManageTripCard key={trip.id} trip={trip} />
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="8">No trips available</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

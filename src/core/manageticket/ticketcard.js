@@ -53,7 +53,7 @@ function TicketCard() {
       <table className="table table-bordered">
         <thead>
           <tr>
-            <th>Logo</th>
+            <th>KCQ</th>
             <th>Destination</th>
             <th>Customer</th>
             <th>ID</th>

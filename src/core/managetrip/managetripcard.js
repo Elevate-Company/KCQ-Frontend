@@ -19,42 +19,24 @@ function ManageTripCard({ trip }) {
   };
 
   return (
-    <div className="card managetrip">
-      <div className="card-body-managetrip">
-        <table className="table table-bordered">
-          <thead>
-            <tr>
-              <th>KCQ</th>
-              <th>From</th>
-              <th>To</th>
-              <th>Departure Date</th>
-              <th>ID</th>
-              <th>Boat Type</th>
-              <th>Available Seats</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><img src={boatLogo} alt="Boat Logo" className="boat-logo-managetrip" /></td>
-              <td>{origin}</td>
-              <td>{destination}</td>
-              <td>{departureDate}</td>
-              <td>{trip.id}</td>
-              <td>{boatType}</td>
-              <td>{available_seats}</td>
-              <td>
-                <button type="button" className="trash-button-managetrip" onClick={() => setShowModal(true)}>
-                  <i className="fas fa-trash"></i>
-                </button>
-                <button type="button" className="view-details-button-managetrip">
-                  View Details
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <>
+      <tr>
+        <td><img src={boatLogo} alt="Boat Logo" className="boat-logo-managetrip" /></td>
+        <td>{origin}</td>
+        <td>{destination}</td>
+        <td>{departureDate}</td>
+        <td>{trip.id}</td>
+        <td>{boatType}</td>
+        <td>{available_seats}</td>
+        <td>
+          <button type="button" className="trash-button-managetrip" onClick={() => setShowModal(true)}>
+            <i className="fas fa-trash"></i>
+          </button>
+          <button type="button" className="view-details-button-managetrip">
+            View Details
+          </button>
+        </td>
+      </tr>
 
       {/* Modal for delete confirmation */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
@@ -83,7 +65,7 @@ function ManageTripCard({ trip }) {
           </Button>
         </Modal.Footer>
       </Modal>
-    </div>
+    </>
   );
 }
 

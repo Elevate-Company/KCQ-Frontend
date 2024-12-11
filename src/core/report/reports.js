@@ -1,13 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Navbar from '../navbar/navbar'; // Import Navbar component
 
 function Reports() {
+  const [filter, setFilter] = useState('daily'); // State to manage the filter type
+
+  const handleFilterChange = (e) => {
+    setFilter(e.target.value);
+    // You can add logic here to fetch or filter data based on the selected filter
+  };
+
   return (
     <div>
       <Navbar /> {/* Display Navbar at the very top */}
       <div className="container my-4">
         <h1 className="text-center mb-4">Ferry Ticketing Management System Report</h1>
+
+        {/* Filter Dropdown */}
+        <div className="d-flex justify-content-end mb-4">
+          <select className="form-select w-auto" value={filter} onChange={handleFilterChange}>
+            <option value="daily">Daily</option>
+            <option value="monthly">Monthly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+        </div>
 
         {/* Overview Section */}
         <div className="card mb-4">
