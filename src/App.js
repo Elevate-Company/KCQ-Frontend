@@ -12,8 +12,10 @@ import Reports from './core/report/reports';
 import Settings from './core/settings/settings';
 import ProfileCard from './core/navbar/profilecard';
 import ProtectedRoute from './components/protectedroute';
-import Checkout from './core/issueticket/checkout'; // Import Checkout component
-import AddTrip from './core/managetrip/addtrip'; // Import AddTrip component
+import Checkout from './core/issueticket/checkout';
+import AddTrip from './core/managetrip/addtrip';
+import TripDetails from './core/managetrip/trip-details';
+import TicketDetails from './core/manageticket/ticket-details'; // Import TicketDetails component
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const isAuthenticated = () => localStorage.getItem('accessToken');
@@ -46,8 +48,10 @@ function App() {
                     <Route path="reports" element={<Reports />} />
                     <Route path="settings" element={<Settings />} />
                     <Route path="profile" element={<ProfileCard />} />
-                    <Route path="checkout" element={<Checkout />} /> {/* Add Checkout route */}
-                    <Route path="addtrip" element={<AddTrip />} /> {/* Add AddTrip route */}
+                    <Route path="checkout" element={<Checkout />} />
+                    <Route path="addtrip" element={<AddTrip />} />
+                    <Route path="trip-details/:id" element={<TripDetails />} />
+                    <Route path="ticket-details/:ticketNumber" element={<TicketDetails />} /> {/* Add TicketDetails route */}
                 </Route>
             </Routes>
         </Router>

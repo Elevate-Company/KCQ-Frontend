@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../css/dashboard/upcomingtripcard.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function UpcomingTripCard() {
   const [trips, setTrips] = useState([]);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTrips = async () => {
@@ -37,6 +39,10 @@ function UpcomingTripCard() {
     fetchTrips();
   }, []);
 
+  const handleViewDetails = (id) => {
+    navigate(`/trip-details/${id}`);
+  };
+
   return (
     <div className="container-fluid">
       <div className="row justify-content-center">
@@ -66,7 +72,11 @@ function UpcomingTripCard() {
                         <td>{new Date(trip.departure_time).toLocaleDateString()}</td>
                         <td>{trip.ferry_boat.slug}</td>
                         <td>
-                          <button type="button" className="view-details-button-upcomingtripcard">
+                          <button
+                            type="button"
+                            className="view-details-button-upcomingtripcard"
+                            onClick={() => handleViewDetails(trip.id)}
+                          >
                             View Details
                           </button>
                         </td>

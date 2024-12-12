@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../navbar/navbar';
 import '../../css/issueticket/checkout.css';
+import axios from 'axios';
 
 function Checkout() {
   const [tickets, setTickets] = useState([]);
@@ -30,6 +31,46 @@ function Checkout() {
   const handleProceedToPayment = (e) => {
     e.preventDefault();
     alert(`Proceeding to payment with ${paymentMethod} method`);
+  };
+
+  const handleGenerateTicket = async () => {
+    const ticketData = {
+      trip: {
+        ferry_boat: {
+          slug: "titanic"
+        },
+        origin: "montalban",
+        destination: "kasiglahan",
+        departure_time: "2024-12-12T12:25:42.020Z",
+        arrival_time: "2024-12-12T12:25:42.020Z",
+        available_seats: 2147483647
+      },
+      passenger: {
+        name: "John Doe",
+        contact: "1234567890"
+      },
+      ticket_number: "12345",
+      seat_number: "22A",
+      age_group: "adult",
+      price: "1000.00",
+      discount: "100.00",
+      baggage_ticket: true,
+      qr_code: "https://api.kcq-express.co/media/tickets/qr_codes/21_qr.png"
+    };
+
+    try {
+      const response = await axios.post('https://api.kcq-express.co/api/tickets/', ticketData, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Token ${localStorage.getItem('accessToken')}`,
+        },
+      });
+      alert('Ticket generated successfully');
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error generating ticket:', error);
+      alert('Failed to generate ticket');
+    }
   };
 
   return (
@@ -65,24 +106,16 @@ function Checkout() {
         </table>
         <div className="payment-section mt-4">
           <div className="payment-methods">
-            <label>
-              <input
-                type="radio"
-                value="cash"
-                checked={paymentMethod === 'cash'}
-                onChange={handlePaymentMethodChange}
-              />
-              Cash Payment
-            </label>
-            <label>
-              <input
-                type="radio"
-                value="online"
-                checked={paymentMethod === 'online'}
-                onChange={handlePaymentMethodChange}
-              />
-              Online Payment
-            </label>
+            <label htmlFor="payment-method">Payment Method:</label>
+            <select
+              id="payment-method"
+              value={paymentMethod}
+              onChange={handlePaymentMethodChange}
+              className="form-select"
+            >
+              <option value="cash">Cash Payment</option>
+              <option value="online">Online Payment</option>
+            </select>
           </div>
           <div className="vertical-line"></div>
           <div className="payment-details">
@@ -114,6 +147,15 @@ function Checkout() {
               </button>
             </div>
           </div>
+        </div>
+        <div className="generate-ticket-btn-container mt-4">
+          <button
+            type="button"
+            className="generate-ticket-btn"
+            onClick={handleGenerateTicket}
+          >
+            Generate Ticket
+          </button>
         </div>
       </div>
     </div>

@@ -80,6 +80,7 @@ function ManageTrips() {
             <button 
               type="button" 
               className="btn btn-primary"
+              style={{ backgroundColor: '#091057', borderColor: '#091057' }}
               onClick={() => navigate('/addtrip')}
             >
               +Add Trip

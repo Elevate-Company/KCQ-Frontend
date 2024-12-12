@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap is loaded
-import '../../css/manageticket/ticketcard.css'; // Import the custom CSS
-import boatLogo from '../../assets/boatlogo.png'; // Import your logo
-import { Modal, Button, Form } from 'react-bootstrap'; // Import Bootstrap components
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../../css/manageticket/ticketcard.css';
+import boatLogo from '../../assets/boatlogo.png';
+import { Modal, Button, Form } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 function TicketCard() {
   const [tickets, setTickets] = useState([]);
@@ -11,6 +12,7 @@ function TicketCard() {
   const [showModal, setShowModal] = useState(false);
   const [reason, setReason] = useState('');
   const [selectedTicket, setSelectedTicket] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTickets = async () => {
@@ -44,6 +46,10 @@ function TicketCard() {
     setShowModal(false);
   };
 
+  const handleViewDetails = (ticketNumber) => {
+    navigate(`/ticket-details/${ticketNumber}`);
+  };
+
   if (loading) return <p>Loading tickets...</p>;
   if (error) return <p>Error: {error}</p>;
 
@@ -55,7 +61,7 @@ function TicketCard() {
             <th>KCQ</th>
             <th>Destination</th>
             <th>Customer</th>
-            <th>ID</th>
+            <th>Ticket Number</th>
             <th>Boat Type</th>
             <th>Capacity</th>
             <th>Actions</th>
@@ -65,20 +71,20 @@ function TicketCard() {
           {Array.isArray(tickets) &&
             tickets.map((ticket) => {
               const {
-                id,
+                ticket_number,
                 trip: { destination, ferry_boat },
                 passenger: { name: customer },
               } = ticket;
 
-              const capacity = ticket.trip.available_seats; 
-              const typeBoat = ferry_boat.slug; 
+              const capacity = ticket.trip.available_seats;
+              const typeBoat = ferry_boat.slug;
 
               return (
-                <tr key={id}>
+                <tr key={ticket_number}>
                   <td><img src={boatLogo} alt="Boat Logo" className="boat-logo-ticketcard" /></td>
                   <td>{destination}</td>
                   <td>{customer}</td>
-                  <td>{id}</td>
+                  <td>{ticket_number}</td>
                   <td>{typeBoat}</td>
                   <td>{capacity}</td>
                   <td>
@@ -86,13 +92,17 @@ function TicketCard() {
                       type="button"
                       className="trash-button-ticketcard"
                       onClick={() => {
-                        setSelectedTicket(id);
+                        setSelectedTicket(ticket_number);
                         setShowModal(true);
                       }}
                     >
                       <i className="fas fa-trash"></i>
                     </button>
-                    <button type="button" className="view-details-button-ticketcard">
+                    <button
+                      type="button"
+                      className="view-details-button-ticketcard"
+                      onClick={() => handleViewDetails(ticket_number)}
+                    >
                       View Details
                     </button>
                   </td>

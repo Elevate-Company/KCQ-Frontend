@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css'; 
-import '../../css/managetrip/managetripcard.css'; 
-import boatLogo from '../../assets/boatlogo.png'; 
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../../css/managetrip/managetripcard.css';
+import boatLogo from '../../assets/boatlogo.png';
 import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function ManageTripCard({ trip }) {
   const { origin, destination, departure_time, available_seats, ferry_boat } = trip;
   const [showModal, setShowModal] = useState(false);
   const [reason, setReason] = useState('');
+  const navigate = useNavigate();
 
   const departureDate = new Date(departure_time).toLocaleDateString();
-  const boatType = ferry_boat.slug; 
+  const boatType = ferry_boat.slug;
 
   const handleDelete = async () => {
     try {
@@ -32,6 +34,10 @@ function ManageTripCard({ trip }) {
     }
   };
 
+  const handleViewDetails = () => {
+    navigate(`/trip-details/${trip.id}`);
+  };
+
   return (
     <>
       <tr>
@@ -46,7 +52,7 @@ function ManageTripCard({ trip }) {
           <button type="button" className="trash-button-managetrip" onClick={() => setShowModal(true)}>
             <i className="fas fa-trash"></i>
           </button>
-          <button type="button" className="view-details-button-managetrip">
+          <button type="button" className="view-details-button-managetrip" onClick={handleViewDetails}>
             View Details
           </button>
         </td>

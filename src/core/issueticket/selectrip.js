@@ -60,7 +60,7 @@ function SelectTrip({ trips, onSelect, error }) {
                   <h4>{trip.ferry_boat.slug}</h4>
                 </div>
                 <div className="price-section">
-                  <h4 className="price">PHP {trip.price}</h4>
+                  <h4 className="price">PHP 400</h4>
                 </div>
               </div>
             </div>

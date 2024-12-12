@@ -28,23 +28,20 @@ function IssueTicket() {
         const response = await axios.get('https://api.kcq-express.co/api/trips/', {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Token ${token}`,
+            Authorization: `Token ${token}`,
           },
         });
 
         const data = response.data;
         console.log('Response data:', data);
 
-        
         const filteredTrips = data.filter(trip => {
           const departureDate = new Date(trip.departure_time);
           const currentDate = new Date();
-
-          
           return departureDate >= currentDate;
         });
 
-        setTrips(filteredTrips); 
+        setTrips(filteredTrips);
       } catch (error) {
         console.error('Error fetching trips:', error);
         setError('Failed to fetch trips');
@@ -80,6 +77,11 @@ function IssueTicket() {
   };
 
   const handleAddTicket = () => {
+    if (!passengerName.trim()) {
+      alert('Passenger name is required.');
+      return;
+    }
+
     const newTicket = {
       passenger: {
         name: passengerName,
@@ -90,10 +92,8 @@ function IssueTicket() {
       amount: calculateAmount(passengerType),
     };
 
-    
     setTickets([...tickets, newTicket]);
 
-    
     setPassengerName('');
     setContactNumber('');
     setEmail('');
