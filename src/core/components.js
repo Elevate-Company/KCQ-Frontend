@@ -28,6 +28,7 @@ function Components() {
 
   const closeSidebar = () => {
     setIsSidebarExpanded(false);
+    setIsSidebarClosed(true);
   };
 
   const handleResize = () => {
@@ -40,6 +41,12 @@ function Components() {
     }
   };
 
+  const handleOverlayClick = () => {
+    if (isMobileView) {
+      closeSidebar();
+    }
+  };
+
   useEffect(() => {
     window.addEventListener('resize', handleResize);
     return () => {
@@ -49,16 +56,18 @@ function Components() {
 
   return (
     <div className="container-fluid">
+      <button onClick={toggleSidebar} className="btn-toggle-sidebar">
+        <i className="fa fa-bars" aria-hidden="true"></i>
+      </button>
+      {isMobileView && isSidebarExpanded && (
+        <div className="overlay visible" onClick={handleOverlayClick}></div>
+      )}
       <div className="row">
-        <div className={`sidebar ${isSidebarExpanded ? 'expanded' : 'collapsed'} ${isSidebarClosed ? 'closed' : ''}`}>
+        <div
+          className={`sidebar ${isSidebarExpanded ? 'expanded' : 'collapsed'} ${isSidebarClosed ? 'closed' : ''}`}
+        >
           <div className="sidebar-header">
-            {isSidebarExpanded ? (
-              <img src={logo} alt="KCQ Logo" className="sidebar-logo" />
-            ) : (
-              <button onClick={toggleSidebar} className="btn-toggle-sidebar arrow-right">
-                <i className="fa fa-arrow-right" aria-hidden="true"></i>
-              </button>
-            )}
+            {isSidebarExpanded && <img src={logo} alt="KCQ Logo" className="sidebar-logo" />}
             {!isMobileView && isSidebarExpanded && (
               <button onClick={closeSidebar} className="btn-close-sidebar">
                 X
@@ -68,43 +77,64 @@ function Components() {
 
           <ul className="nav flex-column">
             <li className="nav-item">
-              <NavLink to="/dashboard" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <NavLink
+                to="/dashboard"
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              >
                 <img src={dashboardIcon} alt="Dashboard" className="sidebar-icon" />
                 {isSidebarExpanded && <span>Dashboard</span>}
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/issue-ticket" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <NavLink
+                to="/issue-ticket"
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              >
                 <img src={issueTicketIcon} alt="Issue Ticket" className="sidebar-icon" />
                 {isSidebarExpanded && <span>Issue Ticket</span>}
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/manage-trips" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <NavLink
+                to="/manage-trips"
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              >
                 <img src={manageTripsIcon} alt="Manage Trips" className="sidebar-icon" />
                 {isSidebarExpanded && <span>Manage Trips</span>}
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/manage-tickets" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <NavLink
+                to="/manage-tickets"
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              >
                 <img src={manageTicketsIcon} alt="Manage Tickets" className="sidebar-icon" />
                 {isSidebarExpanded && <span>Manage Tickets</span>}
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/passenger" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <NavLink
+                to="/passenger"
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              >
                 <img src={profileIcon} alt="Profile" className="sidebar-icon" />
                 {isSidebarExpanded && <span>Passenger</span>}
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/reports" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <NavLink
+                to="/reports"
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              >
                 <img src={reportsIcon} alt="Reports" className="sidebar-icon" />
                 {isSidebarExpanded && <span>Reports</span>}
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/settings" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <NavLink
+                to="/settings"
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              >
                 <img src={settingsIcon} alt="Settings" className="sidebar-icon" />
                 {isSidebarExpanded && <span>Settings</span>}
               </NavLink>
@@ -117,13 +147,9 @@ function Components() {
           </div>
         </div>
 
-        {isSidebarClosed && isMobileView && (
-          <button onClick={toggleSidebar} className="btn-toggle-sidebar arrow-right">
-            <i className="fa fa-arrow-right" aria-hidden="true"></i>
-          </button>
-        )}
-
-        <div className={`main-content ${isSidebarClosed ? 'closed' : isSidebarExpanded ? 'expanded' : 'collapsed'} col p-4`}>
+        <div
+          className={`main-content ${isSidebarClosed ? 'closed' : isSidebarExpanded ? 'expanded' : 'collapsed'} col p-4`}
+        >
           <Outlet />
         </div>
       </div>
