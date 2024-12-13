@@ -1,3 +1,4 @@
+/* Sidebar base styles */
 .sidebar {
   background-color: #091057;
   color: white;
@@ -16,7 +17,7 @@
 }
 
 .sidebar.collapsed {
-  width: 80px;
+  width: 80px; /* Half width for collapsed state */
 }
 
 .sidebar.closed {
@@ -34,21 +35,23 @@
   margin-bottom: 30px;
 }
 
+/* Reduced size of the toggle sidebar button */
 .btn-toggle-sidebar {
   background: none;
   border: none;
-  color: black; /* Ensure the burger icon is black by default */
-  font-size: 24px;
+  color: white; /* Make the burger icon white on desktop */
+  font-size: 20px; /* Reduced font size */
   cursor: pointer;
   transition: transform 0.3s;
-  position: fixed;
+  position: absolute;
   top: 20px;
-  left: 20px; /* Ensure it's placed on the left */
+  left: 10px; /* Reduced left padding */
   z-index: 1001;
-  padding: 0; /* Remove any padding */
-  margin: 0; /* Ensure no margin is affecting its position */
+  padding: 10px 12px; /* Adjusted padding to reduce width */
+  margin: 0;
 }
 
+/* Sidebar logo */
 .sidebar-logo {
   width: 50px;
   height: auto;
@@ -135,11 +138,11 @@
   }
 
   .nav-link {
-    justify-content: flex-start; /* Ensure text is visible */
+    justify-content: flex-start;
   }
 
   .nav-link span {
-    display: inline; /* Ensure text is visible */
+    display: inline;
   }
 
   .main-content {
@@ -155,24 +158,21 @@
     margin-left: 0;
   }
 
+  /* Adjusted size for the toggle sidebar button */
   .btn-toggle-sidebar {
     display: block;
-    position: fixed; /* Fix the position of the burger icon */
-    top: 20px; /* Adjust if needed */
-    left: 20px; /* Keep it on the left side of the screen */
+    position: fixed;
+    top: 20px;
+    left: 20px;
     z-index: 1001;
-    padding: 0; /* Ensure no extra padding */
-    margin: 0; /* Ensure no extra margin */
-    color: transparent; /* Make the burger icon invisible */
-    font-size: 24px; /* Keep the font size for the icon, but invisible */
+    padding: 8px 12px; /* Reduced padding to make the button smaller */
+    margin: 0;
+    color: transparent;
+    font-size: 20px; /* Adjusted font size */
   }
 
   .btn-close-sidebar {
     display: none;
-  }
-
-  .btn-toggle-sidebar.arrow-right {
-    color: transparent; /* Ensure the arrow button is invisible as well */
   }
 
   .overlay {
@@ -194,19 +194,15 @@
 /* Desktop view handling */
 @media (min-width: 769px) {
   .btn-toggle-sidebar {
-    display: none;
+    display: block;
   }
 
   .btn-close-sidebar {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-    position: absolute;
-    top: 15px;
-    left: 30px;
-    z-index: 1000;
+    display: none;
+  }
+
+  .sidebar.collapsed {
+    width: 125px; /* Half-width for collapsed state */
   }
 
   .sidebar.closed .btn-close-sidebar {

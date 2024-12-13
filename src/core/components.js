@@ -17,6 +17,7 @@ function Components() {
   const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 768);
   const [isSidebarClosed, setIsSidebarClosed] = useState(false);
 
+  // Function to toggle sidebar between expanded and collapsed states
   const toggleSidebar = () => {
     if (isMobileView) {
       setIsSidebarClosed(!isSidebarClosed);
@@ -26,11 +27,13 @@ function Components() {
     }
   };
 
+  // Function to close the sidebar completely
   const closeSidebar = () => {
     setIsSidebarExpanded(false);
     setIsSidebarClosed(true);
   };
 
+  // Resize handler to adjust sidebar state based on screen width
   const handleResize = () => {
     setIsMobileView(window.innerWidth <= 768);
     if (window.innerWidth > 768) {
@@ -41,6 +44,7 @@ function Components() {
     }
   };
 
+  // Close sidebar when overlay is clicked on mobile view
   const handleOverlayClick = () => {
     if (isMobileView) {
       closeSidebar();

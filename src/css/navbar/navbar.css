@@ -27,6 +27,8 @@
 
 .profile-avatar {
   cursor: pointer;
+  position: relative;
+  z-index: 1001; /* Ensure avatar is above other elements */
 }
 
 .avatar {
@@ -44,7 +46,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   overflow: hidden;
-  z-index: 1000;
+  z-index: 1000; /* Ensure menu is beneath the avatar but above other elements */
 }
 
 .profile-menu-header {
