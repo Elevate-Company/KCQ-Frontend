@@ -1,14 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Navbar from '../navbar/navbar'; 
+import axios from 'axios';
 
 function Reports() {
   const [filter, setFilter] = useState('daily'); 
+  const [totalTicketsSold, setTotalTicketsSold] = useState(0);
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  const [error, setError] = useState('');
 
   const handleFilterChange = (e) => {
     setFilter(e.target.value);
-    
   };
+
+  useEffect(() => {
+    const fetchTotalTicketsAndRevenue = async () => {
+      const token = localStorage.getItem('accessToken');
+      try {
+        const response = await axios.get('https://api.kcq-express.co/api/tickets/', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`,
+          },
+        });
+        const data = response.data;
+        setTotalTicketsSold(data.length); // Assuming the API returns an array of tickets
+        const total = data.reduce((sum, ticket) => sum + parseFloat(ticket.price), 0);
+        setTotalRevenue(total);
+      } catch (error) {
+        console.error('Error fetching total tickets and revenue:', error);
+        setError('Failed to fetch total tickets and revenue');
+      }
+    };
+
+    fetchTotalTicketsAndRevenue();
+  }, []);
 
   return (
     <div>
@@ -16,7 +42,6 @@ function Reports() {
       <div className="container my-4">
         <h1 className="text-center mb-4">Ferry Ticketing Management System Report</h1>
 
-        
         <div className="d-flex justify-content-end mb-4">
           <select className="form-select w-auto" value={filter} onChange={handleFilterChange}>
             <option value="daily">Daily</option>
@@ -25,7 +50,6 @@ function Reports() {
           </select>
         </div>
 
-        
         <div className="card mb-4">
           <div
             className="card-header text-white"
@@ -34,15 +58,15 @@ function Reports() {
             Overview
           </div>
           <div className="card-body">
-            <p><strong>Total Tickets Sold:</strong> 5,456</p>
-            <p><strong>Total Revenue:</strong> $27,280.00</p>
+            <p><strong>Total Tickets Sold:</strong> {totalTicketsSold}</p>
+            <p><strong>Total Revenue:</strong> ₱{totalRevenue.toFixed(2)}</p>
             <p><strong>Total Passengers:</strong> 7,320</p>
             <p><strong>Trips Completed:</strong> 480</p>
             <p><strong>Cancellation Rate:</strong> 4.8%</p>
+            {error && <p className="text-danger">{error}</p>}
           </div>
         </div>
 
-        
         <div className="card mb-4">
           <div className="card-header bg-success text-white">Financial Summary</div>
           <div className="card-body">
@@ -50,13 +74,13 @@ function Reports() {
               <thead>
                 <tr>
                   <th>Category</th>
-                  <th>Amount ($)</th>
+                  <th>Amount (₱)</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <td>Total Revenue</td>
-                  <td>27,280.00</td>
+                  <td>{totalRevenue.toFixed(2)}</td>
                 </tr>
                 <tr>
                   <td>Refunds Issued</td>
@@ -64,18 +88,17 @@ function Reports() {
                 </tr>
                 <tr>
                   <td>Net Revenue</td>
-                  <td>25,960.00</td>
+                  <td>{(totalRevenue - 1320).toFixed(2)}</td>
                 </tr>
                 <tr>
                   <td>Average Ticket Price</td>
-                  <td>5.00</td>
+                  <td>{(totalRevenue / totalTicketsSold).toFixed(2)}</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        
         <div className="card mb-4">
           <div className="card-header bg-info text-white">Passenger Statistics</div>
           <div className="card-body">
@@ -108,7 +131,6 @@ function Reports() {
           </div>
         </div>
 
-        
         <div className="card mb-4">
           <div className="card-header bg-warning text-dark">Route Analysis</div>
           <div className="card-body">
@@ -117,7 +139,7 @@ function Reports() {
                 <tr>
                   <th>Route</th>
                   <th>Tickets Sold</th>
-                  <th>Revenue ($)</th>
+                  <th>Revenue (₱)</th>
                   <th>Average Occupancy</th>
                 </tr>
               </thead>
@@ -145,7 +167,6 @@ function Reports() {
           </div>
         </div>
 
-        
         <div className="card mb-4">
           <div className="card-header bg-secondary text-white">Operational Metrics</div>
           <div className="card-body">
