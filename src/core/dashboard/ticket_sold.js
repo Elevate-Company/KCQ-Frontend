@@ -1,9 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../css/dashboard/ticket_sold.css'; 
 import ticketImage from '../../assets/ticket.png'; 
+import axios from 'axios';
 
 function TicketSold() {
-  const ticketsSold = 250; 
+  const [ticketsSold, setTicketsSold] = useState(0);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchTicketsSold = async () => {
+      const token = localStorage.getItem('accessToken');
+      try {
+        const response = await axios.get('https://api.kcq-express.co/api/tickets/', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`,
+          },
+        });
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+        setTicketsSold(response.data.length); // Assuming the API returns an array of tickets
+      } catch (error) {
+        console.error('Error fetching tickets:', error);
+        setError('Failed to fetch tickets');
+      }
+    };
+
+    fetchTicketsSold();
+  }, []);
 
   return (
     <div className="card shadow-sm border-0 mb-4 col-12 col-md-6 col-lg-4 position-relative ticket-card">
@@ -18,6 +42,7 @@ function TicketSold() {
       <div className="card-body fade-in-up">
         <h4 className="card-title">Total Tickets Sold This Month</h4>
         <p>Today</p>
+        {error && <p className="text-danger">{error}</p>}
       </div>
     </div>
   );
