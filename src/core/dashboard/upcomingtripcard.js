@@ -54,36 +54,38 @@ function UpcomingTripCard() {
               {trips.length === 0 ? (
                 <p className="text-center">No upcoming trips available</p>
               ) : (
-                <table className="table table-bordered">
-                  <thead>
-                    <tr>
-                      <th>From</th>
-                      <th>Destination</th>
-                      <th>Departure Date</th>
-                      <th>Boat Type</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {trips.map((trip) => (
-                      <tr key={trip.id}>
-                        <td>{trip.origin}</td>
-                        <td>{trip.destination}</td>
-                        <td>{new Date(trip.departure_time).toLocaleDateString()}</td>
-                        <td>{trip.ferry_boat.slug}</td>
-                        <td>
-                          <button
-                            type="button"
-                            className="view-details-button-upcomingtripcard"
-                            onClick={() => handleViewDetails(trip.id)}
-                          >
-                            View Details
-                          </button>
-                        </td>
+                <div className="scrollable-container">
+                  <table className="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>From</th>
+                        <th>Destination</th>
+                        <th>Departure Date</th>
+                        <th>Boat Type</th>
+                        <th>Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {trips.map((trip) => (
+                        <tr key={trip.id}>
+                          <td>{trip.origin}</td>
+                          <td>{trip.destination}</td>
+                          <td>{new Date(trip.departure_time).toLocaleDateString()}</td>
+                          <td>{trip.ferry_boat.slug}</td>
+                          <td>
+                            <button
+                              type="button"
+                              className="view-details-button-upcomingtripcard"
+                              onClick={() => handleViewDetails(trip.id)}
+                            >
+                              View Details
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
           </div>

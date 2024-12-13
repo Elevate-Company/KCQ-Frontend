@@ -16,10 +16,6 @@
   width: 250px;
 }
 
-.sidebar.collapsed {
-  width: 80px; /* Half width for collapsed state */
-}
-
 .sidebar.closed {
   width: 0;
   opacity: 0;
@@ -202,7 +198,7 @@
   }
 
   .sidebar.collapsed {
-    width: 125px; /* Half-width for collapsed state */
+    width: 80px; /* Reduced width for collapsed state on desktop view */
   }
 
   .sidebar.closed .btn-close-sidebar {
