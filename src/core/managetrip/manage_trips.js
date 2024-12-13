@@ -65,7 +65,7 @@ function ManageTrips() {
             placeholder="Search Trip..."
           />
 
-          <div className="d-flex align-items-center">
+          <div className="d-flex align-items-center flex-wrap">
             <select
               className="filter-dropdown form-select me-2"
               value={filter}
@@ -79,7 +79,7 @@ function ManageTrips() {
 
             <button 
               type="button" 
-              className="btn btn-primary"
+              className="btn btn-primary btn-add-trip"
               style={{ backgroundColor: '#091057', borderColor: '#091057' }}
               onClick={() => navigate('/addtrip')}
             >
