@@ -179,6 +179,7 @@ hr {
 
 .tickets-table-container {
   margin-top: 40px; /* Increased margin from the top */
+  overflow-x: auto; /* Enable horizontal scrolling */
 }
 
 .tickets-table {
@@ -222,4 +223,24 @@ hr {
 
 .card-select-empty {
   margin-bottom: 20px; /* Space between each trip card */
+}
+
+/* Mobile view handling */
+@media (max-width: 768px) {
+  .card-select-issue,
+  .card-contact-issue {
+    width: 100%; /* Increase the width of the containers */
+    min-width: 100%; /* Ensure the containers take full width */
+  }
+
+  .contact-form input,
+  .contact-form select,
+  .generate-btn {
+    width: 100%; /* Ensure the form elements take full width */
+    max-width: 100%; /* Ensure the form elements take full width */
+  }
+
+  .tickets-table-container {
+    overflow-x: auto; /* Enable horizontal scrolling on mobile view */
+  }
 }
