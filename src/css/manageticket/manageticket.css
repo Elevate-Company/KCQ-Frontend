@@ -1,6 +1,7 @@
-.manage-trips-container {
+.manage-tickets-container {
   max-width: 1400px;
   border-radius: 10px;
+  padding: 20px;
 }
 
 .header-search-dropdown-row {
@@ -8,6 +9,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
 }
 
 .header-ticket {
@@ -15,6 +17,7 @@
   color: #091057;
   margin-left: 0;
   flex: 1;
+  margin-bottom: 10px; /* Add margin to separate elements */
 }
 
 .search-dropdown-container {
@@ -22,6 +25,7 @@
   align-items: center;
   gap: 15px;
   justify-content: flex-end;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
 }
 
 .search-input-ticket {
@@ -102,4 +106,35 @@
 .unsorted-icon-ticket {
   font-size: 0.80rem;
   margin-left: 5px;
+}
+
+/* Mobile view handling */
+@media (max-width: 768px) {
+  .header-search-dropdown-row {
+    flex-direction: column; /* Stack elements vertically on smaller screens */
+    align-items: flex-start; /* Align items to the start */
+  }
+
+  .header-ticket {
+    margin-bottom: 10px; /* Add margin to separate elements */
+  }
+
+  .search-dropdown-container {
+    width: 100%; /* Full width on mobile view */
+    justify-content: space-between; /* Space between elements */
+  }
+
+  .search-input-ticket {
+    width: calc(100% - 170px); /* Reduced width on mobile view */
+    margin-bottom: 10px; /* Add margin to separate elements */
+  }
+
+  .filter-dropdown-ticket {
+    width: 150px; /* Fixed width for dropdown */
+    margin-bottom: 10px; /* Add margin to separate elements */
+  }
+
+  .ticket-cards-container {
+    overflow-x: auto; /* Enable horizontal scrolling on mobile view */
+  }
 }

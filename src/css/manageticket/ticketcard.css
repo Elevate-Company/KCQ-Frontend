@@ -73,3 +73,14 @@
 .view-details-button-ticketcard:hover {
     background-color: #e2e3e5;
 }
+
+.ticket-list {
+    overflow-x: auto; /* Enable horizontal scrolling */
+}
+
+/* Mobile view handling */
+@media (max-width: 768px) {
+    .ticket-list {
+        overflow-x: auto; /* Enable horizontal scrolling on mobile view */
+    }
+}

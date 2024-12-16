@@ -35,70 +35,72 @@ function PassengerList() {
 
   return (
     <div>
-      
       <Navbar />
-
-      
       <div className="container mt-4">
         <h1 className="text-center mb-4">Passenger Management</h1>
-
-        
         <div className="card">
-         
           <div
             className="card-header text-white"
             style={{ backgroundColor: '#091057' }}
           >
             List of Passengers
           </div>
-
-          
           <div className="card-body">
-            
-            <table className="table table-striped table-responsive-sm">
-            
-              <thead style={{ backgroundColor: '#091057', color: 'white' }}>
-                <tr>
-                  <th>Passenger ID</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Total Bookings</th>
-                  <th>Last Booking</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {passengers.map((passenger) => (
-                  <tr key={passenger.id}>
-                    <td>{passenger.id}</td>
-                    <td>{passenger.name}</td>
-                    <td>{passenger.email}</td>
-                    <td>{passenger.phone}</td>
-                    <td>{passenger.totalBookings}</td>
-                    <td>{passenger.lastBooking}</td>
-                    <td>
-                      <span
-                        className={`badge ${
-                          passenger.status === 'Boarded'
-                            ? 'bg-success'
-                            : passenger.status === 'In Transit'
-                            ? 'bg-warning text-dark'
-                            : 'bg-secondary'
-                        }`}
-                      >
-                        {passenger.status}
-                      </span>
-                    </td>
-                    <td>
-                      <button className="btn btn-success btn-sm me-2 p-1" style={{ fontSize: '0.60rem' }}>View</button>
-                      <button className="btn btn-danger btn-sm p-1" style={{ fontSize: '0.60rem' }}>Delete</button>
-                    </td>
+            <div className="table-responsive">
+              <table className="table table-striped">
+                <thead style={{ backgroundColor: '#091057', color: 'white' }}>
+                  <tr>
+                    <th>Passenger ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Total Bookings</th>
+                    <th>Last Booking</th>
+                    <th>Status</th>
+                    <th>Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {passengers.map((passenger) => (
+                    <tr key={passenger.id}>
+                      <td>{passenger.id}</td>
+                      <td>{passenger.name}</td>
+                      <td>{passenger.email}</td>
+                      <td>{passenger.phone}</td>
+                      <td>{passenger.totalBookings}</td>
+                      <td>{passenger.lastBooking}</td>
+                      <td>
+                        <span
+                          className={`badge ${
+                            passenger.status === 'Boarded'
+                              ? 'bg-success'
+                              : passenger.status === 'In Transit'
+                              ? 'bg-warning text-dark'
+                              : 'bg-secondary'
+                          }`}
+                        >
+                          {passenger.status}
+                        </span>
+                      </td>
+                      <td>
+                        <button
+                          className="btn btn-success btn-sm me-2 p-1"
+                          style={{ fontSize: '0.60rem' }}
+                        >
+                          View
+                        </button>
+                        <button
+                          className="btn btn-danger btn-sm p-1"
+                          style={{ fontSize: '0.60rem' }}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
