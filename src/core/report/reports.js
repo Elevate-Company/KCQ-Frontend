@@ -7,6 +7,7 @@ function Reports() {
   const [filter, setFilter] = useState('daily'); 
   const [totalTicketsSold, setTotalTicketsSold] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
+  const [totalPassengers, setTotalPassengers] = useState(0);
   const [error, setError] = useState('');
 
   const handleFilterChange = (e) => {
@@ -33,7 +34,29 @@ function Reports() {
       }
     };
 
+    const fetchTotalPassengers = async () => {
+      const token = localStorage.getItem('accessToken');
+      try {
+        const response = await axios.get('https://api.kcq-express.co/api/passengers/', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`,
+          },
+        });
+        const data = response.data;
+        if (data && typeof data.total_passengers === 'number') {
+          setTotalPassengers(data.total_passengers); // Set the total number of passengers
+        } else {
+          throw new Error('Unexpected response format');
+        }
+      } catch (error) {
+        console.error('Error fetching total passengers:', error);
+        setError('Failed to fetch total passengers');
+      }
+    };
+
     fetchTotalTicketsAndRevenue();
+    fetchTotalPassengers();
   }, []);
 
   return (
@@ -60,7 +83,7 @@ function Reports() {
           <div className="card-body">
             <p><strong>Total Tickets Sold:</strong> {totalTicketsSold}</p>
             <p><strong>Total Revenue:</strong> ₱{totalRevenue.toFixed(2)}</p>
-            <p><strong>Total Passengers:</strong> 7,320</p>
+            <p><strong>Total Passengers:</strong> {totalPassengers}</p>
             <p><strong>Trips Completed:</strong> 480</p>
             <p><strong>Cancellation Rate:</strong> 4.8%</p>
             {error && <p className="text-danger">{error}</p>}

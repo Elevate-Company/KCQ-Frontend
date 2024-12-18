@@ -1,37 +1,58 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../navbar/navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from 'axios';
 
 function PassengerList() {
-  const passengers = [
-    {
-      id: 'P123456',
-      name: 'John Doe',
-      email: 'johndoe@example.com',
-      phone: '+1-555-123-4567',
-      totalBookings: 15,
-      lastBooking: 'Nov 15, 2024',
-      status: 'Boarded',
-    },
-    {
-      id: 'P123457',
-      name: 'Jane Smith',
-      email: 'janesmith@example.com',
-      phone: '+1-555-987-6543',
-      totalBookings: 8,
-      lastBooking: 'Oct 30, 2024',
-      status: 'In Transit',
-    },
-    {
-      id: 'P123458',
-      name: 'Emily Brown',
-      email: 'emilybrown@example.com',
-      phone: '+1-555-222-3344',
-      totalBookings: 12,
-      lastBooking: 'Nov 10, 2024',
-      status: 'Disembarked',
-    },
-  ];
+  const [passengers, setPassengers] = useState([]);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchPassengers = async () => {
+      const token = localStorage.getItem('accessToken');
+      console.log('Token:', token);
+      try {
+        const response = await axios.get('https://api.kcq-express.co/api/passengers/', {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token}`,
+          },
+        });
+
+        const data = response.data;
+        console.log('Response data:', data);
+
+        setPassengers(data.passengers); // Assuming the API returns an object with a 'passengers' array
+      } catch (error) {
+        console.error('Error fetching passengers:', error);
+        setError('Failed to fetch passengers');
+      }
+    };
+
+    fetchPassengers();
+  }, []);
+
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this passenger?');
+    if (!confirmDelete) return;
+
+    const token = localStorage.getItem('accessToken');
+    try {
+      await axios.delete(`https://api.kcq-express.co/api/passengers/${id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Token ${token}`,
+        },
+      });
+
+      setPassengers(passengers.filter(passenger => passenger.id !== id));
+    } catch (error) {
+      console.error('Error deleting passenger:', error);
+      setError('Failed to delete passenger');
+    }
+  };
 
   return (
     <div>
@@ -66,32 +87,34 @@ function PassengerList() {
                       <td>{passenger.id}</td>
                       <td>{passenger.name}</td>
                       <td>{passenger.email}</td>
-                      <td>{passenger.phone}</td>
-                      <td>{passenger.totalBookings}</td>
-                      <td>{passenger.lastBooking}</td>
+                      <td>{passenger.phone || passenger.contact}</td>
+                      <td>{passenger.total_bookings}</td>
+                      <td>{new Date(passenger.updated_at).toLocaleDateString()}</td>
                       <td>
                         <span
                           className={`badge ${
-                            passenger.status === 'Boarded'
+                            passenger.boarding_status === 'Boarded'
                               ? 'bg-success'
-                              : passenger.status === 'In Transit'
+                              : passenger.boarding_status === 'In Transit'
                               ? 'bg-warning text-dark'
                               : 'bg-secondary'
                           }`}
                         >
-                          {passenger.status}
+                          {passenger.boarding_status}
                         </span>
                       </td>
                       <td>
                         <button
                           className="btn btn-success btn-sm me-2 p-1"
                           style={{ fontSize: '0.60rem' }}
+                          onClick={() => navigate(`/passenger-info/${passenger.id}`)}
                         >
                           View
                         </button>
                         <button
                           className="btn btn-danger btn-sm p-1"
                           style={{ fontSize: '0.60rem' }}
+                          onClick={() => handleDelete(passenger.id)}
                         >
                           Delete
                         </button>
@@ -100,6 +123,7 @@ function PassengerList() {
                   ))}
                 </tbody>
               </table>
+              {error && <p className="text-danger">{error}</p>}
             </div>
           </div>
         </div>

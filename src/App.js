@@ -8,6 +8,7 @@ import IssueTicket from './core/issueticket/issue_ticket';
 import ManageTrips from './core/managetrip/manage_trips';
 import ManageTickets from './core/manageticket/manage_tickets';
 import Passenger from './core/passenger/passenger';
+import PassengerInfo from './core/passenger/passenger-info'; // Import PassengerInfo component
 import Reports from './core/report/reports';
 import Settings from './core/settings/settings';
 import ProfileCard from './core/navbar/profilecard';
@@ -45,6 +46,7 @@ function App() {
                     <Route path="manage-trips" element={<ManageTrips />} />
                     <Route path="manage-tickets" element={<ManageTickets />} />
                     <Route path="passenger" element={<Passenger />} />
+                    <Route path="passenger-info/:id" element={<PassengerInfo />} /> {/* Add PassengerInfo route */}
                     <Route path="reports" element={<Reports />} />
                     <Route path="settings" element={<Settings />} />
                     <Route path="profile" element={<ProfileCard />} />
