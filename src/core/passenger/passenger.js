@@ -54,6 +54,26 @@ function PassengerList() {
     }
   };
 
+  const handleView = async (id) => {
+    const token = localStorage.getItem('accessToken');
+    try {
+      const response = await axios.get(`https://api.kcq-express.co/api/passengers/${id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Token ${token}`,
+        },
+      });
+
+      const passengerData = response.data;
+      console.log('Passenger data:', passengerData);
+
+      navigate(`/passenger-info/${id}`, { state: { passenger: passengerData } });
+    } catch (error) {
+      console.error('Error fetching passenger:', error);
+      navigate(`/passenger-info/${id}`, { state: { error: 'Failed to fetch passenger' } });
+    }
+  };
+
   return (
     <div>
       <Navbar />
@@ -107,7 +127,7 @@ function PassengerList() {
                         <button
                           className="btn btn-success btn-sm me-2 p-1"
                           style={{ fontSize: '0.60rem' }}
-                          onClick={() => navigate(`/passenger-info/${passenger.id}`)}
+                          onClick={() => handleView(passenger.id)}
                         >
                           View
                         </button>
