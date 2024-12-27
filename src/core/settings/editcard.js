@@ -1,12 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import '../../css/settings/editcard.css';
+import axios from 'axios';
 
 function EditCard() {
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState('N/A');
+  const [phone, setPhone] = useState('N/A');
+  const [email, setEmail] = useState('N/A');
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    const usernameID = localStorage.getItem('username');
-    setUsername(usernameID); 
+    const fetchUserData = async () => {
+      const token = localStorage.getItem('accessToken');
+      try {
+        const response = await axios.get('https://api.kcq-express.co/api/accounts/my-account/', {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token}`,
+          },
+        });
+
+        const data = response.data;
+        setUsername(data.username || 'N/A');
+        setPhone(data.mobile_number || 'N/A');
+        setEmail(data.email || 'N/A');
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        setError('Failed to fetch user data');
+      }
+    };
+
+    fetchUserData();
   }, []);
 
   return (
@@ -14,12 +37,15 @@ function EditCard() {
       <div className="editcard-content">
         <p className="editcard-title">Edit Profile</p>
         
-        <label htmlFor="fullname" className="editcard-label">FULLNAME:</label>
+        {error && <p className="text-danger">{error}</p>}
+
+        <label htmlFor="username" className="editcard-label">USERNAME:</label>
         <input
           type="text"
-          id="fullname"
+          id="username"
           className="editcard-input"
-          defaultValue={username}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
         />
 
         <label htmlFor="phone" className="editcard-label">PHONE NUMBER:</label>
@@ -27,7 +53,8 @@ function EditCard() {
           type="text"
           id="phone"
           className="editcard-input"
-          defaultValue="123-456-7890"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
         />
 
         <label htmlFor="email" className="editcard-label">EMAIL:</label>
@@ -35,7 +62,8 @@ function EditCard() {
           type="email"
           id="email"
           className="editcard-input"
-          defaultValue="elevatesolutionsagency@gmail.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
 
         <div className="editcard-button-container">
