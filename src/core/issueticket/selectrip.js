@@ -16,6 +16,7 @@ function SelectTrip({ trips, onSelect, error }) {
   const handleSelect = (trip) => {
     setSelectedTripId(trip.id);
     onSelect(trip);
+    localStorage.setItem('selectedTrip', JSON.stringify(trip));
   };
 
   return (
@@ -29,7 +30,7 @@ function SelectTrip({ trips, onSelect, error }) {
         return (
           <div key={trip.id} className="card-select-empty mb-4">
             <input
-              type="checkbox"
+              type="radio"
               className="round-checkbox"
               checked={selectedTripId === trip.id}
               onChange={() => handleSelect(trip)}

@@ -82,6 +82,12 @@ function IssueTicket() {
       return;
     }
 
+    const selectedTrip = JSON.parse(localStorage.getItem('selectedTrip'));
+    if (!selectedTrip) {
+      alert('Please select a trip.');
+      return;
+    }
+
     const newTicket = {
       passenger: {
         name: passengerName,
@@ -89,6 +95,7 @@ function IssueTicket() {
         email: email,
         type: passengerType,
       },
+      trip: selectedTrip,
       amount: calculateAmount(passengerType),
     };
 
@@ -173,7 +180,6 @@ function IssueTicket() {
                   </select>
                 </label>
                 <hr />
-                <p></p>
                 <div className="total-section">
                   <p>Price</p>
                   <p>PHP {price}</p>
@@ -202,6 +208,7 @@ function IssueTicket() {
                   <th>Contact Number</th>
                   <th>Email</th>
                   <th>Passenger Type</th>
+                  <th>Trip</th>
                   <th>Amount</th>
                 </tr>
               </thead>
@@ -218,11 +225,12 @@ function IssueTicket() {
                     <td>{ticket.passenger.contact}</td>
                     <td>{ticket.passenger.email}</td>
                     <td>{ticket.passenger.type}</td>
+                    <td>{ticket.trip?.origin || 'N/A'} to {ticket.trip?.destination || 'N/A'}</td>
                     <td>PHP {ticket.amount}</td>
                   </tr>
                 ))}
                 <tr>
-                  <td colSpan="5" style={{ textAlign: 'right', fontWeight: 'bold' }}>Total</td>
+                  <td colSpan="6" style={{ textAlign: 'right', fontWeight: 'bold' }}>Total</td>
                   <td style={{ fontWeight: 'bold' }}>PHP {calculateTotalAmount()}</td>
                 </tr>
               </tbody>
