@@ -32,8 +32,9 @@ function ChangePassword() {
     const token = localStorage.getItem('accessToken');
     try {
       const response = await axios.post('https://api.kcq-express.co/api/accounts/update-password/', {
-        current_password: currentPassword,
+        old_password: currentPassword,
         new_password: newPassword,
+        confirm_password: confirmNewPassword,
       }, {
         headers: {
           'Content-Type': 'application/json',
@@ -48,7 +49,22 @@ function ChangePassword() {
       setConfirmNewPassword('');
     } catch (error) {
       console.error('Error changing password:', error);
-      setError('Failed to change password');
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error('Response data:', error.response.data);
+        console.error('Response status:', error.response.status);
+        console.error('Response headers:', error.response.headers);
+        setError(error.response.data.detail || JSON.stringify(error.response.data) || 'Failed to change password');
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error('Request data:', error.request);
+        setError('Failed to change password: No response from server');
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error('Error message:', error.message);
+        setError(`Failed to change password: ${error.message}`);
+      }
       setSuccess('');
     }
   };

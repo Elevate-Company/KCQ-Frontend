@@ -70,6 +70,6 @@ function SelectTrip({ trips, onSelect, error }) {
       })}
     </div>
   );
-}
+}  
 
 export default SelectTrip;
