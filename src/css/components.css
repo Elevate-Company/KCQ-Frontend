@@ -40,7 +40,7 @@
   cursor: pointer;
   transition: transform 0.3s;
   position: absolute;
-  top: 20px;
+  top: 30px;
   left: 10px; /* Reduced left padding */
   z-index: 1001;
   padding: 10px 12px; /* Adjusted padding to reduce width */

@@ -33,6 +33,16 @@
   border-radius: 5px;
   width: 150px;
   cursor: pointer;
+  margin-right: 10px;
+}
+
+.btn-add-trip {
+  background-color: #091057;
+  border-color: #091057;
+  color: white;
+  padding: 10px 15px; /* Adjusted padding to reduce width */
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .card-container {
@@ -79,7 +89,7 @@
   }
 
   .btn-add-trip {
-    width: 100%; /* Full width on mobile view */
+    width: auto; /* Adjust width on mobile view */
   }
 
   .card-container {

@@ -58,14 +58,12 @@ function ManageTrips() {
       <div className="manage-trips-container">
         <div className="header-container">
           <h1 className="header">All Trips</h1>
-
-          <input
-            type="text"
-            className="search-inputt"
-            placeholder="Search Trip..."
-          />
-
           <div className="d-flex align-items-center flex-wrap">
+            <input
+              type="text"
+              className="search-inputt me-2"
+              placeholder="Search Trip..."
+            />
             <select
               className="filter-dropdown form-select me-2"
               value={filter}
@@ -76,7 +74,6 @@ function ManageTrips() {
               <option value="completed">Completed</option>
               <option value="cancelled">Cancelled</option>
             </select>
-
             <button 
               type="button" 
               className="btn btn-primary btn-add-trip"
