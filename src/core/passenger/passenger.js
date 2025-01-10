@@ -78,7 +78,7 @@ function PassengerList() {
     <div>
       <Navbar />
       <div className="container mt-4">
-        <h1 className="text-center mb-4">Passenger Management</h1>
+        <h2 className="text-center mb-4">Passenger Management</h2>
         <div className="card">
           <div
             className="card-header text-white"

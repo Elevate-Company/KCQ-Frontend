@@ -8,6 +8,14 @@ function Reports() {
   const [totalTicketsSold, setTotalTicketsSold] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalPassengers, setTotalPassengers] = useState(0);
+  const [totalTripsCompleted, setTotalTripsCompleted] = useState(0);
+  const [passengerStats, setPassengerStats] = useState({
+    adults: 0,
+    children: 0,
+    seniors: 0,
+    infants: 0,
+  });
+  const [routeStats, setRouteStats] = useState([]);
   const [error, setError] = useState('');
 
   const handleFilterChange = (e) => {
@@ -28,42 +36,82 @@ function Reports() {
         setTotalTicketsSold(data.length); // Assuming the API returns an array of tickets
         const total = data.reduce((sum, ticket) => sum + parseFloat(ticket.price), 0);
         setTotalRevenue(total);
+
+        // Calculate passenger statistics
+        const stats = {
+          adults: 0,
+          children: 0,
+          seniors: 0,
+          infants: 0,
+        };
+        const routeStats = {};
+        data.forEach(ticket => {
+          if (ticket.age_group === 'adult') stats.adults++;
+          if (ticket.age_group === 'child') stats.children++;
+          if (ticket.age_group === 'senior') stats.seniors++;
+          if (ticket.age_group === 'infant') stats.infants++;
+
+          const route = `${ticket.trip.origin} ↔ ${ticket.trip.destination}`;
+          if (!routeStats[route]) {
+            routeStats[route] = {
+              ticketsSold: 0,
+              revenue: 0,
+              availableSeats: ticket.trip.available_seats,
+            };
+          }
+          routeStats[route].ticketsSold++;
+          routeStats[route].revenue += parseFloat(ticket.price);
+        });
+        setPassengerStats(stats);
+        setTotalPassengers(stats.adults + stats.children + stats.seniors + stats.infants);
+
+        // Convert routeStats to an array and find the top 3 picked routes
+        const routeStatsArray = Object.keys(routeStats).map(route => ({
+          route,
+          ticketsSold: routeStats[route].ticketsSold,
+          revenue: routeStats[route].revenue,
+          occupancy: ((routeStats[route].ticketsSold / routeStats[route].availableSeats) * 100).toFixed(1),
+        }));
+        routeStatsArray.sort((a, b) => b.ticketsSold - a.ticketsSold);
+        setRouteStats(routeStatsArray.slice(0, 3));
       } catch (error) {
         console.error('Error fetching total tickets and revenue:', error);
         setError('Failed to fetch total tickets and revenue');
       }
     };
 
-    const fetchTotalPassengers = async () => {
+    const fetchTotalTripsCompleted = async () => {
       const token = localStorage.getItem('accessToken');
       try {
-        const response = await axios.get('https://api.kcq-express.co/api/passengers/', {
+        const response = await axios.get('https://api.kcq-express.co/api/trips/', {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Token ${token}`,
           },
         });
         const data = response.data;
-        if (data && typeof data.total_passengers === 'number') {
-          setTotalPassengers(data.total_passengers); // Set the total number of passengers
-        } else {
-          throw new Error('Unexpected response format');
-        }
+        console.log('Trips data:', data); // Log the trips data for debugging
+        const completedTrips = data.filter(trip => trip.status === 'completed').length;
+        setTotalTripsCompleted(completedTrips);
       } catch (error) {
-        console.error('Error fetching total passengers:', error);
-        setError('Failed to fetch total passengers');
+        console.error('Error fetching total trips completed:', error);
+        setError('Failed to fetch total trips completed');
       }
     };
 
     fetchTotalTicketsAndRevenue();
-    fetchTotalPassengers();
+    fetchTotalTripsCompleted();
   }, []);
+
+  const calculatePercentage = (count) => {
+    return ((count / totalPassengers) * 100).toFixed(1);
+  };
 
   return (
     <div>
       <Navbar /> 
       <div className="container my-4">
-        <h1 className="text-center mb-4">Ferry Ticketing Management System Report</h1>
+        <h2 className="text-center mb-4">Ferry Ticketing Management System Report</h2>
 
         <div className="d-flex justify-content-end mb-4">
           <select className="form-select w-auto" value={filter} onChange={handleFilterChange}>
@@ -84,8 +132,7 @@ function Reports() {
             <p><strong>Total Tickets Sold:</strong> {totalTicketsSold}</p>
             <p><strong>Total Revenue:</strong> ₱{totalRevenue.toFixed(2)}</p>
             <p><strong>Total Passengers:</strong> {totalPassengers}</p>
-            <p><strong>Trips Completed:</strong> 480</p>
-            <p><strong>Cancellation Rate:</strong> 4.8%</p>
+            <p><strong>Trips Completed:</strong> {totalTripsCompleted}</p>
             {error && <p className="text-danger">{error}</p>}
           </div>
         </div>
@@ -106,12 +153,8 @@ function Reports() {
                   <td>{totalRevenue.toFixed(2)}</td>
                 </tr>
                 <tr>
-                  <td>Refunds Issued</td>
-                  <td>1,320.00</td>
-                </tr>
-                <tr>
                   <td>Net Revenue</td>
-                  <td>{(totalRevenue - 1320).toFixed(2)}</td>
+                  <td>{totalRevenue.toFixed(2)}</td>
                 </tr>
                 <tr>
                   <td>Average Ticket Price</td>
@@ -136,18 +179,23 @@ function Reports() {
               <tbody>
                 <tr>
                   <td>Adults</td>
-                  <td>4,500</td>
-                  <td>61.5%</td>
+                  <td>{passengerStats.adults}</td>
+                  <td>{calculatePercentage(passengerStats.adults)}%</td>
                 </tr>
                 <tr>
                   <td>Children</td>
-                  <td>2,500</td>
-                  <td>34.2%</td>
+                  <td>{passengerStats.children}</td>
+                  <td>{calculatePercentage(passengerStats.children)}%</td>
                 </tr>
                 <tr>
                   <td>Seniors</td>
-                  <td>320</td>
-                  <td>4.3%</td>
+                  <td>{passengerStats.seniors}</td>
+                  <td>{calculatePercentage(passengerStats.seniors)}%</td>
+                </tr>
+                <tr>
+                  <td>Infants</td>
+                  <td>{passengerStats.infants}</td>
+                  <td>{calculatePercentage(passengerStats.infants)}%</td>
                 </tr>
               </tbody>
             </table>
@@ -167,52 +215,14 @@ function Reports() {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>Route A (City 1 ↔ City 2)</td>
-                  <td>2,345</td>
-                  <td>11,725.00</td>
-                  <td>75%</td>
-                </tr>
-                <tr>
-                  <td>Route B (City 3 ↔ City 4)</td>
-                  <td>1,856</td>
-                  <td>9,280.00</td>
-                  <td>68%</td>
-                </tr>
-                <tr>
-                  <td>Route C (City 5 ↔ City 6)</td>
-                  <td>1,255</td>
-                  <td>6,275.00</td>
-                  <td>55%</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div className="card mb-4">
-          <div className="card-header bg-secondary text-white">Operational Metrics</div>
-          <div className="card-body">
-            <table className="table table-striped">
-              <thead>
-                <tr>
-                  <th>Metric</th>
-                  <th>Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Average Trip Duration</td>
-                  <td>1.5 hours</td>
-                </tr>
-                <tr>
-                  <td>Total Delayed Trips</td>
-                  <td>32</td>
-                </tr>
-                <tr>
-                  <td>On-Time Performance</td>
-                  <td>93.3%</td>
-                </tr>
+                {routeStats.map((routeStat, index) => (
+                  <tr key={index}>
+                    <td>{routeStat.route}</td>
+                    <td>{routeStat.ticketsSold}</td>
+                    <td>{routeStat.revenue.toFixed(2)}</td>
+                    <td>{routeStat.occupancy}%</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
