@@ -48,6 +48,7 @@ function Passenger() {
       </div>
       <div className="card-body passenger-card-body">
         <h4 className="passenger-title">Number of Passengers</h4>
+        <p className="today-text">Today</p>
         {error && <p className="text-danger">{error}</p>}
       </div>
     </div>

@@ -93,17 +93,32 @@
 }
 
 .need-help {
-  font-size: 14px;
+  font-size: 20px;
   color: #ffffff;
   cursor: pointer;
   margin-top: auto;
-  padding: 10px 15px;
+  padding: 10px;
   display: flex;
   align-items: center;
 }
 
 .need-help .nav-link {
   width: 100%;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: all 0.3s;
+  margin-bottom: 15px;
+}
+
+.need-help .nav-link.active {
+  background-color: white;
+  color: black !important;
+  border-radius: 10px;
 }
 
 .sidebar.collapsed .need-help span {

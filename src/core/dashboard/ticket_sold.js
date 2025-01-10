@@ -40,9 +40,9 @@ function TicketSold() {
         <span className="ticket-amount">{ticketsSold}</span>
       </div>
       <div className="card-body fade-in-up">
-        <h4 className="card-title">Total Tickets Sold This Month</h4>
-        <p>Today</p>
+        <h4 className="card-title mt-4">Total Tickets Sold This Month</h4>
         {error && <p className="text-danger">{error}</p>}
+        <p className="today-text">Today</p>
       </div>
     </div>
   );

@@ -1,0 +1,11 @@
+.container {
+    border: none;
+  }
+  
+  .contact-section, .faq-section {
+    margin-bottom: 20px;
+  }
+  
+  .card {
+    border: none;
+  }

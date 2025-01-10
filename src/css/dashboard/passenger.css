@@ -32,6 +32,11 @@
     margin-bottom: 18px;
 }
 
+.today-text {
+    text-align: left;
+    margin-left: 15px; /* Align to the start left side */
+}
+
 @media (max-width: 768px) {
     .passenger-image {
         width: 35px;
