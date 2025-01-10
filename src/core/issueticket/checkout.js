@@ -8,6 +8,7 @@ function Checkout() {
   const [totalAmount, setTotalAmount] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState('cash');
   const [cashAmount, setCashAmount] = useState('');
+  const [transactionNo, setTransactionNo] = useState('');
 
   useEffect(() => {
     const savedTickets = localStorage.getItem('tickets');
@@ -26,6 +27,10 @@ function Checkout() {
 
   const handleCashAmountChange = (e) => {
     setCashAmount(e.target.value);
+  };
+
+  const handleTransactionNoChange = (e) => {
+    setTransactionNo(e.target.value);
   };
 
   const handleProceedToPayment = (e) => {
@@ -127,14 +132,22 @@ function Checkout() {
                     type="number"
                     value={cashAmount}
                     onChange={handleCashAmountChange}
-                    className="cash-input"
+                    className="cash-input mt-3"
                   />
                 </label>
               </div>
             )}
             {paymentMethod === 'online' && (
               <div className="online-payment">
-                <p>Proceed with Online payment.</p>
+                <label>
+                  Enter Transaction No.:
+                  <input
+                    type="text"
+                    value={transactionNo}
+                    onChange={handleTransactionNoChange}
+                    className="transaction-input mt-3"
+                  />
+                </label>
               </div>
             )}
             <div className="payment-btn-container">

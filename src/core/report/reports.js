@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Navbar from '../navbar/navbar'; 
 import axios from 'axios';
+import moment from 'moment';
 
 function Reports() {
   const [filter, setFilter] = useState('daily'); 
@@ -25,11 +26,29 @@ function Reports() {
   useEffect(() => {
     const fetchTotalTicketsAndRevenue = async () => {
       const token = localStorage.getItem('accessToken');
+      const today = moment().format('YYYY-MM-DD');
+      let startDate, endDate;
+
+      if (filter === 'daily') {
+        startDate = today;
+        endDate = today;
+      } else if (filter === 'monthly') {
+        startDate = moment().startOf('month').format('YYYY-MM-DD');
+        endDate = moment().endOf('month').format('YYYY-MM-DD');
+      } else if (filter === 'yearly') {
+        startDate = moment().startOf('year').format('YYYY-MM-DD');
+        endDate = moment().endOf('year').format('YYYY-MM-DD');
+      }
+
       try {
         const response = await axios.get('https://api.kcq-express.co/api/tickets/', {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Token ${token}`,
+          },
+          params: {
+            start_date: startDate,
+            end_date: endDate,
           },
         });
         const data = response.data;
@@ -82,11 +101,29 @@ function Reports() {
 
     const fetchTotalTripsCompleted = async () => {
       const token = localStorage.getItem('accessToken');
+      const today = moment().format('YYYY-MM-DD');
+      let startDate, endDate;
+
+      if (filter === 'daily') {
+        startDate = today;
+        endDate = today;
+      } else if (filter === 'monthly') {
+        startDate = moment().startOf('month').format('YYYY-MM-DD');
+        endDate = moment().endOf('month').format('YYYY-MM-DD');
+      } else if (filter === 'yearly') {
+        startDate = moment().startOf('year').format('YYYY-MM-DD');
+        endDate = moment().endOf('year').format('YYYY-MM-DD');
+      }
+
       try {
         const response = await axios.get('https://api.kcq-express.co/api/trips/', {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Token ${token}`,
+          },
+          params: {
+            start_date: startDate,
+            end_date: endDate,
           },
         });
         const data = response.data;
@@ -101,7 +138,7 @@ function Reports() {
 
     fetchTotalTicketsAndRevenue();
     fetchTotalTripsCompleted();
-  }, []);
+  }, [filter]);
 
   const calculatePercentage = (count) => {
     return ((count / totalPassengers) * 100).toFixed(1);

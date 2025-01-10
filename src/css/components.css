@@ -102,6 +102,10 @@
   align-items: center;
 }
 
+.need-help .nav-link {
+  width: 100%;
+}
+
 .sidebar.collapsed .need-help span {
   display: none;
 }

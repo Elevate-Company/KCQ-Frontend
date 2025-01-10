@@ -10,7 +10,7 @@ import manageTripsIcon from '../assets/managetrips.png';
 import profileIcon from '../assets/profile.png';
 import reportsIcon from '../assets/reports.png';
 import settingsIcon from '../assets/setting.png';
-import needHelpIcon from '../assets/needhelp.png';
+import needHelpIcon from '../assets/needhelp.png'; // Reusing the needhelp icon for logs
 
 function Components() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(window.innerWidth > 768);
@@ -143,11 +143,25 @@ function Components() {
                 {isSidebarExpanded && <span>Settings</span>}
               </NavLink>
             </li>
+            <li className="nav-item">
+              <NavLink
+                to="/logs"
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              >
+                <img src={needHelpIcon} alt="Logs" className="sidebar-icon" />
+                {isSidebarExpanded && <span>Logs</span>}
+              </NavLink>
+            </li>
           </ul>
 
           <div className="d-flex align-items-center need-help">
-            <img src={needHelpIcon} alt="Need Help" className="sidebar-icon" />
-            {isSidebarExpanded && <span className="ms-2">Need Help?</span>}
+            <NavLink
+              to="/need-help"
+              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+            >
+              <img src={needHelpIcon} alt="Need Help" className="sidebar-icon" />
+              {isSidebarExpanded && <span className="ms-2">Need Help?</span>}
+            </NavLink>
           </div>
         </div>
 
