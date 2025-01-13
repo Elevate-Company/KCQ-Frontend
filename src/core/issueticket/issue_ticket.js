@@ -18,12 +18,12 @@ function IssueTicket() {
     return savedTickets ? JSON.parse(savedTickets) : [];
   });
   const [price, setPrice] = useState(400);
+  const [passengers, setPassengers] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTrips = async () => {
       const token = localStorage.getItem('accessToken');
-      console.log('Token:', token);
       try {
         const response = await axios.get('https://api.kcq-express.co/api/trips/', {
           headers: {
@@ -33,8 +33,6 @@ function IssueTicket() {
         });
 
         const data = response.data;
-        console.log('Response data:', data);
-
         const filteredTrips = data.filter(trip => {
           const departureDate = new Date(trip.departure_time);
           const currentDate = new Date();
@@ -48,7 +46,26 @@ function IssueTicket() {
       }
     };
 
+    const fetchPassengers = async () => {
+      const token = localStorage.getItem('accessToken');
+      try {
+        const response = await axios.get('https://api.kcq-express.co/api/passengers/', {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token}`,
+          },
+        });
+
+        const data = response.data.passengers;
+        setPassengers(data);
+      } catch (error) {
+        console.error('Error fetching passengers:', error);
+        setError('Failed to fetch passengers');
+      }
+    };
+
     fetchTrips();
+    fetchPassengers();
   }, []);
 
   useEffect(() => {
@@ -74,6 +91,16 @@ function IssueTicket() {
     const selectedType = e.target.value;
     setPassengerType(selectedType);
     setPrice(calculateAmount(selectedType));
+  };
+
+  const handlePassengerSelect = (e) => {
+    const selectedPassengerId = e.target.value;
+    const selectedPassenger = passengers.find(p => p.id === parseInt(selectedPassengerId));
+    if (selectedPassenger) {
+      setPassengerName(selectedPassenger.name);
+      setContactNumber(selectedPassenger.contact);
+      setEmail(selectedPassenger.email || '');
+    }
   };
 
   const handleAddTicket = () => {
@@ -123,6 +150,10 @@ function IssueTicket() {
     navigate('/checkout');
   };
 
+  const handleAddPassenger = () => {
+    navigate('/add-passenger');
+  };
+
   return (
     <div>
       <Navbar />
@@ -137,8 +168,22 @@ function IssueTicket() {
 
           <div className="card-contact-issue contact-card">
             <div className="card-contact">
-              <h3>New Ticket</h3>
+              <div className="d-flex justify-content-between align-items-center">
+                <h3>New Ticket</h3>
+                <button className="btn btn-primary add-btn" onClick={handleAddPassenger}>+ Add</button>
+              </div>
               <form className="contact-form">
+                <label>
+                  Select Passenger:
+                  <select onChange={handlePassengerSelect}>
+                    <option value="">Select a passenger</option>
+                    {passengers.map(passenger => (
+                      <option key={passenger.id} value={passenger.id}>
+                        {passenger.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
                 <label>
                   Passenger Name:
                   <input

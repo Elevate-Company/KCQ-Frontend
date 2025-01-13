@@ -1,0 +1,18 @@
+.input-sm {
+    max-width: 300px; /* Adjust the width as needed */
+  }
+  
+  .btn-sm {
+    max-width: 150px; /* Adjust the width as needed */
+    background-color: #091057; /* Set the background color */
+    color: white; /* Set the text color */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Add border radius */
+    cursor: pointer; /* Change cursor to pointer */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Add transition effects */
+  }
+  
+  .btn-sm:hover {
+    background-color: #071540; /* Change background color on hover */
+    transform: scale(1.05); /* Add scale effect on hover */
+  }

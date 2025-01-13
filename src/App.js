@@ -19,6 +19,7 @@ import TripDetails from './core/managetrip/trip-details';
 import TicketDetails from './core/manageticket/ticket-details'; // Import TicketDetails component
 import Logs from './core/logs/logs'; // Import Logs component
 import NeedHelp from './core/help/needhelp'; // Import NeedHelp component
+import AddPassenger from './core/addpassenger'; // Import AddPassenger component
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const isAuthenticated = () => localStorage.getItem('accessToken');
@@ -58,6 +59,7 @@ function App() {
                     <Route path="ticket-details/:ticketNumber" element={<TicketDetails />} /> {/* Add TicketDetails route */}
                     <Route path="logs" element={<Logs />} /> {/* Add Logs route */}
                     <Route path="need-help" element={<NeedHelp />} /> {/* Add NeedHelp route */}
+                    <Route path="add-passenger" element={<AddPassenger />} /> {/* Add AddPassenger route */}
                 </Route>
             </Routes>
         </Router>

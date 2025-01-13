@@ -46,13 +46,18 @@ function Checkout() {
         },
         origin: "montalban",
         destination: "kasiglahan",
-        departure_time: "2024-12-12T12:25:42.020Z",
-        arrival_time: "2024-12-12T12:25:42.020Z",
+        departure_time: "2025-01-13T07:55:47.042Z",
+        arrival_time: "2025-01-13T07:55:47.042Z",
         available_seats: 2147483647
       },
       passenger: {
         name: "John Doe",
-        contact: "1234567890"
+        email: "john.doe@example.com",
+        contact: "1234567890",
+        phone: "1234567890",
+        total_bookings: 1,
+        is_delete: false,
+        boarding_status: "NOT_CHECKED_IN"
       },
       ticket_number: "12345",
       seat_number: "22A",
@@ -73,7 +78,7 @@ function Checkout() {
       alert('Ticket generated successfully');
       console.log(response.data);
     } catch (error) {
-      console.error('Error generating ticket:', error);
+      console.error('Error generating ticket:', error.response ? error.response.data : error.message);
       alert('Failed to generate ticket');
     }
   };

@@ -4,6 +4,7 @@ import Navbar from '../navbar/navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 
+
 function PassengerList() {
   const [passengers, setPassengers] = useState([]);
   const [error, setError] = useState('');
@@ -74,11 +75,18 @@ function PassengerList() {
     }
   };
 
+  const handleAddPassenger = () => {
+    navigate('/add-passenger');
+  };
+
   return (
     <div>
       <Navbar />
       <div className="container mt-4">
-        <h2 className="text-center mb-4">Passenger Management</h2>
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h2 className="text-center">Passenger Management</h2>
+          <button className="btn add-btn" onClick={handleAddPassenger}>+ Add</button>
+        </div>
         <div className="card">
           <div
             className="card-header text-white"

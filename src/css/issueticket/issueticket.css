@@ -225,6 +225,24 @@ hr {
   margin-bottom: 20px; /* Space between each trip card */
 }
 
+/* Add button styling */
+.add-btn {
+  font-size: 0.8rem;
+  padding: 8px 10px; /* Increased height */
+  width: 80px; /* Adjust the width as needed */
+  background-color: #091057;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.add-btn:hover {
+  background-color: #071540;
+  transform: scale(1.05);
+}
+
 /* Mobile view handling */
 @media (max-width: 768px) {
   .card-select-issue,
