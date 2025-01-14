@@ -19,7 +19,7 @@ function TicketSold() {
         });
         console.log('Response status:', response.status);
         console.log('Response headers:', response.headers);
-        setTicketsSold(response.data.length); // Assuming the API returns an array of tickets
+        setTicketsSold(response.data.length); 
       } catch (error) {
         console.error('Error fetching tickets:', error);
         setError('Failed to fetch tickets');
@@ -40,7 +40,7 @@ function TicketSold() {
         <span className="ticket-amount">{ticketsSold}</span>
       </div>
       <div className="card-body fade-in-up">
-        <h4 className="card-title mt-4">Total Tickets Sold This Month</h4>
+        <h4 className="card-title mt-4">Total Tickets Sold</h4>
         {error && <p className="text-danger">{error}</p>}
         <p className="today-text">Today</p>
       </div>

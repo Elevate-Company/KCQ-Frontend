@@ -232,7 +232,7 @@ function IssueTicket() {
                 <hr />
                 <button
                   type="button"
-                  className="generate-btn mt-5"
+                  className="generate-btn mt-3"
                   onClick={handleAddTicket}
                 >
                   Add Ticket

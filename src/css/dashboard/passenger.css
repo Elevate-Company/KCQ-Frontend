@@ -39,7 +39,7 @@
 
 @media (max-width: 768px) {
     .passenger-image {
-        width: 35px;
+        width: 70px; /* Increase the size of the image */
     }
 
     .sample-data-amount {
@@ -49,10 +49,10 @@
 
 @media (max-width: 480px) {
     .passenger-image {
-        width: 30px;
+        width: 80px; /* Further increase the size of the image */
     }
 
     .sample-data-amount {
-        font-size: 1rem;
+        font-size: 1.5rem;
     }
 }

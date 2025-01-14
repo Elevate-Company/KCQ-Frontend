@@ -2,6 +2,11 @@
   position: relative;
 }
 
+.ticket-header {
+  display: flex;
+  align-items: center;
+}
+
 .ticket-icon {
   width: 50px;
   height: auto;
@@ -30,12 +35,17 @@
 }
 
 @media (max-width: 768px) {
+  .ticket-header {
+    justify-content: flex-start; /* Align items to the left */
+  }
+
   .ticket-icon {
-    width: 35px;
+    width: 70px; /* Increase the size of the ticket image */
   }
 
   .ticket-amount {
-    font-size: 1rem;
+    font-size: 1.5rem;
+    margin-left: 10px; /* Space between the image and text */
   }
 
   .today-text {
@@ -44,16 +54,21 @@
 }
 
 @media (max-width: 480px) {
+  .ticket-header {
+    justify-content: flex-start; /* Align items to the left */
+  }
+
   .ticket-icon {
-    width: 30px;
+    width: 80px; /* Further increase the size of the ticket image */
   }
 
   .ticket-amount {
-    font-size: 0.9rem;
+    font-size: 1.5rem;
+    margin-left: 10px; /* Space between the image and text */
   }
 
   .today-text {
-    font-size: 10px;
+    font-size: 12px;
   }
 }
 

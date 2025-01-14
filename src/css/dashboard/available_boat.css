@@ -12,8 +12,6 @@
   color: #091057;
 }
 
-
-
 .available-boat-title {
   text-align: center;
   margin-bottom: 1.5rem;
@@ -21,7 +19,7 @@
 
 @media (max-width: 768px) {
   .boat-image {
-    width: 35px;
+    width: 70px; /* Increase the size of the image */
   }
 
   .boat-count {
@@ -31,10 +29,10 @@
 
 @media (max-width: 480px) {
   .boat-image {
-    width: 30px;
+    width: 80px; /* Further increase the size of the image */
   }
 
   .boat-count {
-    font-size: 1rem;
+    font-size: 1.5rem;
   }
 }
