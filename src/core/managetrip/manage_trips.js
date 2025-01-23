@@ -14,7 +14,7 @@ function ManageTrips() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('https://api.kcq-express.co/api/trips/', {
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/trips/`, {
       headers: {
         'Authorization': `Token ${token}`,
       }
@@ -76,11 +76,11 @@ function ManageTrips() {
             </select>
             <button 
               type="button" 
-              className="btn btn-primary btn-add-trip"
+              className="btn btn-primary btn-add-trip mt-4"
               style={{ backgroundColor: '#091057', borderColor: '#091057' }}
               onClick={() => navigate('/addtrip')}
             >
-              +Add Trip
+              + Add Trip
             </button>
           </div>
         </div>

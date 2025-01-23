@@ -14,7 +14,7 @@ function UpcomingTripCard() {
       const token = localStorage.getItem('accessToken');
       console.log('Token:', token);
       try {
-        const response = await axios.get('https://api.kcq-express.co/api/trips/', {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/trips/`, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Token ${token}`,

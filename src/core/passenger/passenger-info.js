@@ -14,7 +14,7 @@ function PassengerInfo() {
       const token = localStorage.getItem('accessToken');
       console.log('Token:', token);
       try {
-        const response = await axios.get(`https://api.kcq-express.co/api/passengers/${id}/`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/passengers/${id}/`, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Token ${token}`,

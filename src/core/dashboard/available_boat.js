@@ -12,7 +12,7 @@ function AvailableBoat() {
       const token = localStorage.getItem('accessToken');
       console.log('Token:', token);
       try {
-        const response = await axios.get('https://api.kcq-express.co/api/ferry-boats/', {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/ferry-boats/`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Token ${token}`,

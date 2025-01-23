@@ -31,7 +31,7 @@ function ChangePassword() {
 
     const token = localStorage.getItem('accessToken');
     try {
-      const response = await axios.post('https://api.kcq-express.co/api/accounts/update-password/', {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/accounts/update-password/`, {
         old_password: currentPassword,
         new_password: newPassword,
         confirm_password: confirmNewPassword,

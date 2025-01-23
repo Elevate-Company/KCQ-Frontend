@@ -17,7 +17,7 @@ function Login() {
         console.log('Submitting login form');
 
         try {
-            const response = await fetch('https://api.kcq-express.co/api/auth/login/', {
+            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/auth/login/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -37,14 +37,14 @@ function Login() {
             }
 
             localStorage.setItem('accessToken', data.token);
-            console.log('TOKEN:',data.token);
             localStorage.setItem('firstName', data.first_name);
             localStorage.setItem('lastName', data.last_name);
             localStorage.setItem('username', data.username);
             localStorage.setItem('employeeNumber', data.employee_number);
-            console.log('Login successful, navigating to dashboard');
-            navigate('/dashboard');
-            
+            alert('Login successful');
+            navigate('/dashboard', { replace: true });
+            window.location.href = '/dashboard';
+
             
         } catch (error) {
             console.error('Error during login:', error);
@@ -84,17 +84,17 @@ function Login() {
                     </div>
 
                     {/* Remember me and Forgot Password links */}
-                    <div className="remember-forgot-container">
+                    <div className="remember-forgot-container mb-4">
                         <div className="remember-me">
                             <input type="checkbox" id="rememberMe" />
                             <label htmlFor="rememberMe">Remember me</label>
                         </div>
                         <div className="forgot-password">
                             <button
-                                type="button"
-                                className="btn btn-link p-0"
+
+                                className="btn p-0 fs-6"
                                 onClick={() => navigate('/forgot-password')}
-                                style={{ textDecoration: 'none', color: '#ccc' }}
+                                style={{  color: '#000' }}
                             >
                                 Forgot Password?
                             </button>

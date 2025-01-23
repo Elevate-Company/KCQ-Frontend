@@ -44,7 +44,7 @@ function ManageTickets() {
   return (
     <div>
       <Navbar />
-      <div className="manage-tickets-container">
+      <div className="manage-tickets-container container">
         <div className="header-search-dropdown-row">
           <h1 className="header-ticket mt-3">Manage Ticket</h1>
           <div className="search-dropdown-container mt-3">

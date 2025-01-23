@@ -17,7 +17,7 @@ function TicketCard() {
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const response = await fetch('https://api.kcq-express.co/api/tickets/', {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/tickets/`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

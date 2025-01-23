@@ -12,7 +12,7 @@ function Passenger() {
     const fetchTotalPassengers = async () => {
       const token = localStorage.getItem('accessToken');
       try {
-        const response = await axios.get('https://api.kcq-express.co/api/passengers/', {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/passengers/`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Token ${token}`,

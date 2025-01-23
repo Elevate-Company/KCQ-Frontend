@@ -65,11 +65,11 @@ function Checkout() {
       price: "1000.00",
       discount: "100.00",
       baggage_ticket: true,
-      qr_code: "https://api.kcq-express.co/media/tickets/qr_codes/21_qr.png"
+      qr_code: `${process.env.REACT_APP_API_BASE_URL}/media/tickets/qr_codes/21_qr.png`
     };
 
     try {
-      const response = await axios.post('https://api.kcq-express.co/api/tickets/', ticketData, {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/tickets/`, ticketData, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Token ${localStorage.getItem('accessToken')}`,

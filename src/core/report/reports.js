@@ -41,7 +41,7 @@ function Reports() {
       }
 
       try {
-        const response = await axios.get('https://api.kcq-express.co/api/tickets/', {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/tickets/`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Token ${token}`,
@@ -116,7 +116,7 @@ function Reports() {
       }
 
       try {
-        const response = await axios.get('https://api.kcq-express.co/api/trips/', {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/trips/`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Token ${token}`,
