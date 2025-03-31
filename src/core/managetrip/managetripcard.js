@@ -18,7 +18,7 @@ function ManageTripCard({ trip }) {
   const handleDelete = async () => {
     try {
       const token = localStorage.getItem('accessToken');
-      await axios.delete(`https://api.kcq-express.co/api/trips/${trip.id}/`, {
+      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/trips/${trip.id}/`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Token ${token}`,

@@ -20,7 +20,7 @@ function AddTrip() {
     const fetchBoats = async () => {
       try {
         const token = localStorage.getItem('accessToken');
-        const response = await axios.get('https://api.kcq-express.co/api/ferry-boats/', {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/ferry-boats/`, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Token ${token}`,
@@ -43,7 +43,7 @@ function AddTrip() {
     try {
       const token = localStorage.getItem('accessToken');
       const response = await axios.post(
-        'https://api.kcq-express.co/api/trips/',
+        `${process.env.REACT_APP_API_BASE_URL}/api/trips/`,
         {
           ferry_boat: { slug: boat },
           origin,
