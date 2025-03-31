@@ -39,47 +39,25 @@ function Checkout() {
   };
 
   const handleGenerateTicket = async () => {
-    const ticketData = {
-      trip: {
-        ferry_boat: {
-          slug: "titanic"
-        },
-        origin: "montalban",
-        destination: "kasiglahan",
-        departure_time: "2025-01-13T07:55:47.042Z",
-        arrival_time: "2025-01-13T07:55:47.042Z",
-        available_seats: 2147483647
-      },
-      passenger: {
-        name: "John Doe",
-        email: "john.doe@example.com",
-        contact: "1234567890",
-        phone: "1234567890",
-        total_bookings: 1,
-        is_delete: false,
-        boarding_status: "NOT_CHECKED_IN"
-      },
-      ticket_number: "12345",
-      seat_number: "22A",
-      age_group: "adult",
-      price: "1000.00",
-      discount: "100.00",
-      baggage_ticket: true,
-      qr_code: "https://api.kcq-express.co/media/tickets/qr_codes/21_qr.png"
-    };
-
     try {
-      const response = await axios.post('https://api.kcq-express.co/api/tickets/', ticketData, {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        alert('No access token found. Please log in.');
+        return;
+      }
+
+      const response = await axios.post('https://api.kcq-express.co/api/tickets/', tickets, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Token ${localStorage.getItem('accessToken')}`,
+          Authorization: `Token ${token}`,
         },
       });
-      alert('Ticket generated successfully');
+
+      alert('Tickets generated successfully');
       console.log(response.data);
     } catch (error) {
-      console.error('Error generating ticket:', error.response ? error.response.data : error.message);
-      alert('Failed to generate ticket');
+      console.error('Error generating tickets:', error.response ? error.response.data : error.message);
+      alert('Failed to generate tickets');
     }
   };
 
