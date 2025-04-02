@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Navbar from '../navbar/navbar';
 import '../../css/issueticket/checkout.css';
 import axios from 'axios';
@@ -9,6 +10,7 @@ function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState('cash');
   const [cashAmount, setCashAmount] = useState('');
   const [transactionNo, setTransactionNo] = useState('');
+  const navigate = useNavigate(); // Initialize navigate
 
   useEffect(() => {
     const savedTickets = localStorage.getItem('tickets');
@@ -46,7 +48,41 @@ function Checkout() {
         return;
       }
 
-      const response = await axios.post('https://api.kcq-express.co/api/tickets/', tickets, {
+      // Transform tickets to match the required format
+      const transformedTickets = tickets.map(ticket => ({
+        trip: {
+          ferry_boat: {
+            slug: ticket.trip?.ferry_boat?.slug || '',
+          },
+          origin: ticket.trip?.origin || '',
+          destination: ticket.trip?.destination || '',
+          departure_time: ticket.trip?.departure_time || '',
+          arrival_time: ticket.trip?.arrival_time || '',
+          available_seats: ticket.trip?.available_seats || '',
+        },
+        passenger: {
+          name: ticket.passenger?.name || '',
+          email: ticket.passenger?.email || '',
+          contact: ticket.passenger?.contact || '',
+          phone: ticket.passenger?.phone || '',
+          total_bookings: ticket.passenger?.total_bookings || '',
+          is_delete: ticket.passenger?.is_delete || '',
+          boarding_status: ticket.passenger?.boarding_status || '',
+        },
+        ticket_number: ticket.ticket_number || '',
+        seat_number: ticket.seat_number || '',
+        age_group: ticket.age_group || '',
+        price: ticket.price || '',
+        discount: ticket.discount || '',
+        baggage_ticket: ticket.baggage_ticket || '',
+        qr_code: ticket.qr_code || '',
+      }));
+
+      // Log the transformed tickets to the console
+      console.log('Transformed Tickets:', JSON.stringify(transformedTickets, null, 2));
+
+      // Send the transformed tickets to the API
+      const response = await axios.post('https://api.kcq-express.co/api/tickets/', transformedTickets, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Token ${token}`,
@@ -55,6 +91,12 @@ function Checkout() {
 
       alert('Tickets generated successfully');
       console.log(response.data);
+
+      // Save the generated ticket data to localStorage
+      localStorage.setItem('generatedTicket', JSON.stringify(response.data));
+
+      // Navigate to the Ticket page
+      navigate('/ticket'); // Redirect to the Ticket component
     } catch (error) {
       console.error('Error generating tickets:', error.response ? error.response.data : error.message);
       alert('Failed to generate tickets');

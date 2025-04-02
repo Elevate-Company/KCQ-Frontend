@@ -10,8 +10,10 @@ function IssueTicket() {
   const [error, setError] = useState('');
   const [selectedTrip, setSelectedTrip] = useState(null);
   const [passengerName, setPassengerName] = useState('');
-  const [contactNumber, setContactNumber] = useState('');
-  const [email, setEmail] = useState('');
+  const [passengerEmail, setPassengerEmail] = useState('');
+  const [passengerPhone, setPassengerPhone] = useState('');
+  const [ticketNumber, setTicketNumber] = useState('');
+  const [seatNumber, setSeatNumber] = useState('');
   const [passengerType, setPassengerType] = useState('adult');
   const [tickets, setTickets] = useState(() => {
     const savedTickets = localStorage.getItem('tickets');
@@ -87,6 +89,23 @@ function IssueTicket() {
     }
   };
 
+  const getAgeGroup = (type) => {
+    switch (type) {
+      case 'adult':
+        return 'Adult';
+      case 'child':
+        return 'Child';
+      case 'senior':
+        return 'Senior';
+      case 'student':
+        return 'Student';
+      case 'infant':
+        return 'Infant';
+      default:
+        return 'Unknown';
+    }
+  };
+
   const handlePassengerTypeChange = (e) => {
     const selectedType = e.target.value;
     setPassengerType(selectedType);
@@ -98,14 +117,24 @@ function IssueTicket() {
     const selectedPassenger = passengers.find(p => p.id === parseInt(selectedPassengerId));
     if (selectedPassenger) {
       setPassengerName(selectedPassenger.name);
-      setContactNumber(selectedPassenger.contact);
-      setEmail(selectedPassenger.email || '');
+      setPassengerEmail(selectedPassenger.email);
+      setPassengerPhone(selectedPassenger.phone);
     }
   };
 
   const handleAddTicket = () => {
     if (!passengerName.trim()) {
       alert('Passenger name is required.');
+      return;
+    }
+
+    if (!ticketNumber.trim()) {
+      alert('Ticket number is required.');
+      return;
+    }
+
+    if (!seatNumber.trim()) {
+      alert('Seat number is required.');
       return;
     }
 
@@ -118,10 +147,14 @@ function IssueTicket() {
     const newTicket = {
       passenger: {
         name: passengerName,
-        contact: contactNumber,
-        email: email,
+        email: passengerEmail,
+        phone: passengerPhone,
         type: passengerType,
       },
+      ticket_number: ticketNumber,
+      seat_number: seatNumber,
+      age_group: getAgeGroup(passengerType), // Set age group based on passenger type
+      price: price, // Use the price from the "New Ticket" container
       trip: selectedTrip,
       amount: calculateAmount(passengerType),
     };
@@ -129,8 +162,10 @@ function IssueTicket() {
     setTickets([...tickets, newTicket]);
 
     setPassengerName('');
-    setContactNumber('');
-    setEmail('');
+    setPassengerEmail('');
+    setPassengerPhone('');
+    setTicketNumber('');
+    setSeatNumber('');
     setPassengerType('adult');
     setPrice(400);
   };
@@ -190,29 +225,47 @@ function IssueTicket() {
                     type="text"
                     placeholder="Name"
                     value={passengerName}
-                    onChange={(e) => setPassengerName(e.target.value)}
-                  />
-                </label>
-                <label>
-                  Phone Number:
-                  <input
-                    type="tel"
-                    placeholder="Contact number"
-                    value={contactNumber}
-                    onChange={(e) => setContactNumber(e.target.value)}
+                    readOnly
                   />
                 </label>
                 <label>
                   Passenger Email:
                   <input
-                    type="email"
+                    type="text"
                     placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={passengerEmail}
+                    readOnly
                   />
                 </label>
                 <label>
-                  Passenger:
+                  Passenger Phone:
+                  <input
+                    type="text"
+                    placeholder="Phone"
+                    value={passengerPhone}
+                    readOnly
+                  />
+                </label>
+                <label>
+                  Ticket Number:
+                  <input
+                    type="text"
+                    placeholder="Ticket Number"
+                    value={ticketNumber}
+                    onChange={(e) => setTicketNumber(e.target.value)}
+                  />
+                </label>
+                <label>
+                  Seat Number:
+                  <input
+                    type="text"
+                    placeholder="Seat Number"
+                    value={seatNumber}
+                    onChange={(e) => setSeatNumber(e.target.value)}
+                  />
+                </label>
+                <label>
+                  Passenger Type:
                   <select
                     value={passengerType}
                     onChange={handlePassengerTypeChange}
@@ -250,9 +303,12 @@ function IssueTicket() {
                 <tr>
                   <th className="action-column">Action</th>
                   <th>Name</th>
-                  <th>Contact Number</th>
                   <th>Email</th>
+                  <th>Phone</th>
+                  <th>Ticket Number</th>
+                  <th>Seat Number</th>
                   <th>Passenger Type</th>
+                  <th>Age Group</th>
                   <th>Trip</th>
                   <th>Amount</th>
                 </tr>
@@ -267,15 +323,18 @@ function IssueTicket() {
                       ></i>
                     </td>
                     <td>{ticket.passenger.name}</td>
-                    <td>{ticket.passenger.contact}</td>
                     <td>{ticket.passenger.email}</td>
+                    <td>{ticket.passenger.phone}</td>
+                    <td>{ticket.ticket_number}</td>
+                    <td>{ticket.seat_number}</td>
                     <td>{ticket.passenger.type}</td>
+                    <td>{ticket.age_group}</td>
                     <td>{ticket.trip?.origin || 'N/A'} to {ticket.trip?.destination || 'N/A'}</td>
                     <td>PHP {ticket.amount}</td>
                   </tr>
                 ))}
                 <tr>
-                  <td colSpan="6" style={{ textAlign: 'right', fontWeight: 'bold' }}>Total</td>
+                  <td colSpan="9" style={{ textAlign: 'right', fontWeight: 'bold' }}>Total</td>
                   <td style={{ fontWeight: 'bold' }}>PHP {calculateTotalAmount()}</td>
                 </tr>
               </tbody>

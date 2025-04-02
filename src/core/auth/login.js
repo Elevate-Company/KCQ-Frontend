@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import '../../css/auth/login.css';
 import logo from '../../assets/Logo1.png';
 
-
 function Login() {
     const [employeeNumber, setEmployeeNumber] = useState('');
     const [password, setPassword] = useState('');
@@ -17,7 +16,8 @@ function Login() {
         console.log('Submitting login form');
 
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/auth/login/`, {
+            const apiUrl = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000';
+            const response = await fetch(`${apiUrl}/api/auth/login/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -45,7 +45,6 @@ function Login() {
             navigate('/dashboard', { replace: true });
             window.location.href = '/dashboard';
 
-            
         } catch (error) {
             console.error('Error during login:', error);
             setError('Login failed. Please check your credentials and try again.');
@@ -91,10 +90,9 @@ function Login() {
                         </div>
                         <div className="forgot-password">
                             <button
-
                                 className="btn p-0 fs-6"
                                 onClick={() => navigate('/forgot-password')}
-                                style={{  color: '#000' }}
+                                style={{ color: '#000' }}
                             >
                                 Forgot Password?
                             </button>

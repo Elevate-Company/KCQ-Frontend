@@ -45,6 +45,7 @@
   position: relative;
   height: 700px; /* Increased height */
   padding: 20px;
+  overflow-y: auto;
 }
 
 .card-contact {
