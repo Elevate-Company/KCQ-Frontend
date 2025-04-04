@@ -155,10 +155,10 @@ function AddPassenger() {
                 <option value="MISSED">MISSED</option>
               </select>
             </div>
-            {/* <div className="form-check mb-4 d-flex gap-2 align-items-center hidden">
+            <div className="form-check mb-4">
               <input
                 type="checkbox"
-                className="form-check-input"
+                className="form-check-input small-checkbox"
                 id="isDelete"
                 checked={isDelete}
                 onChange={(e) => setIsDelete(e.target.checked)}
@@ -166,7 +166,7 @@ function AddPassenger() {
               <label className="form-check-label" htmlFor="isDelete">
                 Is Deleted?
               </label>
-            </div> */}
+            </div>
             <button type="submit" className="btn btn-success w-100">
               Add Passenger
             </button>
