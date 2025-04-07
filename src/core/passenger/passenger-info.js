@@ -70,8 +70,8 @@ function PassengerInfo() {
                   <td>{passenger.email || 'N/A'}</td>
                 </tr>
                 <tr>
-                  <th>Contact</th>
-                  <td>{passenger.contact || 'N/A'}</td>
+                  <th>Phone</th>
+                  <td>{passenger.phone || 'N/A'}</td>
                 </tr>
                 <tr>
                   <th>Total Bookings</th>
