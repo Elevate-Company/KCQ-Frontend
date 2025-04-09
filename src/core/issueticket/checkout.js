@@ -57,6 +57,25 @@ function Checkout() {
     return STANDARD_PRICE - price;
   };
 
+  const normalizeAgeGroup = (ageGroup) => {
+    // Convert display format to lowercase API format
+    const group = ageGroup.toLowerCase();
+    switch (group) {
+      case 'adult':
+        return 'adult';
+      case 'child':
+        return 'child';
+      case 'senior':
+        return 'senior';
+      case 'student':
+        return 'student';
+      case 'infant':
+        return 'infant';
+      default:
+        return 'adult';
+    }
+  };
+
   const handleGenerateTicket = async () => {
     try {
       const token = localStorage.getItem('accessToken');
@@ -73,35 +92,27 @@ function Checkout() {
       for (let i = 0; i < tickets.length; i++) {
         const ticket = tickets[i];
 
-        // Skip tickets with missing trip or passenger data
         if (!ticket.trip || !ticket.passenger) {
           console.error(`Missing trip or passenger data for ticket ${i + 1}`);
           setError(`Missing trip or passenger data for ticket ${i + 1}`);
           continue;
         }
 
+        // Flatten the ticket data structure to avoid nested serializers issue
         const transformedTicket = {
-          ferry_boat_slug: ticket.trip?.ferry_boat?.slug || '',
-          origin: ticket.trip?.origin || 'Unknown',
-          destination: ticket.trip?.destination || 'Unknown',
-          departure_time: ticket.trip?.departure_time || '',
-          arrival_time: ticket.trip?.arrival_time || '',
-          available_seats: ticket.trip?.available_seats || 0,
-          passenger_name: ticket.passenger?.name || 'Unknown',
-          passenger_email: ticket.passenger?.email || '',
-          passenger_phone: ticket.passenger?.phone || '',
-          passenger_total_bookings: ticket.passenger?.total_bookings || 0,
-          passenger_is_delete: ticket.passenger?.is_delete || false,
-          passenger_boarding_status: ticket.passenger?.boarding_status || 'NOT_CHECKED_IN',
+          trip_id: ticket.trip.id, // Send trip ID instead of nested trip object
+          passenger_id: ticket.passenger.id, // Send passenger ID instead of nested passenger object
           ticket_number: ticket.ticket_number || `TICKET-${Date.now()}-${i}`,
           seat_number: ticket.seat_number || '',
-          age_group: ticket.passenger?.type || 'adult',
-          price: ticket.price || STANDARD_PRICE,
-          discount: calculateDiscount(ticket.price || STANDARD_PRICE),
-          baggage_ticket: baggageTickets[i] || false,
+          age_group: normalizeAgeGroup(ticket.age_group || ticket.passenger?.type || 'adult'),
+          price: parseFloat(ticket.price || STANDARD_PRICE),
+          discount: parseFloat(calculateDiscount(ticket.price || STANDARD_PRICE)),
+          baggage_ticket: Boolean(ticket.baggage_ticket)
         };
 
-        console.log('Posting Ticket:', transformedTicket);
+        // Debug logging
+        console.log('Original ticket:', ticket);
+        console.log('Transformed ticket:', transformedTicket);
 
         try {
           const response = await axios.post(`${apiUrl}/api/tickets/`, transformedTicket, {
