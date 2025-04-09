@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../navbar/navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 
 function PassengerInfo() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [passenger, setPassenger] = useState(null);
   const [error, setError] = useState('');
 
@@ -91,6 +92,12 @@ function PassengerInfo() {
                 </tr>
               </tbody>
             </table>
+            <button
+              className="btn btn-secondary mt-3"
+              onClick={() => navigate(-1)} // Navigate back to the previous page
+            >
+              Back
+            </button>
           </div>
         </div>
       </div>

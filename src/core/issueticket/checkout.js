@@ -4,64 +4,57 @@ import Navbar from '../navbar/navbar';
 import '../../css/issueticket/checkout.css';
 import axios from 'axios';
 
-const apiUrl = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000'; // Use API base URL from .env or fallback
-const STANDARD_PRICE = 400; // Define the standard ticket price
+const apiUrl = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000';
+const STANDARD_PRICE = 400;
 
 function Checkout() {
   const [tickets, setTickets] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
-  const [paymentMethod, setPaymentMethod] = useState('cash');
-  const [cashAmount, setCashAmount] = useState('');
-  const [transactionNo, setTransactionNo] = useState('');
-  const [baggageTickets, setBaggageTickets] = useState([]); // State for baggage tickets
+  const [baggageTickets, setBaggageTickets] = useState([]);
+  const [username, setUsername] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const savedTickets = localStorage.getItem('tickets');
     const savedTotalAmount = localStorage.getItem('totalAmount');
+    const usernameID = localStorage.getItem('username');
+    setUsername(usernameID);
+
     if (savedTickets) {
       const parsedTickets = JSON.parse(savedTickets).map((ticket) => ({
         ...ticket,
         passenger: {
           ...ticket.passenger,
-          total_bookings: ticket.passenger?.total_bookings || 'N/A',
+          total_bookings: ticket.passenger?.total_bookings || 0,
           is_delete: ticket.passenger?.is_delete || false,
           boarding_status: ticket.passenger?.boarding_status || 'NOT_CHECKED_IN',
+          created_by: usernameID || 'Unknown',
         },
       }));
       setTickets(parsedTickets);
-      setBaggageTickets(parsedTickets.map(() => false)); // Initialize baggage tickets as false
+      setBaggageTickets(parsedTickets.map((ticket) => ticket.baggage_ticket || false));
+      console.log('Fetched Tickets:', parsedTickets);
     }
     if (savedTotalAmount) {
       setTotalAmount(parseFloat(savedTotalAmount));
+      console.log('Total Amount:', savedTotalAmount);
     }
   }, []);
 
-  const handlePaymentMethodChange = (e) => {
-    setPaymentMethod(e.target.value);
-  };
-
-  const handleCashAmountChange = (e) => {
-    setCashAmount(e.target.value);
-  };
-
-  const handleTransactionNoChange = (e) => {
-    setTransactionNo(e.target.value);
-  };
-
   const handleBaggageTicketChange = (index) => {
     const updatedBaggageTickets = [...baggageTickets];
-    updatedBaggageTickets[index] = !updatedBaggageTickets[index]; // Toggle the checkbox value
+    updatedBaggageTickets[index] = !updatedBaggageTickets[index];
     setBaggageTickets(updatedBaggageTickets);
+
+    const updatedTickets = [...tickets];
+    updatedTickets[index].baggage_ticket = updatedBaggageTickets[index];
+    setTickets(updatedTickets);
   };
 
   const calculateDiscount = (price) => {
-    return STANDARD_PRICE - price; // Compute the discount based on the standard price
-  };
-
-  const handleProceedToPayment = (e) => {
-    e.preventDefault();
-    alert(`Proceeding to payment with ${paymentMethod} method`);
+    return STANDARD_PRICE - price;
   };
 
   const handleGenerateTicket = async () => {
@@ -72,58 +65,71 @@ function Checkout() {
         return;
       }
 
-      // Transform tickets to match the required format
-      const transformedTickets = tickets.map((ticket, index) => ({
-        trip: {
-          ferry_boat: {
-            slug: ticket.trip?.ferry_boat?.slug || '',
-          },
-          origin: ticket.trip?.origin || '',
-          destination: ticket.trip?.destination || '',
+      setIsGenerating(true);
+      setError(null);
+
+      const generatedTickets = [];
+
+      for (let i = 0; i < tickets.length; i++) {
+        const ticket = tickets[i];
+
+        // Skip tickets with missing trip or passenger data
+        if (!ticket.trip || !ticket.passenger) {
+          console.error(`Missing trip or passenger data for ticket ${i + 1}`);
+          setError(`Missing trip or passenger data for ticket ${i + 1}`);
+          continue;
+        }
+
+        const transformedTicket = {
+          ferry_boat_slug: ticket.trip?.ferry_boat?.slug || '',
+          origin: ticket.trip?.origin || 'Unknown',
+          destination: ticket.trip?.destination || 'Unknown',
           departure_time: ticket.trip?.departure_time || '',
           arrival_time: ticket.trip?.arrival_time || '',
-          available_seats: ticket.trip?.available_seats || '',
-        },
-        passenger: {
-          name: ticket.passenger?.name || '',
-          email: ticket.passenger?.email || '',
-          phone: ticket.passenger?.phone || '',
-          total_bookings: ticket.passenger?.total_bookings, // Fetched from passenger data
-          is_delete: ticket.passenger?.is_delete, // Fetched from passenger data
-          boarding_status: ticket.passenger?.boarding_status, // Fetched from passenger data
-        },
-        ticket_number: ticket.ticket_number || `TICKET-${Date.now()}-${index}`, // Generate unique ticket number
-        seat_number: ticket.seat_number || '',
-        age_group: (ticket.age_group || 'adult').toLowerCase(), // Convert age_group to lowercase
-        price: ticket.price || '',
-        discount: calculateDiscount(ticket.price || 0), // Automatically compute the discount
-        baggage_ticket: baggageTickets[index] || false, // Include baggage ticket value
-        qr_code: '', // QR code will be generated by the backend
-      }));
+          available_seats: ticket.trip?.available_seats || 0,
+          passenger_name: ticket.passenger?.name || 'Unknown',
+          passenger_email: ticket.passenger?.email || '',
+          passenger_phone: ticket.passenger?.phone || '',
+          passenger_total_bookings: ticket.passenger?.total_bookings || 0,
+          passenger_is_delete: ticket.passenger?.is_delete || false,
+          passenger_boarding_status: ticket.passenger?.boarding_status || 'NOT_CHECKED_IN',
+          ticket_number: ticket.ticket_number || `TICKET-${Date.now()}-${i}`,
+          seat_number: ticket.seat_number || '',
+          age_group: ticket.passenger?.type || 'adult',
+          price: ticket.price || STANDARD_PRICE,
+          discount: calculateDiscount(ticket.price || STANDARD_PRICE),
+          baggage_ticket: baggageTickets[i] || false,
+        };
 
-      // Log the transformed tickets to the console
-      console.log('Transformed Tickets:', transformedTickets);
+        console.log('Posting Ticket:', transformedTicket);
 
-      // Send the transformed tickets to the API
-      const response = await axios.post(`${apiUrl}/api/tickets/`, transformedTickets, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Token ${token}`,
-        },
-      });
+        try {
+          const response = await axios.post(`${apiUrl}/api/tickets/`, transformedTicket, {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Token ${token}`,
+            },
+          });
+          console.log('Ticket Posted Successfully:', response.data);
+          generatedTickets.push(response.data);
+        } catch (err) {
+          console.error(`Error posting ticket ${i + 1}:`, err.response?.data || err.message);
+          throw new Error(`Failed to post ticket for ${ticket.passenger?.name || 'passenger'}. ${err.response?.data?.detail || err.message}`);
+        }
+      }
 
-      alert('Tickets generated successfully');
-      console.log(response.data);
-
-      // Save the generated ticket data to localStorage
-      localStorage.setItem('generatedTicket', JSON.stringify(response.data));
-
-      // Navigate to the Ticket page
-      navigate('/ticket'); // Redirect to the Ticket component
+      localStorage.setItem('generatedTickets', JSON.stringify(generatedTickets));
+      navigate('/ticket', { state: { tickets: generatedTickets } });
     } catch (error) {
-      console.error('Error generating tickets:', error.response ? error.response.data : error.message);
-      alert('Failed to generate tickets');
+      console.error('Ticket generation failed:', error);
+      setError(error.message || 'Failed to generate tickets');
+    } finally {
+      setIsGenerating(false);
     }
+  };
+
+  const isGenerateButtonDisabled = () => {
+    return isGenerating || tickets.length === 0;
   };
 
   return (
@@ -131,103 +137,67 @@ function Checkout() {
       <Navbar />
       <div className="checkout-container mt-5">
         <h3>Checkout</h3>
-        <table className="checkout-table mt-2">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Total Bookings</th>
-              <th>Boarding Status</th>
-              <th>Baggage Ticket</th>
-              <th>Amount</th>
-              <th>Discount</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tickets.map((ticket, index) => (
-              <tr key={index}>
-                <td>{ticket.passenger?.name || 'N/A'}</td>
-                <td>{ticket.passenger?.email || 'N/A'}</td>
-                <td>{ticket.passenger?.phone || 'N/A'}</td>
-                <td>{ticket.passenger?.total_bookings || 'N/A'}</td>
-                <td>{ticket.passenger?.boarding_status || 'N/A'}</td>
-                <td>
-                  <input
-                    type="checkbox"
-                    checked={baggageTickets[index]}
-                    onChange={() => handleBaggageTicketChange(index)}
-                  />
-                </td>
-                <td>PHP {ticket.amount}</td>
-                <td>PHP {calculateDiscount(ticket.amount)}</td>
+        {error && <div className="alert alert-danger">{error}</div>}
+
+        <div className="table-responsive">
+          <table className="checkout-table mt-2">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Total Bookings</th>
+                <th>Boarding Status</th>
+                <th>Created By</th>
+                <th>Ticket Number</th>
+                <th>Seat Number</th>
+                <th>Age Group</th>
+                <th>Trip</th>
+                <th>Amount</th>
+                <th>Discount</th>
+                <th>Baggage Ticket</th>
               </tr>
-            ))}
-            <tr>
-              <td colSpan="7" style={{ textAlign: 'right', fontWeight: 'bold' }}>Total</td>
-              <td style={{ fontWeight: 'bold' }}>PHP {totalAmount}</td>
-            </tr>
-          </tbody>
-        </table>
-        <div className="payment-section mt-4">
-          <div className="payment-methods">
-            <label htmlFor="payment-method">Payment Method:</label>
-            <select
-              id="payment-method"
-              value={paymentMethod}
-              onChange={handlePaymentMethodChange}
-              className="form-select"
-            >
-              <option value="cash">Cash Payment</option>
-              <option value="online">Online Payment</option>
-            </select>
-          </div>
-          <div className="vertical-line"></div>
-          <div className="payment-details">
-            {paymentMethod === 'cash' && (
-              <div className="cash-payment">
-                <label>
-                  Enter Amount:
-                  <input
-                    type="number"
-                    value={cashAmount}
-                    onChange={handleCashAmountChange}
-                    className="cash-input mt-3"
-                  />
-                </label>
-              </div>
-            )}
-            {paymentMethod === 'online' && (
-              <div className="online-payment">
-                <label>
-                  Enter Transaction No.:
-                  <input
-                    type="text"
-                    value={transactionNo}
-                    onChange={handleTransactionNoChange}
-                    className="transaction-input mt-3"
-                  />
-                </label>
-              </div>
-            )}
-            <div className="payment-btn-container">
-              <button
-                type="button"
-                className="payment-btn mt-3"
-                onClick={handleProceedToPayment}
-              >
-                Proceed to Payment
-              </button>
-            </div>
-          </div>
+            </thead>
+            <tbody>
+              {tickets.map((ticket, index) => (
+                <tr key={index}>
+                  <td>{ticket.passenger?.name || 'N/A'}</td>
+                  <td>{ticket.passenger?.email || 'N/A'}</td>
+                  <td>{ticket.passenger?.phone || 'N/A'}</td>
+                  <td>{ticket.passenger?.total_bookings || 0}</td>
+                  <td>{ticket.passenger?.boarding_status || 'NOT_CHECKED_IN'}</td>
+                  <td>{ticket.passenger?.created_by || username || 'Unknown'}</td>
+                  <td>{ticket.ticket_number || `TICKET-${index}`}</td>
+                  <td>{ticket.seat_number || 'N/A'}</td>
+                  <td>{ticket.passenger?.type || 'adult'}</td>
+                  <td>{ticket.trip?.origin || 'N/A'} to {ticket.trip?.destination || 'N/A'}</td>
+                  <td>PHP {ticket.price || STANDARD_PRICE}</td>
+                  <td>PHP {calculateDiscount(ticket.price || STANDARD_PRICE)}</td>
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={baggageTickets[index] || false}
+                      onChange={() => handleBaggageTicketChange(index)}
+                    />
+                  </td>
+                </tr>
+              ))}
+              <tr>
+                <td colSpan="11" style={{ textAlign: 'right', fontWeight: 'bold' }}>Total</td>
+                <td colSpan="3" style={{ fontWeight: 'bold' }}>PHP {totalAmount}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+
         <div className="generate-ticket-btn-container mt-4">
           <button
             type="button"
-            className="generate-ticket-btn"
+            className="btn btn-primary generate-ticket-btn"
             onClick={handleGenerateTicket}
+            disabled={isGenerateButtonDisabled()}
           >
-            Generate Ticket
+            {isGenerating ? 'Generating Tickets...' : 'Generate Ticket'}
           </button>
         </div>
       </div>
