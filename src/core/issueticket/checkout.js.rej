@@ -1,0 +1,27 @@
+diff a/src/core/issueticket/checkout.js b/src/core/issueticket/checkout.js	(rejected hunks)
+@@ -57,6 +57,25 @@
+     return STANDARD_PRICE - price;
+   };
+ 
++  const normalizeAgeGroup = (ageGroup) => {
++    // Convert display format to lowercase API format
++    const group = ageGroup.toLowerCase();
++    switch (group) {
++      case 'adult':
++        return 'adult';
++      case 'child':
++        return 'child';
++      case 'senior':
++        return 'senior';
++      case 'student':
++        return 'student';
++      case 'infant':
++        return 'infant';
++      default:
++        return 'adult';
++    }
++  };
++
+   const handleGenerateTicket = async () => {
+     try {
+       const token = localStorage.getItem('accessToken');

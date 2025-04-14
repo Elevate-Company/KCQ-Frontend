@@ -7,6 +7,16 @@ import axios from 'axios';
 const apiUrl = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000';
 const STANDARD_PRICE = 400;
 
+// Validation helper function
+const validateTicketData = (ticket) => {
+  if (!ticket.trip) throw new Error('Trip ID is required');
+  if (!ticket.passenger) throw new Error('Passenger ID is required');
+  if (!ticket.age_group) throw new Error('Age group is required');
+  if (!ticket.price) throw new Error('Price is required');
+  
+  return true;
+};
+
 function Checkout() {
   const [tickets, setTickets] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
@@ -23,23 +33,32 @@ function Checkout() {
     setUsername(usernameID);
 
     if (savedTickets) {
-      const parsedTickets = JSON.parse(savedTickets).map((ticket) => ({
-        ...ticket,
-        passenger: {
-          ...ticket.passenger,
-          total_bookings: ticket.passenger?.total_bookings || 0,
-          is_delete: ticket.passenger?.is_delete || false,
-          boarding_status: ticket.passenger?.boarding_status || 'NOT_CHECKED_IN',
-          created_by: usernameID || 'Unknown',
-        },
-      }));
-      setTickets(parsedTickets);
-      setBaggageTickets(parsedTickets.map((ticket) => ticket.baggage_ticket || false));
-      console.log('Fetched Tickets:', parsedTickets);
+      const parsedTickets = JSON.parse(savedTickets);
+      console.log('Raw tickets from localStorage:', parsedTickets);
+      
+      const validatedTickets = parsedTickets.map((ticket) => {
+        console.log('Processing ticket:', ticket);
+        if (!ticket.trip?.id || !ticket.passenger?.id) {
+          console.error('Missing required IDs:', ticket);
+        }
+        return {
+          ...ticket,
+          passenger: {
+            ...ticket.passenger,
+            total_bookings: ticket.passenger?.total_bookings || 0,
+            is_delete: ticket.passenger?.is_delete || false,
+            boarding_status: ticket.passenger?.boarding_status || 'NOT_CHECKED_IN',
+            created_by: usernameID || 'Unknown',
+          },
+        };
+      });
+      
+      setTickets(validatedTickets);
+      setBaggageTickets(validatedTickets.map((ticket) => ticket.baggage_ticket || false));
+      console.log('Processed tickets:', validatedTickets);
     }
     if (savedTotalAmount) {
       setTotalAmount(parseFloat(savedTotalAmount));
-      console.log('Total Amount:', savedTotalAmount);
     }
   }, []);
 
@@ -58,22 +77,9 @@ function Checkout() {
   };
 
   const normalizeAgeGroup = (ageGroup) => {
-    // Convert display format to lowercase API format
+    const validGroups = ['adult', 'child', 'student', 'senior', 'infant'];
     const group = ageGroup.toLowerCase();
-    switch (group) {
-      case 'adult':
-        return 'adult';
-      case 'child':
-        return 'child';
-      case 'senior':
-        return 'senior';
-      case 'student':
-        return 'student';
-      case 'infant':
-        return 'infant';
-      default:
-        return 'adult';
-    }
+    return validGroups.includes(group) ? group : 'adult';
   };
 
   const handleGenerateTicket = async () => {
@@ -98,23 +104,22 @@ function Checkout() {
           continue;
         }
 
-        // Flatten the ticket data structure to avoid nested serializers issue
         const transformedTicket = {
-          trip_id: ticket.trip.id, // Send trip ID instead of nested trip object
-          passenger_id: ticket.passenger.id, // Send passenger ID instead of nested passenger object
+          trip: ticket.trip.id,
+          passenger: ticket.passenger.id,
           ticket_number: ticket.ticket_number || `TICKET-${Date.now()}-${i}`,
           seat_number: ticket.seat_number || '',
-          age_group: normalizeAgeGroup(ticket.age_group || ticket.passenger?.type || 'adult'),
+          age_group: normalizeAgeGroup(ticket.passenger?.type || 'adult'),
           price: parseFloat(ticket.price || STANDARD_PRICE),
           discount: parseFloat(calculateDiscount(ticket.price || STANDARD_PRICE)),
           baggage_ticket: Boolean(ticket.baggage_ticket)
         };
 
-        // Debug logging
         console.log('Original ticket:', ticket);
         console.log('Transformed ticket:', transformedTicket);
 
         try {
+          validateTicketData(transformedTicket);
           const response = await axios.post(`${apiUrl}/api/tickets/`, transformedTicket, {
             headers: {
               'Content-Type': 'application/json',
@@ -143,6 +148,7 @@ function Checkout() {
     return isGenerating || tickets.length === 0;
   };
 
+  // Rest of the component remains the same
   return (
     <div>
       <Navbar />

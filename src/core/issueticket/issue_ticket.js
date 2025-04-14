@@ -21,7 +21,7 @@ function IssueTicket() {
   });
   const [price, setPrice] = useState(400);
   const [passengers, setPassengers] = useState([]);
-  const [username, setUsername] = useState(''); // State for username
+  const [username, setUsername] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -67,7 +67,6 @@ function IssueTicket() {
       }
     };
 
-    // Fetch username from local storage
     const usernameID = localStorage.getItem('username');
     setUsername(usernameID);
 
@@ -125,17 +124,15 @@ function IssueTicket() {
       setPassengerEmail(selectedPassenger.email);
       setPassengerPhone(selectedPassenger.phone);
 
-      // Fetch and store total_bookings, boarding_status, and created_by
       const passengerData = {
         name: selectedPassenger.name,
         email: selectedPassenger.email,
         phone: selectedPassenger.phone,
         total_bookings: selectedPassenger.total_bookings || 'N/A',
         boarding_status: selectedPassenger.boarding_status || 'NOT_CHECKED_IN',
-        created_by: username || 'Unknown', // Use the username from local storage
+        created_by: username || 'Unknown',
       };
 
-      // Store passenger data in local storage
       localStorage.setItem('selectedPassenger', JSON.stringify(passengerData));
     }
   };
@@ -165,19 +162,19 @@ function IssueTicket() {
 
     const newTicket = {
       passenger: {
-        ...storedPassenger, // Use stored passenger data
+        ...storedPassenger,
         type: passengerType,
       },
       ticket_number: ticketNumber,
       seat_number: seatNumber,
-      age_group: getAgeGroup(passengerType), // Use passengerType for Age Group
+      age_group: getAgeGroup(passengerType),
       price: price,
       trip: selectedTrip,
       amount: calculateAmount(passengerType),
-      baggage_ticket: false, // Default baggage ticket value
+      baggage_ticket: false,
     };
 
-    setTickets([...tickets, newTicket]);
+    setTickets([newTicket]);
 
     setPassengerName('');
     setPassengerEmail('');
@@ -188,14 +185,9 @@ function IssueTicket() {
     setPrice(400);
   };
 
-  const handleDeleteTicket = (index) => {
-    const updatedTickets = tickets.filter((_, i) => i !== index);
-    setTickets(updatedTickets);
-  };
-
-  const handleBaggageTicketChange = (index) => {
+  const handleBaggageTicketChange = () => {
     const updatedTickets = [...tickets];
-    updatedTickets[index].baggage_ticket = !updatedTickets[index].baggage_ticket; // Toggle baggage ticket
+    updatedTickets[0].baggage_ticket = !updatedTickets[0].baggage_ticket;
     setTickets(updatedTickets);
   };
 
@@ -321,58 +313,50 @@ function IssueTicket() {
         </div>
         {tickets.length > 0 && (
           <div className="tickets-table-container mt-5">
-            <h3>Passengers</h3>
-            {/* Add a scrollable container for the table */}
+            <h3>Passenger Details</h3>
             <div className="table-responsive">
               <table className="tickets-table mt-2">
                 <thead>
                   <tr>
-                    <th className="action-column">Action</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
                     <th>Total Bookings</th>
                     <th>Boarding Status</th>
-                    <th>Created By</th> {/* Added Created By */}
+                    <th>Created By</th>
                     <th>Ticket Number</th>
                     <th>Seat Number</th>
-                    <th>Age Group</th> {/* Removed Passenger Type */}
+                    <th>Age Group</th>
                     <th>Trip</th>
                     <th>Amount</th>
-                    <th>Baggage Ticket</th> {/* Added Baggage Ticket */}
+                    <th>Baggage Ticket</th>
                   </tr>
                 </thead>
                 <tbody>
                   {tickets.map((ticket, index) => (
                     <tr key={index}>
-                      <td className="action-column">
-                        <i
-                          className="fa fa-trash"
-                          onClick={() => handleDeleteTicket(index)}
-                        ></i>
-                      </td>
                       <td>{ticket.passenger.name}</td>
                       <td>{ticket.passenger.email}</td>
                       <td>{ticket.passenger.phone}</td>
                       <td>{ticket.passenger.total_bookings || 'N/A'}</td>
                       <td>{ticket.passenger.boarding_status || 'N/A'}</td>
-                      <td>{ticket.passenger.created_by || username || 'Unknown'}</td> {/* Display Created By */}
+                      <td>{ticket.passenger.created_by || username || 'Unknown'}</td>
                       <td>{ticket.ticket_number}</td>
                       <td>{ticket.seat_number}</td>
-                      <td>{ticket.age_group}</td> {/* Display Passenger Type in Age Group */}
+                      <td>{ticket.age_group}</td>
                       <td>{ticket.trip?.origin || 'N/A'} to {ticket.trip?.destination || 'N/A'}</td>
                       <td>PHP {ticket.amount}</td>
                       <td>
                         <input
                           type="checkbox"
                           checked={ticket.baggage_ticket}
-                          onChange={() => handleBaggageTicketChange(index)}
+                          onChange={handleBaggageTicketChange}
                         />
                       </td>
                     </tr>
                   ))}
                   <tr>
-                    <td colSpan="12" style={{ textAlign: 'right', fontWeight: 'bold' }}>Total</td>
+                    <td colSpan="11" style={{ textAlign: 'right', fontWeight: 'bold' }}>Total</td>
                     <td style={{ fontWeight: 'bold' }}>PHP {calculateTotalAmount()}</td>
                   </tr>
                 </tbody>
