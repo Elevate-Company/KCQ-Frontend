@@ -90,36 +90,47 @@ function Checkout() {
         return;
       }
 
+      // Prevent duplicate submissions
+      if (isGenerating) {
+        return;
+      }
+
       setIsGenerating(true);
       setError(null);
 
       const generatedTickets = [];
+      const processedTicketNumbers = new Set(); // Track processed ticket numbers
 
       for (let i = 0; i < tickets.length; i++) {
         const ticket = tickets[i];
 
-        if (!ticket.trip || !ticket.passenger) {
-          console.error(`Missing trip or passenger data for ticket ${i + 1}`);
-          setError(`Missing trip or passenger data for ticket ${i + 1}`);
+        // Skip if we've already processed this ticket number
+        if (processedTicketNumbers.has(ticket.ticket_number)) {
+          console.log('Skipping duplicate ticket:', ticket.ticket_number);
           continue;
         }
 
+        // Early validation of required fields
+        if (!ticket.trip?.id) {
+          throw new Error(`Missing trip ID for ticket ${i + 1}`);
+        }
+        if (!ticket.passenger?.id) {
+          throw new Error(`Missing passenger ID for ${ticket.passenger?.name || 'unknown passenger'}`);
+        }
+
         const transformedTicket = {
-          trip: ticket.trip.id,
-          passenger: ticket.passenger.id,
+          trip_id: parseInt(ticket.trip.id),
+          passenger_id: parseInt(ticket.passenger.id),
           ticket_number: ticket.ticket_number || `TICKET-${Date.now()}-${i}`,
           seat_number: ticket.seat_number || '',
-          age_group: normalizeAgeGroup(ticket.passenger?.type || 'adult'),
+          age_group: normalizeAgeGroup(ticket.age_group || 'adult'),
           price: parseFloat(ticket.price || STANDARD_PRICE),
           discount: parseFloat(calculateDiscount(ticket.price || STANDARD_PRICE)),
-          baggage_ticket: Boolean(ticket.baggage_ticket)
+          baggage_ticket: Boolean(baggageTickets[i])
         };
 
-        console.log('Original ticket:', ticket);
-        console.log('Transformed ticket:', transformedTicket);
-
         try {
-          validateTicketData(transformedTicket);
+          console.log('Sending ticket data:', transformedTicket);  // Add this debug line
           const response = await axios.post(`${apiUrl}/api/tickets/`, transformedTicket, {
             headers: {
               'Content-Type': 'application/json',
@@ -128,14 +139,31 @@ function Checkout() {
           });
           console.log('Ticket Posted Successfully:', response.data);
           generatedTickets.push(response.data);
+          processedTicketNumbers.add(ticket.ticket_number); // Mark as processed
         } catch (err) {
-          console.error(`Error posting ticket ${i + 1}:`, err.response?.data || err.message);
-          throw new Error(`Failed to post ticket for ${ticket.passenger?.name || 'passenger'}. ${err.response?.data?.detail || err.message}`);
+          // If it's a duplicate error, skip this ticket
+          if (err.response?.data?.error?.includes('UNIQUE constraint failed')) {
+            console.log('Ticket already exists:', ticket.ticket_number);
+            continue;
+          }
+          console.error('Full error response:', err.response);
+          const errorDetails = err.response?.data || {};
+          const errorMessage = Object.entries(errorDetails)
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(', ') || err.message;
+          throw new Error(`Failed to post ticket for ${ticket.passenger?.name || 'passenger'}: ${errorMessage}`);
         }
       }
 
-      localStorage.setItem('generatedTickets', JSON.stringify(generatedTickets));
-      navigate('/ticket', { state: { tickets: generatedTickets } });
+      if (generatedTickets.length > 0) {
+        // Clear tickets from localStorage only after successful generation
+        localStorage.removeItem('tickets');
+        localStorage.removeItem('totalAmount');
+        localStorage.setItem('generatedTickets', JSON.stringify(generatedTickets));
+        navigate('/ticket', { state: { tickets: generatedTickets } });
+      } else {
+        setError('No new tickets were generated. They may already exist.');
+      }
     } catch (error) {
       console.error('Ticket generation failed:', error);
       setError(error.message || 'Failed to generate tickets');

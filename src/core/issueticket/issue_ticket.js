@@ -94,19 +94,19 @@ function IssueTicket() {
   };
 
   const getAgeGroup = (type) => {
-    switch (type) {
+    switch (type.toLowerCase()) {
       case 'adult':
-        return 'Adult';
+        return 'adult';
       case 'child':
-        return 'Child';
+        return 'child';
       case 'senior':
-        return 'Senior';
+        return 'senior';
       case 'student':
-        return 'Student';
+        return 'student';
       case 'infant':
-        return 'Infant';
+        return 'infant';
       default:
-        return 'Unknown';
+        return 'adult';
     }
   };
 
@@ -125,6 +125,7 @@ function IssueTicket() {
       setPassengerPhone(selectedPassenger.phone);
 
       const passengerData = {
+        id: selectedPassenger.id, // Add the ID
         name: selectedPassenger.name,
         email: selectedPassenger.email,
         phone: selectedPassenger.phone,
@@ -141,6 +142,11 @@ function IssueTicket() {
     const storedPassenger = JSON.parse(localStorage.getItem('selectedPassenger'));
     if (!storedPassenger) {
       alert('Please select a passenger.');
+      return;
+    }
+
+    if (!storedPassenger.id) {
+      alert('Invalid passenger data. Please select a passenger again.');
       return;
     }
 
@@ -167,13 +173,15 @@ function IssueTicket() {
       },
       ticket_number: ticketNumber,
       seat_number: seatNumber,
-      age_group: getAgeGroup(passengerType),
+      age_group: passengerType.toLowerCase(),  // Use lowercase directly
       price: price,
       trip: selectedTrip,
       amount: calculateAmount(passengerType),
       baggage_ticket: false,
     };
 
+    // Verify the passenger ID is present in the ticket data
+    console.log('Creating ticket with passenger ID:', storedPassenger.id);
     setTickets([newTicket]);
 
     setPassengerName('');
