@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Login from './core/auth/login';
 import ForgotPassword from './core/auth/forgotpassword';
 import Dashboard from './core/components';
@@ -28,6 +30,7 @@ const isAuthenticated = () => localStorage.getItem('accessToken');
 function App() {
     return (
         <Router>
+            <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
             <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />

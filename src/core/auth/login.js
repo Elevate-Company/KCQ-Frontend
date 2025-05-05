@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import '../../css/auth/login.css';
 import logo from '../../assets/Logo1.png';
 
@@ -33,7 +34,7 @@ function Login() {
 
             if (!response.ok) {
                 console.error('Login failed:', data);
-                throw new Error(data.message || 'Login failed');
+                throw new Error(data.error || 'Login failed');
             }
 
             localStorage.setItem('accessToken', data.token);
@@ -41,13 +42,20 @@ function Login() {
             localStorage.setItem('lastName', data.last_name);
             localStorage.setItem('username', data.username);
             localStorage.setItem('employeeNumber', data.employee_number);
-            alert('Login successful');
-            navigate('/dashboard', { replace: true });
-            window.location.href = '/dashboard';
+            toast.success('Login successful!');
+            navigate('/dashboard');
 
         } catch (error) {
             console.error('Error during login:', error);
-            setError('Login failed. Please check your credentials and try again.');
+            setError(error.message || 'Login failed. Please check your credentials and try again.');
+            toast.error(error.message || 'Login failed. Please check your credentials and try again.');
+        }
+    };
+
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            handleSubmit(event);
         }
     };
 
@@ -67,6 +75,7 @@ function Login() {
                             placeholder="Enter your employee number"
                             value={employeeNumber}
                             onChange={(e) => setEmployeeNumber(e.target.value)}
+                            onKeyPress={handleKeyPress}
                             required
                         />
                     </div>
@@ -78,6 +87,7 @@ function Login() {
                             placeholder="Enter your password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            onKeyPress={handleKeyPress}
                             required
                         />
                     </div>
@@ -90,6 +100,7 @@ function Login() {
                         </div>
                         <div className="forgot-password">
                             <button
+                                type="button"
                                 className="btn p-0 fs-6"
                                 onClick={() => navigate('/forgot-password')}
                                 style={{ color: '#000' }}
