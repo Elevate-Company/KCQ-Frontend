@@ -13,6 +13,7 @@ function Reports() {
   const [passengerStats, setPassengerStats] = useState({
     adults: 0,
     children: 0,
+    students: 0,
     seniors: 0,
     infants: 0,
   });
@@ -60,6 +61,7 @@ function Reports() {
         const stats = {
           adults: 0,
           children: 0,
+          students: 0,  // Added student category
           seniors: 0,
           infants: 0,
         };
@@ -67,6 +69,7 @@ function Reports() {
         data.forEach(ticket => {
           if (ticket.age_group === 'adult') stats.adults++;
           if (ticket.age_group === 'child') stats.children++;
+          if (ticket.age_group === 'student') stats.students++;  // Added student counting
           if (ticket.age_group === 'senior') stats.seniors++;
           if (ticket.age_group === 'infant') stats.infants++;
 
@@ -82,7 +85,7 @@ function Reports() {
           routeStats[route].revenue += parseFloat(ticket.price);
         });
         setPassengerStats(stats);
-        setTotalPassengers(stats.adults + stats.children + stats.seniors + stats.infants);
+        setTotalPassengers(stats.adults + stats.children + stats.students + stats.seniors + stats.infants);
 
         // Convert routeStats to an array and find the top 3 picked routes
         const routeStatsArray = Object.keys(routeStats).map(route => ({
@@ -223,6 +226,11 @@ function Reports() {
                   <td>Children</td>
                   <td>{passengerStats.children}</td>
                   <td>{calculatePercentage(passengerStats.children)}%</td>
+                </tr>
+                <tr>
+                  <td>Students</td>
+                  <td>{passengerStats.students}</td>
+                  <td>{calculatePercentage(passengerStats.students)}%</td>
                 </tr>
                 <tr>
                   <td>Seniors</td>
