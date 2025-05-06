@@ -4,68 +4,160 @@ import { useNavigate } from 'react-router-dom';
 import '../../css/managetrip/managetrips.css';
 import ManageTripCard from './managetripcard';
 import Navbar from '../navbar/navbar';
+import { Pagination } from 'react-bootstrap';
 
 function ManageTrips() {
   const [trips, setTrips] = useState([]);
   const [filteredTrips, setFilteredTrips] = useState([]);
   const [filter, setFilter] = useState('all');
-  const cardCount = 100;
+  const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(3); // Show 3 trips per page as requested
+  
   const token = localStorage.getItem('accessToken');
   const navigate = useNavigate();
+  const apiUrl = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000';
 
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/trips/`, {
-      headers: {
-        'Authorization': `Token ${token}`,
-      }
-    })
-    .then(response => {
+    fetchTrips();
+  }, []);
+
+  useEffect(() => {
+    filterAndSearchTrips(trips, filter, searchQuery);
+  }, [filter, searchQuery, trips]);
+
+  const fetchTrips = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${apiUrl}/api/trips/`, {
+        headers: {
+          'Authorization': `Token ${token}`,
+        }
+      });
+      
       const fetchedTrips = response.data;
       setTrips(fetchedTrips);
-      filterTrips(fetchedTrips, filter);
-    })
-    .catch(error => {
+      filterAndSearchTrips(fetchedTrips, filter, searchQuery);
+      setLoading(false);
+    } catch (error) {
       console.error("Error fetching trips:", error);
-    });
-  }, [filter]);
+      setError("Failed to load trips. Please try again later.");
+      setLoading(false);
+    }
+  };
 
-  const filterTrips = (trips, filter) => {
+  const filterAndSearchTrips = (trips, filter, query) => {
     const currentDate = new Date();
-    let filtered = [];
-
+    let filtered = [...trips];
+    
+    // Apply filter
     if (filter === 'upcoming') {
-      filtered = trips.filter((trip) => {
+      filtered = filtered.filter((trip) => {
         const departureDate = new Date(trip.departure_time);
         return departureDate > currentDate;
       });
     } else if (filter === 'completed') {
-      filtered = trips.filter((trip) => {
+      filtered = filtered.filter((trip) => {
         const departureDate = new Date(trip.departure_time);
         return departureDate < currentDate;
       });
-    } else {
-      filtered = trips;
+    } else if (filter === 'cancelled') {
+      filtered = filtered.filter((trip) => trip.status === 'cancelled');
+    }
+
+    // Apply search
+    if (query) {
+      filtered = filtered.filter(trip => {
+        // Get boat type from ferry_boat object or string
+        const boatType = typeof trip.ferry_boat === 'object' 
+          ? (trip.ferry_boat.name || trip.ferry_boat.slug || '') 
+          : (trip.ferry_boat || '');
+        
+        // Search in origin, destination, or boat type (case-insensitive)
+        const searchFields = [
+          boatType,
+          trip.origin || '',
+          trip.destination || ''
+        ];
+        
+        return searchFields.some(field => 
+          field.toLowerCase().includes(query.toLowerCase())
+        );
+      });
     }
 
     setFilteredTrips(filtered);
+    setCurrentPage(1); // Reset to first page on filter change
   };
 
-  const displayedTrips = filteredTrips.slice(0, cardCount);
+  // Get current trips for pagination
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentTrips = filteredTrips.slice(indexOfFirstItem, indexOfLastItem);
+  
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredTrips.length / itemsPerPage);
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Previous and next page handlers
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div>
+        <Navbar />
+        <div className="manage-trips-container container text-center mt-5">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div>
+        <Navbar />
+        <div className="manage-trips-container container mt-5">
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
       <Navbar />
-      <div className="manage-trips-container">
-        <div className="header-container">
-          <h1 className="header">All Trips</h1>
-          <div className="d-flex align-items-center flex-wrap">
+      <div className="manage-trips-container container">
+        <div className="header-search-dropdown-row">
+          <h1 className="header-trip mt-3">Manage Trips</h1>
+          <div className="search-dropdown-container mt-3">
             <input
               type="text"
-              className="search-inputt me-2"
-              placeholder="Search Trip..."
+              className="search-input-trip"
+              placeholder="Search trips..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
             <select
-              className="filter-dropdown form-select me-2"
+              className="filter-dropdown-trip"
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
             >
@@ -76,8 +168,7 @@ function ManageTrips() {
             </select>
             <button 
               type="button" 
-              className="btn btn-primary btn-add-trip mt-4"
-              style={{ backgroundColor: '#091057', borderColor: '#091057' }}
+              className="btn-add-trip"
               onClick={() => navigate('/addtrip')}
             >
               + Add Trip
@@ -85,33 +176,43 @@ function ManageTrips() {
           </div>
         </div>
 
-        <div className="card-container mt-3">
-          <table className="table table-bordered">
-            <thead>
-              <tr>
-                <th>KCQ</th>
-                <th>From</th>
-                <th>To</th>
-                <th>Departure Date</th>
-                <th>ID</th>
-                <th>Boat Type</th>
-                <th>Available Seats</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {displayedTrips.length > 0 ? (
-                displayedTrips.map((trip) => (
-                  <ManageTripCard key={trip.id} trip={trip} />
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="8">No trips available</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+        <div className="trip-cards-container">
+          {currentTrips.length > 0 ? (
+            currentTrips.map((trip) => (
+              <ManageTripCard key={trip.id} trip={trip} />
+            ))
+          ) : (
+            <div className="no-trips-message text-center mt-5">
+              <p>No trips found. Try adjusting your search or filter.</p>
+            </div>
+          )}
         </div>
+
+        {filteredTrips.length > 0 && (
+          <div className="pagination-container mt-4 d-flex justify-content-center">
+            <Pagination>
+              <Pagination.Prev
+                onClick={goToPreviousPage}
+                disabled={currentPage === 1}
+              />
+              
+              {[...Array(totalPages)].map((_, index) => (
+                <Pagination.Item 
+                  key={index + 1} 
+                  active={index + 1 === currentPage}
+                  onClick={() => paginate(index + 1)}
+                >
+                  {index + 1}
+                </Pagination.Item>
+              ))}
+              
+              <Pagination.Next
+                onClick={goToNextPage}
+                disabled={currentPage === totalPages}
+              />
+            </Pagination>
+          </div>
+        )}
       </div>
     </div>
   );

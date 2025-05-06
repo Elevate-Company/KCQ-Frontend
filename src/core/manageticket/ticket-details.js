@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Container, Row, Col, Card, Button, Table, Form, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Table, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import Barcode from 'react-barcode';
-import { toast } from 'react-toastify';
 import Navbar from '../navbar/navbar';
 import '../../css/manageticket/ticket-details.css';
 
@@ -24,9 +23,6 @@ function TicketDetails() {
   const [ticket, setTicket] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [boardingStatus, setBoardingStatus] = useState('');
-  const [updating, setUpdating] = useState(false);
-  const [updateSuccess, setUpdateSuccess] = useState(false);
   
   const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000';
@@ -48,51 +44,11 @@ function TicketDetails() {
       });
       
       setTicket(response.data);
-      setBoardingStatus(response.data.passenger?.boarding_status || 'NOT_CHECKED_IN');
       setLoading(false);
     } catch (error) {
       console.error('Error fetching ticket details:', error);
       setError('Failed to fetch ticket details');
       setLoading(false);
-    }
-  };
-
-  const updateBoardingStatus = async () => {
-    if (!ticket || !ticket.passenger) return;
-    
-    setUpdating(true);
-    const token = localStorage.getItem('accessToken');
-    
-    try {
-      await axios.patch(`${apiUrl}/api/passengers/${ticket.passenger.id}/update-boarding-status/`, 
-        { boarding_status: boardingStatus },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Token ${token}`,
-          },
-        }
-      );
-      
-      // Update the local ticket state
-      setTicket({
-        ...ticket,
-        passenger: {
-          ...ticket.passenger,
-          boarding_status: boardingStatus
-        }
-      });
-      
-      setUpdateSuccess(true);
-      toast.success('Boarding status updated successfully');
-      
-      // Clear success message after 3 seconds
-      setTimeout(() => setUpdateSuccess(false), 3000);
-    } catch (error) {
-      console.error('Error updating boarding status:', error);
-      toast.error('Failed to update boarding status');
-    } finally {
-      setUpdating(false);
     }
   };
 
@@ -104,6 +60,8 @@ function TicketDetails() {
         return THEME.primary;
       case 'NOT_CHECKED_IN':
         return THEME.warning;
+      case 'CANCELLED':
+        return THEME.danger;
       default:
         return '#6c757d'; // Gray
     }
@@ -164,12 +122,6 @@ function TicketDetails() {
           </Card.Header>
           
           <Card.Body className="p-4">
-            {updateSuccess && (
-              <Alert variant="success" className="mb-4">
-                Boarding status updated successfully!
-              </Alert>
-            )}
-            
             <div className="d-flex flex-column flex-md-row align-items-center mb-4">
               <div className="me-md-4 mb-3 mb-md-0 text-center">
                 <div className="d-inline-block p-3 border rounded">
@@ -194,7 +146,7 @@ function TicketDetails() {
                 </p>
                 <div className="d-flex flex-wrap align-items-center">
                   <span 
-                    className="me-3 px-3 py-1 rounded-pill" 
+                    className="px-3 py-1 rounded-pill" 
                     style={{ 
                       backgroundColor: getBoardingStatusColor(ticket.passenger?.boarding_status), 
                       color: 'white',
@@ -203,28 +155,6 @@ function TicketDetails() {
                   >
                     {ticket.passenger?.boarding_status?.replace(/_/g, ' ') || 'NOT CHECKED IN'}
                   </span>
-                  <div className="ms-auto mt-2 mt-md-0">
-                    <span className="fw-medium me-2">Update status:</span>
-                    <Form.Select 
-                      size="sm" 
-                      style={{ width: 'auto', display: 'inline-block' }}
-                      value={boardingStatus}
-                      onChange={(e) => setBoardingStatus(e.target.value)}
-                      className="me-2"
-                    >
-                      <option value="NOT_CHECKED_IN">NOT CHECKED IN</option>
-                      <option value="CHECKED_IN">CHECKED IN</option>
-                      <option value="BOARDED">BOARDED</option>
-                    </Form.Select>
-                    <Button 
-                      style={{ backgroundColor: THEME.primary, borderColor: THEME.primary }}
-                      size="sm"
-                      onClick={updateBoardingStatus}
-                      disabled={updating || boardingStatus === ticket.passenger?.boarding_status}
-                    >
-                      {updating ? 'Updating...' : 'Update'}
-                    </Button>
-                  </div>
                 </div>
               </div>
             </div>
@@ -245,20 +175,12 @@ function TicketDetails() {
                           <td className="fw-medium">{ticket.seat_number || 'N/A'}</td>
                         </tr>
                         <tr>
-                          <td className="text-muted">Age Group</td>
-                          <td className="fw-medium text-capitalize">{ticket.age_group}</td>
+                          <td className="text-muted">Ticket Type</td>
+                          <td className="fw-medium">{ticket.ticket_type || 'Standard'}</td>
                         </tr>
                         <tr>
                           <td className="text-muted">Price</td>
-                          <td className="fw-medium">PHP {ticket.price}</td>
-                        </tr>
-                        <tr>
-                          <td className="text-muted">Discount</td>
-                          <td className="fw-medium">PHP {ticket.discount}</td>
-                        </tr>
-                        <tr>
-                          <td className="text-muted">Baggage Ticket</td>
-                          <td className="fw-medium">{ticket.baggage_ticket ? 'Yes' : 'No'}</td>
+                          <td className="fw-medium">₱{ticket.price || 'N/A'}</td>
                         </tr>
                       </tbody>
                     </Table>
@@ -269,33 +191,24 @@ function TicketDetails() {
               <Col md={6}>
                 <Card className="h-100 border-0 shadow-sm">
                   <Card.Body>
-                    <h6 className="mb-3 fw-bold">Trip Information</h6>
+                    <h6 className="mb-3 fw-bold">Passenger Information</h6>
                     <Table borderless size="sm" className="details-table">
                       <tbody>
                         <tr>
-                          <td className="text-muted" style={{width: '40%'}}>Origin</td>
-                          <td className="fw-medium">{ticket.trip?.origin}</td>
+                          <td className="text-muted" style={{width: '40%'}}>Name</td>
+                          <td className="fw-medium">{ticket.passenger?.name || 'N/A'}</td>
                         </tr>
                         <tr>
-                          <td className="text-muted">Destination</td>
-                          <td className="fw-medium">{ticket.trip?.destination}</td>
+                          <td className="text-muted">Contact Number</td>
+                          <td className="fw-medium">{ticket.passenger?.contact_number || 'N/A'}</td>
                         </tr>
                         <tr>
-                          <td className="text-muted">Departure</td>
-                          <td className="fw-medium">{new Date(ticket.trip?.departure_time).toLocaleString()}</td>
+                          <td className="text-muted">Email</td>
+                          <td className="fw-medium">{ticket.passenger?.email || 'N/A'}</td>
                         </tr>
                         <tr>
-                          <td className="text-muted">Arrival</td>
-                          <td className="fw-medium">{new Date(ticket.trip?.arrival_time).toLocaleString()}</td>
-                        </tr>
-                        <tr>
-                          <td className="text-muted">Boat Type</td>
-                          <td className="fw-medium">
-                            {typeof ticket.trip?.ferry_boat === 'object' ? 
-                              (ticket.trip.ferry_boat.name || ticket.trip.ferry_boat.slug || 'N/A') : 
-                              ticket.trip?.ferry_boat || 'N/A'
-                            }
-                          </td>
+                          <td className="text-muted">ID Number</td>
+                          <td className="fw-medium">{ticket.passenger?.id_number || 'N/A'}</td>
                         </tr>
                       </tbody>
                     </Table>
@@ -304,31 +217,59 @@ function TicketDetails() {
               </Col>
             </Row>
             
-            <Card className="border-0 shadow-sm">
+            <Card className="border-0 shadow-sm mb-4">
               <Card.Body>
-                <h6 className="mb-3 fw-bold">Passenger Information</h6>
-                <Table borderless size="sm" className="details-table">
-                  <tbody>
-                    <tr>
-                      <td className="text-muted" style={{width: '25%'}}>Name</td>
-                      <td className="fw-medium">{ticket.passenger?.name || 'N/A'}</td>
-                      <td className="text-muted" style={{width: '25%'}}>Contact</td>
-                      <td className="fw-medium">{ticket.passenger?.phone || 'N/A'}</td>
-                    </tr>
-                    <tr>
-                      <td className="text-muted">Email</td>
-                      <td className="fw-medium">{ticket.passenger?.email || 'N/A'}</td>
-                      <td className="text-muted">Created By</td>
-                      <td className="fw-medium">{ticket.created_by || 'N/A'}</td>
-                    </tr>
-                    <tr>
-                      <td className="text-muted">Issue Date</td>
-                      <td className="fw-medium">{new Date(ticket.issue_date).toLocaleString()}</td>
-                      <td className="text-muted">Last Updated</td>
-                      <td className="fw-medium">{new Date(ticket.updated_at).toLocaleString()}</td>
-                    </tr>
-                  </tbody>
-                </Table>
+                <h6 className="mb-3 fw-bold">Trip Information</h6>
+                <Row>
+                  <Col md={6}>
+                    <Table borderless size="sm" className="details-table">
+                      <tbody>
+                        <tr>
+                          <td className="text-muted" style={{width: '40%'}}>Origin</td>
+                          <td className="fw-medium">{ticket.trip?.origin || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                          <td className="text-muted">Destination</td>
+                          <td className="fw-medium">{ticket.trip?.destination || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                          <td className="text-muted">Ferry</td>
+                          <td className="fw-medium">
+                            {typeof ticket.trip?.ferry_boat === 'object' 
+                              ? (ticket.trip.ferry_boat.name || 'N/A') 
+                              : (ticket.trip?.ferry_boat || 'N/A')}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </Table>
+                  </Col>
+                  <Col md={6}>
+                    <Table borderless size="sm" className="details-table">
+                      <tbody>
+                        <tr>
+                          <td className="text-muted" style={{width: '40%'}}>Departure Date</td>
+                          <td className="fw-medium">
+                            {ticket.trip?.departure_time 
+                              ? new Date(ticket.trip.departure_time).toLocaleDateString() 
+                              : 'N/A'}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="text-muted">Departure Time</td>
+                          <td className="fw-medium">
+                            {ticket.trip?.departure_time 
+                              ? new Date(ticket.trip.departure_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) 
+                              : 'N/A'}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="text-muted">Duration</td>
+                          <td className="fw-medium">{ticket.trip?.duration || 'N/A'}</td>
+                        </tr>
+                      </tbody>
+                    </Table>
+                  </Col>
+                </Row>
               </Card.Body>
             </Card>
           </Card.Body>

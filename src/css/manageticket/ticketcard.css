@@ -84,3 +84,146 @@
         overflow-x: auto; /* Enable horizontal scrolling on mobile view */
     }
 }
+
+/* New ticket card styles */
+.ticket-card {
+    margin-bottom: 15px;
+}
+
+.ticket-card .card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    background-color: #ffffff;
+}
+
+.ticket-card .card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.ticket-card h6 {
+    font-size: 0.8rem;
+    color: #6c757d;
+    font-weight: 600;
+}
+
+.ticket-card p {
+    font-size: 0.9rem;
+    color: #212529;
+}
+
+.ticket-card .badge {
+    font-size: 0.75rem;
+    padding: 5px 8px;
+}
+
+/* Status dropdown styling */
+.status-dropdown .dropdown-toggle {
+    background: none;
+    border: none;
+    padding: 0;
+    box-shadow: none !important;
+}
+
+.status-dropdown .dropdown-toggle::after {
+    display: none;
+}
+
+.status-dropdown .dropdown-toggle:hover {
+    opacity: 0.9;
+}
+
+.status-dropdown .dropdown-menu {
+    min-width: 150px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    border: none;
+    border-radius: 0.25rem;
+}
+
+.status-dropdown .dropdown-item {
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+}
+
+.status-dropdown .dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+.status-dropdown .dropdown-item:active {
+    background-color: #0a215a;
+}
+
+/* Status button styling */
+.status-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.status-button:hover {
+    opacity: 0.9;
+}
+
+.status-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Status modal styling */
+.status-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.status-option {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.status-option:hover {
+    background-color: #f8f9fa;
+}
+
+.status-option.selected {
+    background-color: #f0f0f0;
+}
+
+.status-option label {
+    cursor: pointer;
+    margin-bottom: 0;
+    font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .ticket-card .row > div {
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .ticket-card .row {
+        flex-direction: column;
+    }
+    
+    .ticket-card .col-md-1,
+    .ticket-card .col-md-2 {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    
+    .ticket-card .col-md-1 div,
+    .ticket-card .col-md-2 div {
+        width: 100%;
+    }
+}

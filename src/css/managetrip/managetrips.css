@@ -1,98 +1,127 @@
 .manage-trips-container {
+  max-width: 1400px;
+  border-radius: 10px;
   padding: 20px;
+  background-color: #f9f9f9;
 }
 
-.header-container {
+/* Header styles */
+.header-search-dropdown-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.header-trip {
+  font-size: 24px;
+  font-weight: 600;
+  color: #0a215a;
+  margin-bottom: 0;
+}
+
+.search-dropdown-container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap; /* Allow wrapping on smaller screens */
-  margin-bottom: 20px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.header {
-  font-size: 24px;
-  color: #333;
-  margin-right: 20px;
-  flex-grow: 1;
-}
-
-.search-inputt {
-  padding: 10px;
-  font-size: 14px;
-  border: 1px solid #ccc;
+.search-input-trip {
+  padding: 10px 15px;
+  border: 1px solid #dee2e6;
   border-radius: 5px;
-  width: 180px;
-  margin-right: 10px;
+  width: 250px;
+  font-size: 14px;
+  transition: border-color 0.2s;
 }
 
-.filter-dropdown {
+.search-input-trip:focus {
+  border-color: #0a215a;
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(10, 33, 90, 0.25);
+}
+
+.filter-dropdown-trip {
   padding: 10px;
-  font-size: 14px;
-  border: 1px solid #ccc;
+  border: 1px solid #dee2e6;
   border-radius: 5px;
   width: 150px;
+  font-size: 14px;
+  background-color: white;
   cursor: pointer;
-  margin-right: 10px;
+  transition: border-color 0.2s;
+}
+
+.filter-dropdown-trip:focus {
+  border-color: #0a215a;
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(10, 33, 90, 0.25);
 }
 
 .btn-add-trip {
-  background-color: #091057;
-  border-color: #091057;
+  background-color: #0a215a;
   color: white;
-  padding: 10px 15px; /* Adjusted padding to reduce width */
+  border: none;
   border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 14px;
   cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-.card-container {
-  overflow-x: auto; /* Enable horizontal scrolling */
+.btn-add-trip:hover {
+  background-color: #071c4d;
 }
 
-.table {
-  width: 100%;
-  border-collapse: collapse;
+/* Trip cards container */
+.trip-cards-container {
+  margin-top: 1rem;
 }
 
-.table th,
-.table td {
-  border: 1px solid #dee2e6;
-  text-align: center;
-  vertical-align: middle;
-  padding: 10px;
+/* Pagination styling */
+.pagination-container .pagination .page-item .page-link {
+  color: #0a215a;
 }
 
-.table th {
+.pagination-container .pagination .page-item.active .page-link {
+  background-color: #0a215a;
+  border-color: #0a215a;
+  color: white;
+}
+
+.pagination-container .pagination .page-item.disabled .page-link {
+  color: #6c757d;
+}
+
+.no-trips-message {
   background-color: #f8f9fa;
-  font-weight: bold;
+  padding: 2rem;
+  border-radius: 8px;
+  color: #6c757d;
 }
 
-/* Mobile view handling */
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .header-search-dropdown-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .search-dropdown-container {
+    margin-top: 1rem;
+    width: 100%;
+  }
+  
+  .search-input-trip, 
+  .filter-dropdown-trip {
+    width: 100%;
+  }
+}
+
 @media (max-width: 768px) {
-  .header-container {
-    flex-direction: column; /* Stack elements vertically on smaller screens */
-    align-items: flex-start; /* Align items to the start */
-  }
-
-  .header {
-    margin-bottom: 10px; /* Add margin to separate elements */
-  }
-
-  .search-inputt {
-    width: calc(100% - 170px); /* Reduced width on mobile view */
-    margin-bottom: 10px; /* Add margin to separate elements */
-  }
-
-  .filter-dropdown {
-    width: 150px; /* Fixed width for dropdown */
-    margin-bottom: 10px; /* Add margin to separate elements */
-  }
-
-  .btn-add-trip {
-    width: auto; /* Adjust width on mobile view */
-  }
-
-  .card-container {
-    overflow-x: auto; /* Enable horizontal scrolling on mobile view */
+  .manage-trips-container {
+    padding: 15px;
   }
 }

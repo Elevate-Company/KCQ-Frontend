@@ -30,7 +30,21 @@ const isAuthenticated = () => localStorage.getItem('accessToken');
 function App() {
     return (
         <Router>
-            <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+            <ToastContainer 
+                position="top-right" 
+                autoClose={3000} 
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss={false}
+                draggable
+                pauseOnHover
+                theme="light"
+                closeButton={CloseButton}
+                toastClassName="custom-toast"
+                progressClassName="custom-progress-bar"
+            />
             <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -70,5 +84,16 @@ function App() {
         </Router>
     );
 }
+
+// Custom close button for toast
+const CloseButton = ({ closeToast }) => (
+    <button 
+        className="custom-toast-close-button" 
+        onClick={closeToast}
+        aria-label="Close"
+    >
+        <span aria-hidden="true">×</span>
+    </button>
+);
 
 export default App;
