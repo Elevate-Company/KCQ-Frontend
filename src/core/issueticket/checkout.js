@@ -10,13 +10,13 @@ const STANDARD_PRICE = 400;
 
 // Define consistent colors for the application
 const THEME = {
-  primary: '#1a73e8',
-  secondary: '#0d47a1',
+  primary: '#0a215a',
+  secondary: '#071c4d',
   accent: '#e8f0fe',
   success: '#34a853',
   danger: '#ea4335',
   warning: '#fbbc04',
-  dark: '#202124',
+  dark: '#071440',
   light: '#f8f9fa'
 };
 
