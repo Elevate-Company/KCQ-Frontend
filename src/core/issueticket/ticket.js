@@ -1,10 +1,11 @@
-import React from "react";
-import { Card, Row, Col, Container, Badge } from "react-bootstrap";
+import React, { useRef, useEffect, useState } from "react";
+import { Card, Row, Col, Container, Badge, Button } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import moment from "moment";
 import axios from 'axios';
 import Barcode from 'react-barcode';
+import '../../css/issueticket/ticket.css';
 
 // Define consistent colors for the application
 const THEME = {
@@ -21,16 +22,21 @@ const THEME = {
 const Ticket = () => {
   const location = useLocation();
   const tickets = location.state?.tickets || [];
+  const [ticketsToPrint, setTicketsToPrint] = useState([]);
+  const ticketRef = useRef(null);
 
-  if (!tickets.length) {
+  useEffect(() => {
+    // Update the tickets state when component mounts or tickets change
+    setTicketsToPrint(tickets);
+  }, [tickets]);
+
+  if (!ticketsToPrint.length) {
     return (
       <Container className="my-4">
         <div className="alert alert-warning">No ticket data available</div>
       </Container>
     );
   }
-
-  console.log('Ticket data:', tickets);  // Add this to debug
 
   const getPassengerName = (ticket) => {
     // First try to get from nested passenger object
@@ -70,9 +76,17 @@ const Ticket = () => {
     return ticket.trip;
   };
 
+  // Function to handle printing ticket
+  const handlePrint = () => {
+    // Using setTimeout to ensure React has updated the DOM before printing
+    setTimeout(() => {
+      window.print();
+    }, 100);
+  };
+
   return (
     <Container className="my-4">
-      {tickets.map((ticket, index) => {
+      {ticketsToPrint.map((ticket, index) => {
         // Format the departure and arrival times
         const departureTime = ticket.trip?.departure_time ? 
           moment(ticket.trip.departure_time).format('h:mm A') : 'N/A';
@@ -82,240 +96,201 @@ const Ticket = () => {
           moment(ticket.trip.departure_time).format('DD.MM.YY') : 'N/A';
 
         return (
-          <Card key={index} className="mb-4 mx-auto" style={{ 
-            maxWidth: "450px", 
-            boxShadow: "0 8px 16px rgba(0,0,0,0.1)",
-            borderRadius: "12px",
-            overflow: "hidden",
-            border: `2px solid ${THEME.primary}`
-          }}>
-            {/* Header Section with ferry logo and ticket number */}
-            <div style={{ 
-              background: THEME.primary,
-              color: "white",
-              padding: "16px",
-              borderBottom: `1px solid ${THEME.primary}`
-            }}>
-              <div className="d-flex justify-content-between align-items-center">
-                <div className="d-flex align-items-center">
-                  <i className="fas fa-ship fa-2x me-2"></i>
-                  <div>
-                    <h4 className="mb-0 fw-bold">KCQ EXPRESS</h4>
-                    <small>Ferry Ticketing System</small>
+          <div key={index} className="printable-ticket" ref={ticketRef}>
+            <div className="ticket-container">
+              {/* Passenger Section */}
+              <div className="passenger-section">
+                <div style={{ 
+                  background: THEME.primary,
+                  color: "white",
+                  padding: "10px",
+                  borderBottom: `1px solid ${THEME.primary}`
+                }}>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div className="d-flex align-items-center">
+                      <i className="fas fa-ship fa-lg me-2"></i>
+                      <div>
+                        <h4 className="mb-0 fw-bold">KCQ EXPRESS</h4>
+                        <small>Ferry Ticketing System</small>
+                      </div>
+                    </div>
+                    <Badge 
+                      style={{ 
+                        background: "white", 
+                        color: THEME.primary, 
+                        padding: "6px 10px",
+                        borderRadius: "4px",
+                        fontWeight: "600"
+                      }}
+                    >
+                      {ticket.ticket_number}
+                    </Badge>
                   </div>
                 </div>
-                <Badge 
-                  style={{ 
-                    background: "white", 
-                    color: THEME.primary, 
-                    padding: "8px 12px",
-                    borderRadius: "6px",
-                    fontWeight: "600"
-                  }}
-                >
-                  {ticket.ticket_number}
-                </Badge>
-              </div>
-            </div>
 
-            <Card.Body style={{ padding: "20px" }}>
-              {/* Passenger Details Section */}
-              <div className="mb-4">
-                <div className="d-flex align-items-center mb-2">
-                  <i className="fas fa-user-circle me-2" style={{ color: THEME.primary }}></i>
-                  <h6 className="fw-bold text-uppercase mb-0" style={{ color: THEME.primary, letterSpacing: "1px" }}>
-                    PASSENGER DETAILS
-                  </h6>
-                </div>
-                <h5 className="fw-bold mb-3">{getPassengerName(ticket)?.toUpperCase()}</h5>
-              </div>
+                <div className="card-body-compact">
+                  {/* Passenger Name and Basic Info */}
+                  <Row className="compact-row">
+                    <Col>
+                      <h5 className="fw-bold mb-1">{getPassengerName(ticket)?.toUpperCase()}</h5>
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <div><small className="text-muted">{ticket.age_group || 'Adult'} • Seat {ticket.seat_number || 'N/A'}</small></div>
+                        <div><small className="text-muted">{date}</small></div>
+                      </div>
+                    </Col>
+                  </Row>
 
-              {/* Trip Details Section */}
-              <Row className="g-3 mb-4">
-                <Col xs={6}>
-                  <div className="d-flex align-items-center mb-2">
-                    <i className="fas fa-anchor me-2" style={{ color: THEME.primary }}></i>
-                    <span className="text-muted">From</span>
-                  </div>
-                  <h6 className="fw-bold">{ticket.trip?.origin || 'Manila Bay'}</h6>
-                </Col>
-                <Col xs={6}>
-                  <div className="d-flex align-items-center mb-2">
-                    <i className="fas fa-map-marker-alt me-2" style={{ color: THEME.primary }}></i>
-                    <span className="text-muted">To</span>
-                  </div>
-                  <h6 className="fw-bold">{ticket.trip?.destination || 'Bataan'}</h6>
-                </Col>
-              </Row>
+                  {/* From - To */}
+                  <Row className="compact-row text-center">
+                    <Col xs={5}>
+                      <h6 className="fw-bold mb-0">{ticket.trip?.origin || 'Manila Bay'}</h6>
+                      <small className="text-muted">{departureTime}</small>
+                    </Col>
+                    <Col xs={2} className="d-flex align-items-center justify-content-center">
+                      <i className="fas fa-arrow-right text-muted"></i>
+                    </Col>
+                    <Col xs={5}>
+                      <h6 className="fw-bold mb-0">{ticket.trip?.destination || 'Bataan'}</h6>
+                      <small className="text-muted">{arrivalTime}</small>
+                    </Col>
+                  </Row>
 
-              {/* Time and Date Section */}
-              <Row className="g-3 mb-4">
-                <Col xs={4}>
-                  <div className="d-flex align-items-center mb-2">
-                    <i className="fas fa-hourglass-start me-2" style={{ color: THEME.primary }}></i>
-                    <span className="text-muted">Departure</span>
-                  </div>
-                  <h6 className="fw-bold">{departureTime}</h6>
-                </Col>
-                <Col xs={4}>
-                  <div className="d-flex align-items-center mb-2">
-                    <i className="fas fa-hourglass-end me-2" style={{ color: THEME.primary }}></i>
-                    <span className="text-muted">Arrival</span>
-                  </div>
-                  <h6 className="fw-bold">{arrivalTime}</h6>
-                </Col>
-                <Col xs={4}>
-                  <div className="d-flex align-items-center mb-2">
-                    <i className="fas fa-calendar-alt me-2" style={{ color: THEME.primary }}></i>
-                    <span className="text-muted">Date</span>
-                  </div>
-                  <h6 className="fw-bold">{date}</h6>
-                </Col>
-              </Row>
-
-              {/* Seat and Type Section */}
-              <Row className="g-3 mb-4">
-                <Col xs={4}>
-                  <div className="d-flex align-items-center mb-2">
-                    <i className="fas fa-chair me-2" style={{ color: THEME.primary }}></i>
-                    <span className="text-muted">Seat</span>
-                  </div>
-                  <h6 className="fw-bold">{ticket.seat_number || '3'}</h6>
-                </Col>
-                <Col xs={4}>
-                  <div className="d-flex align-items-center mb-2">
-                    <i className="fas fa-ship me-2" style={{ color: THEME.primary }}></i>
-                    <span className="text-muted">Ferry</span>
-                  </div>
-                  <h6 className="fw-bold">
-                    {typeof ticket.trip?.ferry_boat === 'object' ? 
+                  {/* Ferry Info */}
+                  <div className="text-center mt-2 mb-2">
+                    <small className="text-muted">Ferry: {
+                      typeof ticket.trip?.ferry_boat === 'object' ? 
                       (ticket.trip.ferry_boat.name || ticket.trip.ferry_boat.slug || 'N/A') : 
                       ticket.trip?.ferry_boat || 'N/A'
-                    }
-                  </h6>
-                </Col>
-                <Col xs={4}>
-                  <div className="d-flex align-items-center mb-2">
-                    <i className="fas fa-user me-2" style={{ color: THEME.primary }}></i>
-                    <span className="text-muted">Type</span>
+                    }</small>
                   </div>
-                  <h6 className="fw-bold text-capitalize">{ticket.age_group || 'Adult'}</h6>
-                </Col>
-              </Row>
 
-              {/* Divider */}
-              <div className="text-center mb-4">
-                <div style={{ 
-                  height: "1px", 
-                  background: `linear-gradient(to right, transparent, ${THEME.primary}80, transparent)`,
-                  margin: "20px 0"
-                }}></div>
-              </div>
-
-              {/* Barcode Section */}
-              <div className="text-center mb-4">
-                <div style={{ 
-                  background: "#fff", 
-                  padding: "15px", 
-                  borderRadius: "8px",
-                  border: `1px solid ${THEME.primary}30`
-                }}>
-                  <Barcode 
-                    value={ticket.ticket_number || `T-${Date.now()}`} 
-                    width={1.5}
-                    height={50}
-                    fontSize={16}
-                    margin={10}
-                    background="#fff"
-                    lineColor={THEME.dark}
-                  />
-                </div>
-              </div>
-
-              {/* Employee Section - Can be cut off when needed */}
-              <div className="mt-5 pt-4 text-center position-relative staff-section">
-                <div className="text-center mb-3" style={{position: "relative"}}>
-                  <div style={{
-                    width: "100%", 
-                    height: "1px", 
-                    background: "#000", 
-                    marginBottom: "10px",
-                    borderBottom: "2px dashed #000"
-                  }}></div>
-                  <span style={{
-                    position: "absolute",
-                    top: "-10px",
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    background: "#fff",
-                    padding: "0 10px",
-                    fontSize: "12px",
-                    color: "#666"
-                  }}>
-                    CUT HERE - STAFF COPY
-                  </span>
-                </div>
-                
-                <div className="staff-copy" style={{padding: "15px", border: "1px solid #ddd", borderRadius: "8px"}}>
-                  <div className="d-flex justify-content-between align-items-center mb-3">
-                    <h6 className="mb-0 fw-bold">TICKET: {ticket.ticket_number}</h6>
-                    <span className="badge rounded-pill" style={{background: THEME.primary, color: "white"}}>
-                      STAFF COPY
-                    </span>
-                  </div>
-                  
-                  <div className="d-flex justify-content-between mb-2">
-                    <span className="text-muted">Passenger:</span>
-                    <span className="fw-bold">{getPassengerName(ticket)}</span>
-                  </div>
-                  
-                  <div className="d-flex justify-content-between mb-2">
-                    <span className="text-muted">Route:</span>
-                    <span className="fw-bold">{ticket.trip?.origin} → {ticket.trip?.destination}</span>
-                  </div>
-                  
-                  <div className="d-flex justify-content-between mb-2">
-                    <span className="text-muted">Seat:</span>
-                    <span className="fw-bold">{ticket.seat_number}</span>
-                  </div>
-                  
-                  <div className="d-flex justify-content-between mb-2">
-                    <span className="text-muted">Type:</span>
-                    <span className="fw-bold text-capitalize">{ticket.age_group}</span>
-                  </div>
-                  
-                  <div className="d-flex justify-content-between mb-2">
-                    <span className="text-muted">Date:</span>
-                    <span className="fw-bold">{date} {departureTime}</span>
-                  </div>
-                  
-                  <div className="text-center mt-3">
+                  {/* Barcode Section */}
+                  <div className="text-center mb-2 compact-barcode">
                     <Barcode 
                       value={ticket.ticket_number || `T-${Date.now()}`} 
                       width={1}
-                      height={30}
+                      height={40}
                       fontSize={10}
                       margin={5}
                       background="#fff"
                       lineColor={THEME.dark}
+                      displayValue={true}
                     />
+                  </div>
+                  
+                  <div className="text-center">
+                    <small>PASSENGER COPY</small>
                   </div>
                 </div>
               </div>
-            </Card.Body>
 
-            <Card.Footer style={{ 
-              background: THEME.primary, 
-              color: "white",
-              textAlign: "center", 
-              padding: "12px"
-            }}>
-              <div className="d-flex justify-content-center align-items-center">
-                <i className="fas fa-ship me-2"></i>
-                <span>Thank you for choosing KCQ Express!</span>
+              {/* Staff Section */}
+              <div className="staff-section">
+                <div style={{ 
+                  background: THEME.primary,
+                  color: "white",
+                  padding: "10px",
+                  borderBottom: `1px solid ${THEME.primary}`
+                }}>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div className="d-flex align-items-center">
+                      <i className="fas fa-ship fa-lg me-2"></i>
+                      <div>
+                        <h4 className="mb-0 fw-bold">KCQ EXPRESS</h4>
+                        <small>Ferry Ticketing System</small>
+                      </div>
+                    </div>
+                    <Badge 
+                      style={{ 
+                        background: "white", 
+                        color: THEME.primary, 
+                        padding: "6px 10px",
+                        borderRadius: "4px",
+                        fontWeight: "600"
+                      }}
+                    >
+                      {ticket.ticket_number}
+                    </Badge>
+                  </div>
+                </div>
+
+                <div className="card-body-compact">
+                  {/* Compact Staff Copy */}
+                  <Row className="compact-row">
+                    <Col xs={12}>
+                      <div className="d-flex justify-content-between mb-1">
+                        <span className="detail-text text-muted">Passenger:</span>
+                        <span className="detail-text fw-bold">{getPassengerName(ticket)}</span>
+                      </div>
+                      
+                      <div className="d-flex justify-content-between mb-1">
+                        <span className="detail-text text-muted">Route:</span>
+                        <span className="detail-text fw-bold">{ticket.trip?.origin} → {ticket.trip?.destination}</span>
+                      </div>
+                      
+                      <div className="d-flex justify-content-between mb-1">
+                        <span className="detail-text text-muted">Time:</span>
+                        <span className="detail-text fw-bold">{departureTime} - {arrivalTime}</span>
+                      </div>
+                      
+                      <div className="d-flex justify-content-between mb-1">
+                        <span className="detail-text text-muted">Date:</span>
+                        <span className="detail-text fw-bold">{date}</span>
+                      </div>
+                      
+                      <div className="d-flex justify-content-between mb-1">
+                        <span className="detail-text text-muted">Seat:</span>
+                        <span className="detail-text fw-bold">{ticket.seat_number}</span>
+                      </div>
+                      
+                      <div className="d-flex justify-content-between mb-1">
+                        <span className="detail-text text-muted">Type:</span>
+                        <span className="detail-text fw-bold text-capitalize">{ticket.age_group}</span>
+                      </div>
+                    </Col>
+                  </Row>
+
+                  {/* Barcode Section */}
+                  <div className="text-center mb-2 compact-barcode">
+                    <Barcode 
+                      value={ticket.ticket_number || `T-${Date.now()}`} 
+                      width={1}
+                      height={40}
+                      fontSize={10}
+                      margin={5}
+                      background="#fff"
+                      lineColor={THEME.dark}
+                      displayValue={true}
+                    />
+                  </div>
+                  
+                  <div className="text-center">
+                    <small>STAFF COPY</small>
+                  </div>
+                </div>
               </div>
-            </Card.Footer>
-          </Card>
+
+              {/* Print Button - Will be hidden during printing */}
+              <div className="text-center mt-3 print-button">
+                <Button 
+                  onClick={handlePrint}
+                  variant="primary"
+                  style={{ 
+                    background: THEME.primary,
+                    border: 'none',
+                    padding: '10px 20px',
+                    borderRadius: '5px',
+                    fontWeight: '600',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  <i className="fas fa-print"></i> Print Ticket
+                </Button>
+              </div>
+            </div>
+          </div>
         );
       })}
     </Container>
