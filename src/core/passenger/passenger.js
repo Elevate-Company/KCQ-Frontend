@@ -25,7 +25,41 @@ function PassengerList() {
         const data = response.data;
         console.log('Response data:', data);
 
-        setPassengers(data.passengers); // Assuming the API returns an object with a 'passengers' array
+        // Fetch boarding status for each passenger's tickets to calculate actual boarded count
+        const passengersWithCheckedTickets = await Promise.all(
+          data.passengers.map(async (passenger) => {
+            try {
+              const ticketsResponse = await axios.get(
+                `${process.env.REACT_APP_API_BASE_URL}/api/passengers/${passenger.id}/tickets/`,
+                {
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Token ${token}`,
+                  },
+                }
+              );
+              
+              // Count only tickets that are CHECKED_IN or BOARDED
+              const checkedInOrBoardedTickets = ticketsResponse.data.filter(
+                ticket => ticket.passenger?.boarding_status === 'CHECKED_IN' || 
+                           ticket.passenger?.boarding_status === 'BOARDED'
+              );
+              
+              return {
+                ...passenger,
+                total_checked_tickets: checkedInOrBoardedTickets.length,
+              };
+            } catch (error) {
+              console.error(`Error fetching tickets for passenger ${passenger.id}:`, error);
+              return {
+                ...passenger,
+                total_checked_tickets: 0,
+              };
+            }
+          })
+        );
+
+        setPassengers(passengersWithCheckedTickets);
       } catch (error) {
         console.error('Error fetching passengers:', error);
         setError('Failed to fetch passengers');
@@ -116,7 +150,7 @@ function PassengerList() {
                       <td>{passenger.name}</td>
                       <td>{passenger.email}</td>
                       <td>{passenger.phone || passenger.contact}</td>
-                      <td>{passenger.total_bookings}</td>
+                      <td>{passenger.total_checked_tickets || 0}</td>
                       <td>{new Date(passenger.updated_at).toLocaleDateString()}</td>
                       <td>
                         <span

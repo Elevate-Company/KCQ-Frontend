@@ -187,7 +187,12 @@ const Ticket = () => {
                     <i className="fas fa-ship me-2" style={{ color: THEME.primary }}></i>
                     <span className="text-muted">Ferry</span>
                   </div>
-                  <h6 className="fw-bold">{ticket.trip?.ferry_boat?.name || 'N/A'}</h6>
+                  <h6 className="fw-bold">
+                    {typeof ticket.trip?.ferry_boat === 'object' ? 
+                      (ticket.trip.ferry_boat.name || ticket.trip.ferry_boat.slug || 'N/A') : 
+                      ticket.trip?.ferry_boat || 'N/A'
+                    }
+                  </h6>
                 </Col>
                 <Col xs={4}>
                   <div className="d-flex align-items-center mb-2">
@@ -205,21 +210,6 @@ const Ticket = () => {
                   background: `linear-gradient(to right, transparent, ${THEME.primary}80, transparent)`,
                   margin: "20px 0"
                 }}></div>
-              </div>
-
-              {/* Company Logo Section */}
-              <div className="text-center mb-4">
-                <div className="d-flex justify-content-center align-items-center" style={{
-                  background: THEME.primary,
-                  padding: "15px",
-                  borderRadius: "8px"
-                }}>
-                  <i className="fas fa-ship fa-2x me-2" style={{ color: "white" }}></i>
-                  <div>
-                    <h3 className="fw-bold mb-0 text-white">KCQ</h3>
-                    <h5 className="fw-bold text-uppercase" style={{ color: "white" }}>EXPRESS</h5>
-                  </div>
-                </div>
               </div>
 
               {/* Barcode Section */}
@@ -242,87 +232,75 @@ const Ticket = () => {
                 </div>
               </div>
 
-              {/* Payment Information Section */}
-              <div className="mb-4">
-                <div className="d-flex align-items-center mb-3">
-                  <i className="fas fa-credit-card me-2" style={{ color: THEME.primary }}></i>
-                  <h6 className="fw-bold text-uppercase mb-0" style={{ color: THEME.primary, letterSpacing: "1px" }}>
-                    PAYMENT INFORMATION
-                  </h6>
+              {/* Employee Section - Can be cut off when needed */}
+              <div className="mt-5 pt-4 text-center position-relative staff-section">
+                <div className="text-center mb-3" style={{position: "relative"}}>
+                  <div style={{
+                    width: "100%", 
+                    height: "1px", 
+                    background: "#000", 
+                    marginBottom: "10px",
+                    borderBottom: "2px dashed #000"
+                  }}></div>
+                  <span style={{
+                    position: "absolute",
+                    top: "-10px",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    background: "#fff",
+                    padding: "0 10px",
+                    fontSize: "12px",
+                    color: "#666"
+                  }}>
+                    CUT HERE - STAFF COPY
+                  </span>
                 </div>
                 
-                <Row className="g-3 mb-3">
-                  <Col xs={6}>
-                    <div className="d-flex align-items-center">
-                      {getPaymentMethodIcon(ticket.payment_method)}
-                      <div className="ms-2">
-                        <small className="text-muted d-block">Method</small>
-                        <h6 className="mb-0 fw-bold">{ticket.payment_method || 'CASH'}</h6>
-                      </div>
-                    </div>
-                  </Col>
-                  <Col xs={6}>
-                    <div className="d-flex align-items-center">
-                      <i className="fas fa-tag me-2" style={{ color: THEME.primary }}></i>
-                      <div>
-                        <small className="text-muted d-block">Price</small>
-                        <h6 className="mb-0 fw-bold">PHP {ticket.price || '400.00'}</h6>
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
-              </div>
-
-              {/* Additional Info Section */}
-              <div>
-                <div className="d-flex align-items-center mb-3">
-                  <i className="fas fa-info-circle me-2" style={{ color: THEME.primary }}></i>
-                  <h6 className="fw-bold text-uppercase mb-0" style={{ color: THEME.primary, letterSpacing: "1px" }}>
-                    ADDITIONAL INFO
-                  </h6>
+                <div className="staff-copy" style={{padding: "15px", border: "1px solid #ddd", borderRadius: "8px"}}>
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <h6 className="mb-0 fw-bold">TICKET: {ticket.ticket_number}</h6>
+                    <span className="badge rounded-pill" style={{background: THEME.primary, color: "white"}}>
+                      STAFF COPY
+                    </span>
+                  </div>
+                  
+                  <div className="d-flex justify-content-between mb-2">
+                    <span className="text-muted">Passenger:</span>
+                    <span className="fw-bold">{getPassengerName(ticket)}</span>
+                  </div>
+                  
+                  <div className="d-flex justify-content-between mb-2">
+                    <span className="text-muted">Route:</span>
+                    <span className="fw-bold">{ticket.trip?.origin} → {ticket.trip?.destination}</span>
+                  </div>
+                  
+                  <div className="d-flex justify-content-between mb-2">
+                    <span className="text-muted">Seat:</span>
+                    <span className="fw-bold">{ticket.seat_number}</span>
+                  </div>
+                  
+                  <div className="d-flex justify-content-between mb-2">
+                    <span className="text-muted">Type:</span>
+                    <span className="fw-bold text-capitalize">{ticket.age_group}</span>
+                  </div>
+                  
+                  <div className="d-flex justify-content-between mb-2">
+                    <span className="text-muted">Date:</span>
+                    <span className="fw-bold">{date} {departureTime}</span>
+                  </div>
+                  
+                  <div className="text-center mt-3">
+                    <Barcode 
+                      value={ticket.ticket_number || `T-${Date.now()}`} 
+                      width={1}
+                      height={30}
+                      fontSize={10}
+                      margin={5}
+                      background="#fff"
+                      lineColor={THEME.dark}
+                    />
+                  </div>
                 </div>
-                
-                <Row className="g-3 mb-3">
-                  <Col xs={6}>
-                    <div className="d-flex align-items-center">
-                      <i className="fas fa-percentage me-2" style={{ color: THEME.primary }}></i>
-                      <div>
-                        <small className="text-muted d-block">Discount</small>
-                        <h6 className="mb-0 fw-bold">PHP {ticket.discount || '0.00'}</h6>
-                      </div>
-                    </div>
-                  </Col>
-                  <Col xs={6}>
-                    <div className="d-flex align-items-center">
-                      <i className="fas fa-suitcase me-2" style={{ color: THEME.primary }}></i>
-                      <div>
-                        <small className="text-muted d-block">Baggage</small>
-                        <h6 className="mb-0 fw-bold">{ticket.baggage_ticket ? 'Yes' : 'No'}</h6>
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
-
-                <Row className="g-3">
-                  <Col xs={6}>
-                    <div className="d-flex align-items-center">
-                      <i className="fas fa-user-check me-2" style={{ color: THEME.primary }}></i>
-                      <div>
-                        <small className="text-muted d-block">Status</small>
-                        <h6 className="mb-0 fw-bold">{ticket.passenger?.boarding_status || 'NOT_CHECKED_IN'}</h6>
-                      </div>
-                    </div>
-                  </Col>
-                  <Col xs={6}>
-                    <div className="d-flex align-items-center">
-                      <i className="fas fa-calendar-check me-2" style={{ color: THEME.primary }}></i>
-                      <div>
-                        <small className="text-muted d-block">Issue Date</small>
-                        <h6 className="mb-0 fw-bold">{moment(ticket.issue_date).format('MM/DD/YYYY')}</h6>
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
               </div>
             </Card.Body>
 

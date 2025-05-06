@@ -361,80 +361,149 @@ function Checkout() {
               </div>
               <div className="card-body">
                 <div className="payment-options mb-4">
-                  <div className="form-check mb-3 p-2" style={{ 
-                    borderRadius: "8px", 
-                    background: paymentMethod === 'CASH' ? THEME.accent : 'transparent',
-                    border: paymentMethod === 'CASH' ? `1px solid ${THEME.primary}30` : 'none'
-                  }}>
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      name="paymentMethod"
-                      id="cashOption"
-                      value="CASH"
-                      checked={paymentMethod === 'CASH'}
-                      onChange={() => setPaymentMethod('CASH')}
-                      style={{ borderColor: THEME.primary }}
-                    />
-                    <label className="form-check-label d-flex align-items-center w-100" htmlFor="cashOption">
-                      <span className="payment-icon me-3" style={{ width: '30px', textAlign: 'center' }}>
-                        <i className="fas fa-money-bill-wave fs-5" style={{ color: THEME.success }}></i>
-                      </span>
-                      <span className="fw-medium">Cash</span>
-                    </label>
+                  <div 
+                    className={`payment-option mb-3 p-3 d-flex align-items-center ${paymentMethod === 'CASH' ? 'active' : ''}`}
+                    style={{ 
+                      borderRadius: "12px", 
+                      background: paymentMethod === 'CASH' ? `${THEME.accent}` : '#f8f9fa',
+                      border: `1px solid ${paymentMethod === 'CASH' ? THEME.primary : '#e9ecef'}`,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onClick={() => setPaymentMethod('CASH')}
+                  >
+                    <div className="payment-radio me-3">
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="paymentMethod"
+                          id="cashOption"
+                          value="CASH"
+                          checked={paymentMethod === 'CASH'}
+                          onChange={() => setPaymentMethod('CASH')}
+                          style={{ 
+                            borderColor: THEME.primary,
+                            width: '20px',
+                            height: '20px'
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="payment-icon me-3 d-flex justify-content-center align-items-center" 
+                      style={{ 
+                        width: '40px', 
+                        height: '40px', 
+                        borderRadius: '10px',
+                        background: paymentMethod === 'CASH' ? THEME.primary : '#e9ecef',
+                        color: paymentMethod === 'CASH' ? 'white' : THEME.success
+                      }}
+                    >
+                      <i className="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div className="payment-text">
+                      <h6 className="mb-0 fw-bold">Cash</h6>
+                      <small className="text-muted">Pay with cash on checkout</small>
+                    </div>
                   </div>
                   
-                  <div className="form-check mb-3 p-2" style={{ 
-                    borderRadius: "8px", 
-                    background: paymentMethod === 'GCASH' ? THEME.accent : 'transparent',
-                    border: paymentMethod === 'GCASH' ? `1px solid ${THEME.primary}30` : 'none'
-                  }}>
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      name="paymentMethod"
-                      id="gcashOption"
-                      value="GCASH"
-                      checked={paymentMethod === 'GCASH'}
-                      onChange={() => setPaymentMethod('GCASH')}
-                      style={{ borderColor: THEME.primary }}
-                    />
-                    <label className="form-check-label d-flex align-items-center w-100" htmlFor="gcashOption">
-                      <span className="payment-icon me-3" style={{ width: '30px', textAlign: 'center' }}>
-                        <i className="fas fa-mobile-alt fs-5" style={{ color: THEME.primary }}></i>
-                      </span>
-                      <span className="fw-medium">GCash</span>
-                    </label>
+                  <div 
+                    className={`payment-option mb-3 p-3 d-flex align-items-center ${paymentMethod === 'GCASH' ? 'active' : ''}`}
+                    style={{ 
+                      borderRadius: "12px", 
+                      background: paymentMethod === 'GCASH' ? `${THEME.accent}` : '#f8f9fa',
+                      border: `1px solid ${paymentMethod === 'GCASH' ? THEME.primary : '#e9ecef'}`,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onClick={() => setPaymentMethod('GCASH')}
+                  >
+                    <div className="payment-radio me-3">
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="paymentMethod"
+                          id="gcashOption"
+                          value="GCASH"
+                          checked={paymentMethod === 'GCASH'}
+                          onChange={() => setPaymentMethod('GCASH')}
+                          style={{ 
+                            borderColor: THEME.primary,
+                            width: '20px',
+                            height: '20px'
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="payment-icon me-3 d-flex justify-content-center align-items-center" 
+                      style={{ 
+                        width: '40px', 
+                        height: '40px', 
+                        borderRadius: '10px',
+                        background: paymentMethod === 'GCASH' ? '#0074de' : '#e9ecef',
+                        color: 'white'
+                      }}
+                    >
+                      <i className="fas fa-mobile-alt"></i>
+                    </div>
+                    <div className="payment-text">
+                      <h6 className="mb-0 fw-bold">GCash</h6>
+                      <small className="text-muted">Pay with GCash e-wallet</small>
+                    </div>
                   </div>
                   
-                  <div className="form-check mb-3 p-2" style={{ 
-                    borderRadius: "8px", 
-                    background: paymentMethod === 'MAYA' ? THEME.accent : 'transparent',
-                    border: paymentMethod === 'MAYA' ? `1px solid ${THEME.primary}30` : 'none'
-                  }}>
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      name="paymentMethod"
-                      id="mayaOption"
-                      value="MAYA"
-                      checked={paymentMethod === 'MAYA'}
-                      onChange={() => setPaymentMethod('MAYA')}
-                      style={{ borderColor: THEME.primary }}
-                    />
-                    <label className="form-check-label d-flex align-items-center w-100" htmlFor="mayaOption">
-                      <span className="payment-icon me-3" style={{ width: '30px', textAlign: 'center' }}>
-                        <i className="fas fa-credit-card fs-5" style={{ color: THEME.danger }}></i>
-                      </span>
-                      <span className="fw-medium">Maya</span>
-                    </label>
+                  <div 
+                    className={`payment-option mb-3 p-3 d-flex align-items-center ${paymentMethod === 'MAYA' ? 'active' : ''}`}
+                    style={{ 
+                      borderRadius: "12px", 
+                      background: paymentMethod === 'MAYA' ? `${THEME.accent}` : '#f8f9fa',
+                      border: `1px solid ${paymentMethod === 'MAYA' ? THEME.primary : '#e9ecef'}`,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onClick={() => setPaymentMethod('MAYA')}
+                  >
+                    <div className="payment-radio me-3">
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="paymentMethod"
+                          id="mayaOption"
+                          value="MAYA"
+                          checked={paymentMethod === 'MAYA'}
+                          onChange={() => setPaymentMethod('MAYA')}
+                          style={{ 
+                            borderColor: THEME.primary,
+                            width: '20px',
+                            height: '20px'
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="payment-icon me-3 d-flex justify-content-center align-items-center" 
+                      style={{ 
+                        width: '40px', 
+                        height: '40px', 
+                        borderRadius: '10px',
+                        background: paymentMethod === 'MAYA' ? '#5cc16c' : '#e9ecef',
+                        color: 'white'
+                      }}
+                    >
+                      <i className="fas fa-credit-card"></i>
+                    </div>
+                    <div className="payment-text">
+                      <h6 className="mb-0 fw-bold">Maya</h6>
+                      <small className="text-muted">Pay with Maya payment app</small>
+                    </div>
                   </div>
                 </div>
 
-                <div className="payment-details p-3" style={{ 
-                  background: THEME.accent, 
-                  borderRadius: "8px",
-                  border: `1px solid ${THEME.primary}30` 
+                <div className="payment-details p-4" style={{ 
+                  background: '#f8f9fa', 
+                  borderRadius: "12px",
+                  border: `1px solid #e9ecef` 
                 }}>
                   {paymentMethod === 'CASH' ? (
                     <div className="mb-3">

@@ -4,6 +4,7 @@ import '../../css/issueticket/issueticket.css';
 import SelectTrip from './selectrip';
 import axios from 'axios';
 import Navbar from '../navbar/navbar';
+import { toast } from 'react-toastify';
 
 function IssueTicket() {
   const [trips, setTrips] = useState([]);
@@ -141,31 +142,37 @@ function IssueTicket() {
   const handleAddTicket = () => {
     const storedPassenger = JSON.parse(localStorage.getItem('selectedPassenger'));
     if (!storedPassenger) {
-      alert('Please select a passenger.');
+      toast.error('Please select a passenger.');
       return;
     }
 
     if (!storedPassenger.id) {
-      alert('Invalid passenger data. Please select a passenger again.');
+      toast.error('Invalid passenger data. Please select a passenger again.');
       return;
     }
 
     if (!ticketNumber.trim()) {
-      alert('Ticket number is required.');
+      toast.error('Ticket number is required.');
       return;
     }
 
     if (!seatNumber.trim()) {
-      alert('Seat number is required.');
+      toast.error('Seat number is required.');
       return;
     }
 
     const selectedTrip = JSON.parse(localStorage.getItem('selectedTrip'));
-    if (!selectedTrip) {
-      alert('Please select a trip.');
+    if (!selectedTrip || !selectedTrip.id) {
+      toast.error('Please select a trip before adding a ticket.');
       return;
     }
 
+    // Verify that the trip has the necessary data
+    if (!selectedTrip.origin || !selectedTrip.destination || !selectedTrip.departure_time) {
+      toast.error('Selected trip has incomplete information. Please select another trip.');
+      return;
+    }
+    
     const newTicket = {
       passenger: {
         ...storedPassenger,
@@ -183,6 +190,7 @@ function IssueTicket() {
     // Verify the passenger ID is present in the ticket data
     console.log('Creating ticket with passenger ID:', storedPassenger.id);
     setTickets([newTicket]);
+    toast.success('Ticket added successfully!');
 
     setPassengerName('');
     setPassengerEmail('');

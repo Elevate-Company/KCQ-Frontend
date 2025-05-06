@@ -78,7 +78,7 @@ function TicketCard() {
                 } = ticket;
 
                 const capacity = ticket.trip.available_seats;
-                const typeBoat = ferry_boat.slug;
+                const typeBoat = typeof ferry_boat === 'object' ? (ferry_boat.name || ferry_boat.slug || 'N/A') : (ferry_boat || 'N/A');
 
                 return (
                   <tr key={ticket_number}>
