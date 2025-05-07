@@ -203,16 +203,16 @@ function TicketDetails() {
                           <td className="fw-medium">{ticket.passenger?.name || 'N/A'}</td>
                         </tr>
                         <tr>
-                          <td className="text-muted">Contact Number</td>
-                          <td className="fw-medium">{ticket.passenger?.contact_number || 'N/A'}</td>
+                          <td className="text-muted">Passenger Phone</td>
+                          <td className="fw-medium">{ticket.passenger?.phone || 'N/A'}</td>
                         </tr>
                         <tr>
                           <td className="text-muted">Email</td>
                           <td className="fw-medium">{ticket.passenger?.email || 'N/A'}</td>
                         </tr>
                         <tr>
-                          <td className="text-muted">ID Number</td>
-                          <td className="fw-medium">{ticket.passenger?.id_number || 'N/A'}</td>
+                          <td className="text-muted">Passenger ID</td>
+                          <td className="fw-medium">{ticket.passenger?.id || 'N/A'}</td>
                         </tr>
                       </tbody>
                     </Table>
@@ -237,10 +237,10 @@ function TicketDetails() {
                           <td className="fw-medium">{ticket.trip?.destination || 'N/A'}</td>
                         </tr>
                         <tr>
-                          <td className="text-muted">Ferry</td>
+                          <td className="text-muted">Boat Type</td>
                           <td className="fw-medium">
                             {typeof ticket.trip?.ferry_boat === 'object' 
-                              ? (ticket.trip.ferry_boat.name || 'N/A') 
+                              ? (ticket.trip.ferry_boat.slug || 'N/A') 
                               : (ticket.trip?.ferry_boat || 'N/A')}
                           </td>
                         </tr>
@@ -267,8 +267,35 @@ function TicketDetails() {
                           </td>
                         </tr>
                         <tr>
+                          <td className="text-muted">Arrival Date</td>
+                          <td className="fw-medium">
+                            {ticket.trip?.arrival_time 
+                              ? new Date(ticket.trip.arrival_time).toLocaleDateString() 
+                              : 'N/A'}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="text-muted">Arrival Time</td>
+                          <td className="fw-medium">
+                            {ticket.trip?.arrival_time 
+                              ? new Date(ticket.trip.arrival_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) 
+                              : 'N/A'}
+                          </td>
+                        </tr>
+                        <tr>
                           <td className="text-muted">Duration</td>
-                          <td className="fw-medium">{ticket.trip?.duration || 'N/A'}</td>
+                          <td className="fw-medium">
+                            {ticket.trip?.departure_time && ticket.trip?.arrival_time 
+                              ? (() => {
+                                  const departureTime = new Date(ticket.trip.departure_time);
+                                  const arrivalTime = new Date(ticket.trip.arrival_time);
+                                  const duration = (arrivalTime - departureTime) / (1000 * 60); // Convert to minutes
+                                  const hours = Math.floor(duration / 60);
+                                  const minutes = Math.floor(duration % 60);
+                                  return `${hours}h ${minutes}m`;
+                                })()
+                              : 'N/A'}
+                          </td>
                         </tr>
                       </tbody>
                     </Table>

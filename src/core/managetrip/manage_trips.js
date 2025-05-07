@@ -152,7 +152,7 @@ function ManageTrips() {
             <input
               type="text"
               className="search-input-trip"
-              placeholder="Search trips..."
+              placeholder="Search trips and boats type..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
