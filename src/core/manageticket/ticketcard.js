@@ -29,13 +29,11 @@ function TicketCard({ ticket }) {
   // Quick status check for badge color
   const getBadgeClass = (status) => {
     switch(status) {
-      case 'CHECKED_IN':
-        return 'badge bg-success';
       case 'BOARDED':
-        return 'badge bg-primary';
+        return 'badge bg-success';
       case 'CANCELLED':
         return 'badge bg-danger';
-      case 'NOT_CHECKED_IN':
+      case 'NOT_BOARDED':
       default:
         return 'badge bg-warning';
     }
@@ -56,6 +54,20 @@ function TicketCard({ ticket }) {
   // Update the boarding status with the ticket number to ensure only this ticket's status is updated
   const updateBoardingStatus = async () => {
     if (!ticket?.passenger?.id || selectedStatus === currentStatus) {
+      setShowStatusModal(false);
+      return;
+    }
+    
+    // Don't allow changing from BOARDED to any other status
+    if (currentStatus === 'BOARDED' && selectedStatus !== 'BOARDED') {
+      toast.error('Cannot change status once BOARDED');
+      setShowStatusModal(false);
+      return;
+    }
+    
+    // Only allow changing from NOT_BOARDED to CANCELLED, not to BOARDED manually
+    if (currentStatus === 'NOT_BOARDED' && selectedStatus === 'BOARDED') {
+      toast.error('Boarding must be done via ticket scan only');
       setShowStatusModal(false);
       return;
     }
@@ -82,7 +94,7 @@ function TicketCard({ ticket }) {
       toast.success('Boarding status updated successfully');
     } catch (error) {
       console.error('Error updating boarding status:', error);
-      toast.error('Failed to update boarding status');
+      toast.error(error.response?.data?.detail || 'Failed to update boarding status');
     } finally {
       setLoading(false);
     }
@@ -216,28 +228,17 @@ function TicketCard({ ticket }) {
             <Form.Group controlId="boardingStatus">
               <Form.Label>Select new status:</Form.Label>
               <div className="status-options">
-                <div className={`status-option ${selectedStatus === 'NOT_CHECKED_IN' ? 'selected' : ''}`}>
+                <div className={`status-option ${selectedStatus === 'NOT_BOARDED' ? 'selected' : ''}`}>
                   <Form.Check
                     type="radio"
-                    id="status-not-checked-in"
+                    id="status-not-boarded"
                     name="boardingStatus"
-                    checked={selectedStatus === 'NOT_CHECKED_IN'}
-                    onChange={() => setSelectedStatus('NOT_CHECKED_IN')}
+                    checked={selectedStatus === 'NOT_BOARDED'}
+                    onChange={() => setSelectedStatus('NOT_BOARDED')}
+                    disabled={currentStatus === 'BOARDED'}
                   />
-                  <label htmlFor="status-not-checked-in" className="ms-2">
-                    <span className="badge bg-warning">NOT CHECKED IN</span>
-                  </label>
-                </div>
-                <div className={`status-option ${selectedStatus === 'CHECKED_IN' ? 'selected' : ''}`}>
-                  <Form.Check
-                    type="radio"
-                    id="status-checked-in"
-                    name="boardingStatus"
-                    checked={selectedStatus === 'CHECKED_IN'}
-                    onChange={() => setSelectedStatus('CHECKED_IN')}
-                  />
-                  <label htmlFor="status-checked-in" className="ms-2">
-                    <span className="badge bg-success">CHECKED IN</span>
+                  <label htmlFor="status-not-boarded" className="ms-2">
+                    <span className="badge bg-warning">NOT BOARDED</span>
                   </label>
                 </div>
                 <div className={`status-option ${selectedStatus === 'BOARDED' ? 'selected' : ''}`}>
@@ -247,9 +248,11 @@ function TicketCard({ ticket }) {
                     name="boardingStatus"
                     checked={selectedStatus === 'BOARDED'}
                     onChange={() => setSelectedStatus('BOARDED')}
+                    disabled={true}
                   />
                   <label htmlFor="status-boarded" className="ms-2">
-                    <span className="badge bg-primary">BOARDED</span>
+                    <span className="badge bg-success">BOARDED</span>
+                    <small className="text-muted ms-2">(Only via scan)</small>
                   </label>
                 </div>
                 <div className={`status-option ${selectedStatus === 'CANCELLED' ? 'selected' : ''}`}>
@@ -259,6 +262,7 @@ function TicketCard({ ticket }) {
                     name="boardingStatus"
                     checked={selectedStatus === 'CANCELLED'}
                     onChange={() => setSelectedStatus('CANCELLED')}
+                    disabled={currentStatus === 'BOARDED'}
                   />
                   <label htmlFor="status-cancelled" className="ms-2">
                     <span className="badge bg-danger">CANCELLED</span>

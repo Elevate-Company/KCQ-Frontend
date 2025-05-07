@@ -54,16 +54,13 @@ function TicketDetails() {
 
   const getBoardingStatusColor = (status) => {
     switch(status) {
-      case 'CHECKED_IN':
-        return THEME.success;
       case 'BOARDED':
-        return THEME.primary;
-      case 'NOT_CHECKED_IN':
-        return THEME.warning;
+        return THEME.success;
       case 'CANCELLED':
         return THEME.danger;
+      case 'NOT_BOARDED':
       default:
-        return '#6c757d'; // Gray
+        return THEME.warning; // Yellow
     }
   };
 

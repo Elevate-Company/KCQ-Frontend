@@ -6,11 +6,9 @@ import "../css/passenger/addpassenger.css"; // Import the CSS file
 function AddPassenger() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [contact, setContact] = useState("");
   const [phone, setPhone] = useState("");
   const [totalBookings, setTotalBookings] = useState(0);
-  const [boardingStatus, setBoardingStatus] = useState("NOT_CHECKED_IN");
-  const [isDelete, setIsDelete] = useState(false);
+  const [boardingStatus, setBoardingStatus] = useState("NOT_BOARDED");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -20,11 +18,9 @@ function AddPassenger() {
     const passengerData = {
       name,
       email,
-      contact,
       phone,
       total_bookings: totalBookings,
       boarding_status: boardingStatus,
-      is_delete: isDelete,
     };
 
     try {
@@ -52,11 +48,9 @@ function AddPassenger() {
       // Clear the input fields
       setName("");
       setEmail("");
-      setContact("");
       setPhone("");
       setTotalBookings(0);
-      setBoardingStatus("NOT_CHECKED_IN");
-      setIsDelete(false);
+      setBoardingStatus("NOT_BOARDED");
     } catch (error) {
       setError("Failed to add passenger");
       setSuccess("");
@@ -101,19 +95,6 @@ function AddPassenger() {
               />
             </div>
             <div className="mb-3">
-              <label htmlFor="contact" className="form-label">
-                Contact
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="contact"
-                value={contact}
-                onChange={(e) => setContact(e.target.value)}
-                required
-              />
-            </div>
-            <div className="mb-3">
               <label htmlFor="phone" className="form-label">
                 Phone
               </label>
@@ -123,6 +104,7 @@ function AddPassenger() {
                 id="phone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
+                required
               />
             </div>
             <div className="mb-3">
@@ -147,25 +129,11 @@ function AddPassenger() {
                 id="boardingStatus"
                 value={boardingStatus}
                 onChange={(e) => setBoardingStatus(e.target.value)}
-                required
+                disabled
               >
-                <option value="NOT_CHECKED_IN">NOT_CHECKED_IN</option>
-                <option value="CHECKED_IN">CHECKED_IN</option>
-                <option value="BOARDING">BOARDING</option>
-                <option value="MISSED">MISSED</option>
+                <option value="NOT_BOARDED">Not Boarded</option>
               </select>
-            </div>
-            <div className="form-check mb-4">
-              <input
-                type="checkbox"
-                className="form-check-input small-checkbox"
-                id="isDelete"
-                checked={isDelete}
-                onChange={(e) => setIsDelete(e.target.checked)}
-              />
-              <label className="form-check-label" htmlFor="isDelete">
-                Is Deleted?
-              </label>
+              <small className="text-muted">New passengers can only have 'Not Boarded' status</small>
             </div>
             <button type="submit" className="btn btn-success w-100">
               Add Passenger

@@ -62,7 +62,6 @@ function Checkout() {
           passenger: {
             ...ticket.passenger,
             total_bookings: ticket.passenger?.total_bookings || 0,
-            is_delete: ticket.passenger?.is_delete || false,
             boarding_status: ticket.passenger?.boarding_status || 'NOT_CHECKED_IN',
             created_by: usernameID || 'Unknown',
           },

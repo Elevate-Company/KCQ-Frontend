@@ -3,11 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../navbar/navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
-
+import { toast } from 'react-toastify';
+import { Modal, Button } from 'react-bootstrap';
 
 function PassengerList() {
   const [passengers, setPassengers] = useState([]);
   const [error, setError] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [passengerToDelete, setPassengerToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,41 +29,14 @@ function PassengerList() {
         const data = response.data;
         console.log('Response data:', data);
 
-        // Fetch boarding status for each passenger's tickets to calculate actual boarded count
-        const passengersWithCheckedTickets = await Promise.all(
-          data.passengers.map(async (passenger) => {
-            try {
-              const ticketsResponse = await axios.get(
-                `${process.env.REACT_APP_API_BASE_URL}/api/passengers/${passenger.id}/tickets/`,
-                {
-                  headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Token ${token}`,
-                  },
-                }
-              );
-              
-              // Count only tickets that are CHECKED_IN or BOARDED
-              const checkedInOrBoardedTickets = ticketsResponse.data.filter(
-                ticket => ticket.passenger?.boarding_status === 'CHECKED_IN' || 
-                           ticket.passenger?.boarding_status === 'BOARDED'
-              );
-              
-              return {
-                ...passenger,
-                total_checked_tickets: checkedInOrBoardedTickets.length,
-              };
-            } catch (error) {
-              console.error(`Error fetching tickets for passenger ${passenger.id}:`, error);
-              return {
-                ...passenger,
-                total_checked_tickets: 0,
-              };
-            }
-          })
-        );
+        // Map passengers, but don't try to fetch tickets - just set total_checked_tickets to 0
+        // This avoids the 404 errors since the endpoint doesn't exist
+        const passengersWithDefaultTickets = data.passengers.map(passenger => ({
+          ...passenger,
+          total_checked_tickets: 0
+        }));
 
-        setPassengers(passengersWithCheckedTickets);
+        setPassengers(passengersWithDefaultTickets);
       } catch (error) {
         console.error('Error fetching passengers:', error);
         setError('Failed to fetch passengers');
@@ -69,23 +46,40 @@ function PassengerList() {
     fetchPassengers();
   }, []);
 
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this passenger?');
-    if (!confirmDelete) return;
+  const openDeleteModal = (passenger) => {
+    setPassengerToDelete(passenger);
+    setShowDeleteModal(true);
+  };
 
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+    setPassengerToDelete(null);
+  };
+
+  const handleDelete = async () => {
+    if (!passengerToDelete) return;
+    
+    setIsDeleting(true);
     const token = localStorage.getItem('accessToken');
+    
     try {
-      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/passengers/${id}`, {
+      const response = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/passengers/${passengerToDelete.id}/`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Token ${token}`,
         },
       });
 
-      setPassengers(passengers.filter(passenger => passenger.id !== id));
+      // Since the passenger is not actually deleted in the backend, don't remove it from the list
+      // Just show the success message to inform the user
+      toast.info(response.data.detail || "Delete request has been logged for admin review");
+      closeDeleteModal();
     } catch (error) {
-      console.error('Error deleting passenger:', error);
-      setError('Failed to delete passenger');
+      console.error('Error processing passenger delete request:', error);
+      toast.error(error.response?.data?.detail || "Failed to process delete request");
+      setError('Failed to process delete request');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -155,14 +149,16 @@ function PassengerList() {
                       <td>
                         <span
                           className={`badge ${
-                            passenger.boarding_status === 'Boarded'
+                            passenger.boarding_status === 'BOARDED'
                               ? 'bg-success'
-                              : passenger.boarding_status === 'In Transit'
+                              : passenger.boarding_status === 'NOT_BOARDED'
                               ? 'bg-warning text-dark'
+                              : passenger.boarding_status === 'CANCELLED'
+                              ? 'bg-danger'
                               : 'bg-secondary'
                           }`}
                         >
-                          {passenger.boarding_status}
+                          {passenger.boarding_status?.replace(/_/g, ' ') || 'N/A'}
                         </span>
                       </td>
                       <td>
@@ -174,11 +170,11 @@ function PassengerList() {
                           View
                         </button>
                         <button
-                          className="btn btn-danger btn-sm p-1"
+                          className="btn btn-warning btn-sm p-1"
                           style={{ fontSize: '0.60rem' }}
-                          onClick={() => handleDelete(passenger.id)}
+                          onClick={() => openDeleteModal(passenger)}
                         >
-                          Delete
+                          Request Delete
                         </button>
                       </td>
                     </tr>
@@ -190,6 +186,38 @@ function PassengerList() {
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <Modal show={showDeleteModal} onHide={closeDeleteModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Request Passenger Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {passengerToDelete && (
+            <div>
+              <p>
+                Are you sure you want to request deletion of passenger <strong>{passengerToDelete.name}</strong>?
+              </p>
+              <p>
+                <strong>Note:</strong> This will not immediately delete the passenger. 
+                The request will be logged for administrator review.
+              </p>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={closeDeleteModal}>
+            Cancel
+          </Button>
+          <Button 
+            variant="danger" 
+            onClick={handleDelete}
+            disabled={isDeleting}
+          >
+            {isDeleting ? 'Submitting...' : 'Submit Request'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
