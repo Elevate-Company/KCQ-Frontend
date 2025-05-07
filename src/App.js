@@ -23,6 +23,7 @@ import Logs from './core/logs/logs';
 import NeedHelp from './core/help/needhelp'; 
 import AddPassenger from './core/addpassenger';
 import Ticket from './core/issueticket/ticket';
+import Scanner from './core/scanner/scanner';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const isAuthenticated = () => localStorage.getItem('accessToken');
@@ -79,6 +80,7 @@ function App() {
                     <Route path="need-help" element={<NeedHelp />} /> 
                     <Route path="add-passenger" element={<AddPassenger />} /> 
                     <Route path="ticket" element={<Ticket />} />
+                    <Route path="scanner" element={<Scanner />} />
                 </Route>
             </Routes>
         </Router>

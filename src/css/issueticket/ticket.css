@@ -55,9 +55,17 @@
   margin: 10px 0 !important;
 }
 
-/* Smaller barcodes */
-.compact-barcode svg {
-  max-height: 40px !important;
+/* Smaller QR codes */
+.compact-qrcode svg {
+  max-height: 100px !important;
+  image-rendering: -webkit-optimize-contrast !important;
+  image-rendering: crisp-edges !important;
+}
+
+/* QR code background and padding */
+.compact-qrcode {
+  background-color: white !important;
+  padding: 8px !important;
 }
   
 /* Thermal Printer Specific Styles */
@@ -127,10 +135,12 @@
     padding: 0 !important;
   }
   
-  /* Optimize barcode for thermal printer */
+  /* Optimize QR code for thermal printer */
   .printable-ticket svg {
     max-width: 100% !important;
-    height: 30px !important;
+    height: auto !important;
+    image-rendering: -webkit-optimize-contrast !important;
+    image-rendering: crisp-edges !important;
   }
   
   /* Optimize space by reducing padding */

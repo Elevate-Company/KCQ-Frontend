@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import moment from "moment";
 import axios from 'axios';
-import Barcode from 'react-barcode';
+import QRCode from 'qrcode.react';
 import '../../css/issueticket/ticket.css';
 
 // Define consistent colors for the application
@@ -164,18 +164,21 @@ const Ticket = () => {
                     }</small>
                   </div>
 
-                  {/* Barcode Section */}
-                  <div className="text-center mb-2 compact-barcode">
-                    <Barcode 
+                  {/* QR Code Section */}
+                  <div className="text-center mb-2 compact-qrcode">
+                    <QRCode 
                       value={ticket.ticket_number || `T-${Date.now()}`} 
-                      width={1}
-                      height={40}
-                      fontSize={10}
-                      margin={5}
-                      background="#fff"
-                      lineColor={THEME.dark}
-                      displayValue={true}
+                      size={100}
+                      level="M"
+                      includeMargin={true}
+                      bgColor="#fff"
+                      fgColor="#000000"
+                      renderAs="svg"
+                      style={{imageRendering: 'crisp-edges'}}
                     />
+                    <div className="mt-1">
+                      <small>{ticket.ticket_number}</small>
+                    </div>
                   </div>
                   
                   <div className="text-center">
@@ -250,18 +253,21 @@ const Ticket = () => {
                     </Col>
                   </Row>
 
-                  {/* Barcode Section */}
-                  <div className="text-center mb-2 compact-barcode">
-                    <Barcode 
+                  {/* QR Code Section */}
+                  <div className="text-center mb-2 compact-qrcode">
+                    <QRCode 
                       value={ticket.ticket_number || `T-${Date.now()}`} 
-                      width={1}
-                      height={40}
-                      fontSize={10}
-                      margin={5}
-                      background="#fff"
-                      lineColor={THEME.dark}
-                      displayValue={true}
+                      size={80}
+                      level="M"
+                      includeMargin={true}
+                      bgColor="#fff"
+                      fgColor="#000000"
+                      renderAs="svg"
+                      style={{imageRendering: 'crisp-edges'}}
                     />
+                    <div className="mt-1">
+                      <small>{ticket.ticket_number}</small>
+                    </div>
                   </div>
                   
                   <div className="text-center">

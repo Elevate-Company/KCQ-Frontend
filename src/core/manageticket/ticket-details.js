@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Table, Alert } from 'react-bootstrap';
 import axios from 'axios';
-import Barcode from 'react-barcode';
+import QRCode from 'qrcode.react';
 import Navbar from '../navbar/navbar';
 import '../../css/manageticket/ticket-details.css';
 
@@ -124,16 +124,20 @@ function TicketDetails() {
           <Card.Body className="p-4">
             <div className="d-flex flex-column flex-md-row align-items-center mb-4">
               <div className="me-md-4 mb-3 mb-md-0 text-center">
-                <div className="d-inline-block p-3 border rounded">
-                  <Barcode 
+                <div className="d-inline-block p-3 border rounded compact-qrcode">
+                  <QRCode 
                     value={ticket.ticket_number}
-                    width={1.5}
-                    height={50}
-                    fontSize={14}
-                    margin={5}
-                    background="#fff"
-                    lineColor={THEME.dark}
+                    size={120}
+                    level="M"
+                    includeMargin={true}
+                    bgColor="#fff"
+                    fgColor="#000000"
+                    renderAs="svg"
+                    style={{imageRendering: 'crisp-edges'}}
                   />
+                  <div className="mt-2 text-center">
+                    <small>{ticket.ticket_number}</small>
+                  </div>
                 </div>
               </div>
               <div className="flex-grow-1 text-center text-md-start">

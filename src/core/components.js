@@ -11,6 +11,7 @@ import profileIcon from '../assets/profile.png';
 import reportsIcon from '../assets/reports.png';
 import settingsIcon from '../assets/setting.png';
 import needHelpIcon from '../assets/needhelp.png'; // Reusing the needhelp icon for logs
+import scannerIcon from '../assets/issueticket.png'; // Using issue ticket icon temporarily for scanner
 
 function Components() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(window.innerWidth > 768);
@@ -114,6 +115,15 @@ function Components() {
               >
                 <img src={manageTicketsIcon} alt="Manage Tickets" className="sidebar-icon" />
                 {isSidebarExpanded && <span>Manage Tickets</span>}
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                to="/scanner"
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              >
+                <img src={scannerIcon} alt="Ticket Scanner" className="sidebar-icon" />
+                {isSidebarExpanded && <span>Ticket Scanner</span>}
               </NavLink>
             </li>
             <li className="nav-item">
