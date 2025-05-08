@@ -100,18 +100,6 @@ function PassengerInfo() {
     }
   };
 
-  if (loading) {
-    return (
-      <div>
-        <Navbar />
-        <Container className="mt-5 text-center">
-          <Spinner animation="border" className="text-primary" />
-          <p className="mt-3">Loading passenger information...</p>
-        </Container>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div>

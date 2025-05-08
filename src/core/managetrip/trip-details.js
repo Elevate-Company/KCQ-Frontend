@@ -77,19 +77,6 @@ function TripDetails() {
     );
   };
 
-  if (loading) {
-    return (
-      <>
-        <Navbar />
-        <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: "70vh" }}>
-          <Spinner animation="border" role="status" style={{ color: THEME.primary }}>
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
-        </Container>
-      </>
-    );
-  }
-
   if (error) {
     return (
       <>

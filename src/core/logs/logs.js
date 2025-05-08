@@ -128,62 +128,54 @@ function Logs() {
               </Col>
             </Row>
 
-            {loading ? (
-              <div className="d-flex justify-content-center p-5">
-                <Spinner animation="border" style={{ color: THEME.primary }} />
-              </div>
-            ) : (
-              <>
-                <div className="table-responsive">
-                  <Table hover className="align-middle">
-                    <thead style={{ backgroundColor: THEME.accent }}>
-                      <tr>
-                        <th>Date & Time</th>
-                        <th>User</th>
-                        <th>Action</th>
-                        <th>Model</th>
-                        <th>Object ID</th>
-                        <th>Details</th>
-                        <th>IP Address</th>
+            <div className="table-responsive">
+              <Table hover className="align-middle">
+                <thead style={{ backgroundColor: THEME.accent }}>
+                  <tr>
+                    <th>Date & Time</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Model</th>
+                    <th>Object ID</th>
+                    <th>Details</th>
+                    <th>IP Address</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredLogs.length === 0 ? (
+                    <tr>
+                      <td colSpan="7" className="text-center py-4">No logs found</td>
+                    </tr>
+                  ) : (
+                    filteredLogs.map((log, index) => (
+                      <tr key={index}>
+                        <td>{formatTimestamp(log.timestamp)}</td>
+                        <td>{log.user}</td>
+                        <td>
+                          <Badge pill bg="none" style={{ 
+                            backgroundColor: getActionBadgeColor(log.action),
+                            color: 'white'
+                          }}>
+                            {log.action}
+                          </Badge>
+                        </td>
+                        <td>{log.model_name}</td>
+                        <td>{log.object_id}</td>
+                        <td>
+                          <div style={{ maxWidth: '250px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {log.details}
+                          </div>
+                        </td>
+                        <td>{log.ip_address}</td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {filteredLogs.length === 0 ? (
-                        <tr>
-                          <td colSpan="7" className="text-center py-4">No logs found</td>
-                        </tr>
-                      ) : (
-                        filteredLogs.map((log, index) => (
-                          <tr key={index}>
-                            <td>{formatTimestamp(log.timestamp)}</td>
-                            <td>{log.user}</td>
-                            <td>
-                              <Badge pill bg="none" style={{ 
-                                backgroundColor: getActionBadgeColor(log.action),
-                                color: 'white'
-                              }}>
-                                {log.action}
-                              </Badge>
-                            </td>
-                            <td>{log.model_name}</td>
-                            <td>{log.object_id}</td>
-                            <td>
-                              <div style={{ maxWidth: '250px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                {log.details}
-                              </div>
-                            </td>
-                            <td>{log.ip_address}</td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </Table>
-                </div>
-                <div className="mt-3 text-muted small">
-                  Showing {filteredLogs.length} of {logs.length} logs
-                </div>
-              </>
-            )}
+                    ))
+                  )}
+                </tbody>
+              </Table>
+            </div>
+            <div className="mt-3 text-muted small">
+              Showing {filteredLogs.length} of {logs.length} logs
+            </div>
           </Card.Body>
         </Card>
       </Container>

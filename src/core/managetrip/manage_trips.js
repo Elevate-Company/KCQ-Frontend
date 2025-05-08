@@ -116,19 +116,6 @@ function ManageTrips() {
     }
   };
 
-  if (loading) {
-    return (
-      <div>
-        <Navbar />
-        <div className="manage-trips-container container text-center mt-5">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div>

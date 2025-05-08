@@ -166,76 +166,70 @@ function PassengerList() {
               </Col>
             </Row>
 
-            {loading ? (
-              <div className="d-flex justify-content-center p-5">
-                <Spinner animation="border" style={{ color: '#091057' }} />
-              </div>
-            ) : (
-              <div className="passenger-table-container">
-                <Table responsive hover className="align-middle passenger-table">
-                  <thead>
+            <div className="passenger-table-container">
+              <Table responsive hover className="align-middle passenger-table">
+                <thead>
+                  <tr>
+                    <th style={{ width: '5%' }}>ID</th>
+                    <th style={{ width: '20%' }}>Name</th>
+                    <th style={{ width: '20%' }}>Email</th>
+                    <th style={{ width: '15%' }}>Phone</th>
+                    <th style={{ width: '10%', textAlign: 'center' }}>Bookings</th>
+                    <th style={{ width: '10%' }}>Last Updated</th>
+                    <th style={{ width: '20%' }}>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredPassengers.length === 0 ? (
                     <tr>
-                      <th style={{ width: '5%' }}>ID</th>
-                      <th style={{ width: '20%' }}>Name</th>
-                      <th style={{ width: '20%' }}>Email</th>
-                      <th style={{ width: '15%' }}>Phone</th>
-                      <th style={{ width: '10%', textAlign: 'center' }}>Bookings</th>
-                      <th style={{ width: '10%' }}>Last Updated</th>
-                      <th style={{ width: '20%' }}>Action</th>
+                      <td colSpan="7" className="text-center py-4">
+                        {searchTerm ? "No passengers match your search" : "No passengers found"}
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {filteredPassengers.length === 0 ? (
-                      <tr>
-                        <td colSpan="7" className="text-center py-4">
-                          {searchTerm ? "No passengers match your search" : "No passengers found"}
+                  ) : (
+                    filteredPassengers.map((passenger) => (
+                      <tr key={passenger.id}>
+                        <td>{passenger.id}</td>
+                        <td>{passenger.name}</td>
+                        <td>{passenger.email || 'N/A'}</td>
+                        <td>{passenger.phone || passenger.contact || 'N/A'}</td>
+                        <td className="text-center">
+                          <Badge bg="none" style={{ 
+                            backgroundColor: passenger.total_checked_tickets > 0 ? '#e8f0fe' : '#f5f5f5',
+                            color: passenger.total_checked_tickets > 0 ? '#091057' : '#6c757d',
+                            fontSize: '0.85rem',
+                            padding: '6px 10px'
+                          }}>
+                            {passenger.total_checked_tickets || 0}
+                          </Badge>
+                        </td>
+                        <td>{new Date(passenger.updated_at).toLocaleDateString()}</td>
+                        <td>
+                          <div className="action-buttons">
+                            <Button
+                              variant="outline-primary"
+                              size="sm"
+                              className="view-btn"
+                              onClick={() => handleView(passenger.id)}
+                            >
+                              View
+                            </Button>
+                            <Button
+                              variant="outline-warning"
+                              size="sm"
+                              className="delete-btn"
+                              onClick={() => openDeleteModal(passenger)}
+                            >
+                              Delete
+                            </Button>
+                          </div>
                         </td>
                       </tr>
-                    ) : (
-                      filteredPassengers.map((passenger) => (
-                        <tr key={passenger.id}>
-                          <td>{passenger.id}</td>
-                          <td>{passenger.name}</td>
-                          <td>{passenger.email || 'N/A'}</td>
-                          <td>{passenger.phone || passenger.contact || 'N/A'}</td>
-                          <td className="text-center">
-                            <Badge bg="none" style={{ 
-                              backgroundColor: passenger.total_checked_tickets > 0 ? '#e8f0fe' : '#f5f5f5',
-                              color: passenger.total_checked_tickets > 0 ? '#091057' : '#6c757d',
-                              fontSize: '0.85rem',
-                              padding: '6px 10px'
-                            }}>
-                              {passenger.total_checked_tickets || 0}
-                            </Badge>
-                          </td>
-                          <td>{new Date(passenger.updated_at).toLocaleDateString()}</td>
-                          <td>
-                            <div className="action-buttons">
-                              <Button
-                                variant="outline-primary"
-                                size="sm"
-                                className="view-btn"
-                                onClick={() => handleView(passenger.id)}
-                              >
-                                View
-                              </Button>
-                              <Button
-                                variant="outline-warning"
-                                size="sm"
-                                className="delete-btn"
-                                onClick={() => openDeleteModal(passenger)}
-                              >
-                                Delete
-                              </Button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </Table>
-              </div>
-            )}
+                    ))
+                  )}
+                </tbody>
+              </Table>
+            </div>
           </Card.Body>
         </Card>
       </Container>
