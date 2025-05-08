@@ -3,11 +3,26 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { toast } from 'react-toastify';
 import Navbar from '../navbar/navbar';
 import axios from 'axios';
+import { Container, Card, Table, Badge, Spinner, Alert, Row, Col } from 'react-bootstrap';
+import '../../css/logs/logs.css';
+
+// Define theme colors to match sidebar
+const THEME = {
+  primary: '#091057',
+  secondary: '#071440',
+  accent: '#e8f0fe',
+  success: '#34a853',
+  danger: '#ea4335',
+  warning: '#fbbc04',
+  light: '#f8f9fa'
+};
 
 function Logs() {
   const [logs, setLogs] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const [filterModel, setFilterModel] = useState('');
+  const [filterAction, setFilterAction] = useState('');
 
   useEffect(() => {
     const fetchLogs = async () => {
@@ -45,54 +60,133 @@ function Logs() {
     return new Date(timestamp).toLocaleString();
   };
 
+  const getActionBadgeColor = (action) => {
+    switch(action.toLowerCase()) {
+      case 'create':
+        return THEME.success;
+      case 'update':
+        return THEME.warning;
+      case 'delete':
+        return THEME.danger;
+      default:
+        return THEME.primary;
+    }
+  };
+
+  const filteredLogs = logs.filter(log => {
+    const modelMatch = filterModel ? log.model_name.toLowerCase().includes(filterModel.toLowerCase()) : true;
+    const actionMatch = filterAction ? log.action.toLowerCase().includes(filterAction.toLowerCase()) : true;
+    return modelMatch && actionMatch;
+  });
+
+  const uniqueModels = [...new Set(logs.map(log => log.model_name))];
+  const uniqueActions = [...new Set(logs.map(log => log.action))];
+
   return (
     <div>
       <Navbar />
-      <div className="container mt-5">
-        <h2 className="mb-4">Activity Logs</h2>
-        {error && <div className="alert alert-danger">{error}</div>}
-        
-        {loading ? (
-          <div className="d-flex justify-content-center">
-            <div className="spinner-border text-primary" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </div>
-          </div>
-        ) : (
-          <table className="table table-striped">
-            <thead>
-              <tr>
-                <th>Date & Time</th>
-                <th>User</th>
-                <th>Action</th>
-                <th>Model</th>
-                <th>Object ID</th>
-                <th>Details</th>
-                <th>IP Address</th>
-              </tr>
-            </thead>
-            <tbody>
-              {logs.length === 0 ? (
-                <tr>
-                  <td colSpan="7" className="text-center">No logs found</td>
-                </tr>
-              ) : (
-                logs.map((log, index) => (
-                  <tr key={index}>
-                    <td>{formatTimestamp(log.timestamp)}</td>
-                    <td>{log.user}</td>
-                    <td>{log.action}</td>
-                    <td>{log.model_name}</td>
-                    <td>{log.object_id}</td>
-                    <td>{log.details}</td>
-                    <td>{log.ip_address}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        )}
-      </div>
+      <Container fluid className="mt-4 px-4">
+        <Card className="shadow-sm border-0">
+          <Card.Header style={{ backgroundColor: THEME.primary, color: 'white' }}>
+            <h4 className="mb-0">System Activity Logs</h4>
+          </Card.Header>
+          <Card.Body>
+            {error && <Alert variant="danger">{error}</Alert>}
+            
+            <Row className="mb-3">
+              <Col md={6} lg={3}>
+                <div className="mb-3">
+                  <label htmlFor="modelFilter" className="form-label">Filter by Model</label>
+                  <select 
+                    id="modelFilter" 
+                    className="form-select"
+                    value={filterModel}
+                    onChange={(e) => setFilterModel(e.target.value)}
+                  >
+                    <option value="">All Models</option>
+                    {uniqueModels.map(model => (
+                      <option key={model} value={model}>{model}</option>
+                    ))}
+                  </select>
+                </div>
+              </Col>
+              <Col md={6} lg={3}>
+                <div className="mb-3">
+                  <label htmlFor="actionFilter" className="form-label">Filter by Action</label>
+                  <select 
+                    id="actionFilter" 
+                    className="form-select"
+                    value={filterAction}
+                    onChange={(e) => setFilterAction(e.target.value)}
+                  >
+                    <option value="">All Actions</option>
+                    {uniqueActions.map(action => (
+                      <option key={action} value={action}>{action}</option>
+                    ))}
+                  </select>
+                </div>
+              </Col>
+            </Row>
+
+            {loading ? (
+              <div className="d-flex justify-content-center p-5">
+                <Spinner animation="border" style={{ color: THEME.primary }} />
+              </div>
+            ) : (
+              <>
+                <div className="table-responsive">
+                  <Table hover className="align-middle">
+                    <thead style={{ backgroundColor: THEME.accent }}>
+                      <tr>
+                        <th>Date & Time</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Model</th>
+                        <th>Object ID</th>
+                        <th>Details</th>
+                        <th>IP Address</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredLogs.length === 0 ? (
+                        <tr>
+                          <td colSpan="7" className="text-center py-4">No logs found</td>
+                        </tr>
+                      ) : (
+                        filteredLogs.map((log, index) => (
+                          <tr key={index}>
+                            <td>{formatTimestamp(log.timestamp)}</td>
+                            <td>{log.user}</td>
+                            <td>
+                              <Badge pill bg="none" style={{ 
+                                backgroundColor: getActionBadgeColor(log.action),
+                                color: 'white'
+                              }}>
+                                {log.action}
+                              </Badge>
+                            </td>
+                            <td>{log.model_name}</td>
+                            <td>{log.object_id}</td>
+                            <td>
+                              <div style={{ maxWidth: '250px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {log.details}
+                              </div>
+                            </td>
+                            <td>{log.ip_address}</td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </Table>
+                </div>
+                <div className="mt-3 text-muted small">
+                  Showing {filteredLogs.length} of {logs.length} logs
+                </div>
+              </>
+            )}
+          </Card.Body>
+        </Card>
+      </Container>
     </div>
   );
 }

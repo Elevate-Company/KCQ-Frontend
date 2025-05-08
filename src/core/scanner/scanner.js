@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Card, Form, Button, Alert, Spinner, Row, Col, Badge } from 'react-bootstrap';
+import { Container, Card, Form, Button, Alert, Spinner, Row, Col, Badge, Table } from 'react-bootstrap';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { createScannerDetector } from '../../utils/scannerDetector';
 import '../../css/scanner/scanner.css';
+import Navbar from '../navbar/navbar';
 
-// Define consistent colors for the application
+// Define consistent colors to match the sidebar
 const THEME = {
-  primary: '#0a215a',
-  secondary: '#071c4d',
+  primary: '#091057',
+  secondary: '#071440',
   accent: '#e8f0fe',
   success: '#34a853',
   danger: '#ea4335',
   warning: '#fbbc04',
-  dark: '#071440', 
   light: '#f8f9fa'
 };
 
@@ -188,188 +188,203 @@ function Scanner() {
   };
 
   return (
-    <Container className="py-4">
-      <h2 className="mb-4 text-center">Ticket Scanner</h2>
-      
-      <Card className="mb-4 shadow-sm">
-        <Card.Header className={`text-white ${isScanning ? 'bg-warning' : 'bg-primary'}`}>
-          <h5 className="mb-0">
-            {isScanning ? 'Scanning...' : 'Scan Ticket'}
-          </h5>
-        </Card.Header>
-        <Card.Body>
-          <p className="mb-3">
-            Use the QR code scanner to scan a ticket, or enter the ticket number manually.
-            {isScanning && <strong className="text-warning"> Scanner detected!</strong>}
-          </p>
-          
-          <Form onSubmit={handleSubmit} className={isScanning ? 'scanner-active scanning' : 'scanner-active'}>
-            <Form.Group className="mb-3 position-relative">
-              <Form.Label>Ticket Number</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Scan or enter ticket number"
-                value={ticketNumber}
-                onChange={handleInputChange}
-                ref={inputRef}
-                autoFocus
-                readOnly={isLoading || isScanning}
-                className="scanner-input"
-              />
-              {isScanning && (
-                <div className="scanning-indicator">
-                  <Spinner animation="border" size="sm" className="me-2" />
-                  Reading...
-                </div>
-              )}
-            </Form.Group>
-            
-            <div className="d-grid">
-              <Button 
-                variant="primary" 
-                type="submit" 
-                disabled={isLoading || !ticketNumber.trim() || isScanning}
-                style={{ backgroundColor: THEME.primary, borderColor: THEME.primary }}
-              >
-                {isLoading ? (
-                  <>
-                    <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" className="me-2" />
-                    Validating...
-                  </>
-                ) : 'Validate Ticket'}
-              </Button>
-            </div>
-          </Form>
-          
-          {error && (
-            <Alert variant="danger" className="mt-3">
-              {error}
-            </Alert>
-          )}
-          
-          <Alert variant="info" className="mt-3">
-            <h6 className="mb-1">QR Code Scanner Troubleshooting:</h6>
-            <ol className="mb-0 ps-3">
-              <li>Ensure your QR code scanner is properly connected</li>
-              <li>Check scanner configuration (may need to add Enter suffix)</li>
-              <li>Try scanning in a text editor first to verify it's working</li>
-              <li>If scanner doesn't work, enter ticket number manually</li>
-            </ol>
-          </Alert>
-          
-          {/* Debug section for raw input */}
-          <div className="mt-3 pt-3 border-top">
-            <h6>Scanner Debug Info:</h6>
-            <p className="mb-1">
-              <small>This section shows what your scanner is sending. After scanning, you should see the ticket number appear in the field above, and here:</small>
-            </p>
-            <pre className="bg-light p-2 mt-2 mb-0" style={{fontSize: '0.8rem'}}>
-              Current input: {ticketNumber || '<none>'}
-            </pre>
-            <p className="mt-2 mb-0">
-              <small>If you see data here but validation fails, the issue might be with the backend validation.</small>
-            </p>
-          </div>
-        </Card.Body>
-      </Card>
-      
-      {lastScanned && (
-        <Card className="mb-4 shadow-sm">
-          <Card.Header 
-            className={lastScanned.valid ? 'bg-success text-white' : 'bg-danger text-white'}
-          >
-            <h5 className="mb-0">
-              {lastScanned.valid ? 'Valid Ticket' : 'Invalid Ticket'}
-            </h5>
+    <div>
+      <Navbar />
+      <Container fluid className="py-4 px-4">
+        <Card className="shadow-sm border-0 mb-4">
+          <Card.Header style={{ backgroundColor: THEME.primary, color: 'white' }}>
+            <h4 className="mb-0">{isScanning ? 'Scanning...' : 'Ticket Scanner'}</h4>
           </Card.Header>
           <Card.Body>
-            <p className="mb-2">
-              <strong>Status:</strong> {lastScanned.message}
-            </p>
-            <p className="mb-0">
-              <strong>Scanned at:</strong> {formatTimestamp(lastScanned.timestamp)}
-            </p>
-            
-            {lastScanned.ticket && (
-              <div className="mt-3 pt-3 border-top">
-                <h6>Ticket Details</h6>
-                <Row>
-                  <Col md={6}>
-                    <p className="mb-1"><strong>Ticket Number:</strong> {lastScanned.ticket.ticket_number}</p>
-                    <p className="mb-1"><strong>Passenger:</strong> {lastScanned.ticket.passenger?.name || 'N/A'}</p>
-                    <p className="mb-1">
-                      <strong>Status:</strong>{' '}
-                      <Badge 
-                        style={{ 
-                          backgroundColor: getBoardingStatusColor(lastScanned.ticket.passenger?.boarding_status),
-                          color: 'white'
-                        }}
-                      >
-                        {formatBoardingStatus(lastScanned.ticket.passenger?.boarding_status)}
-                      </Badge>
-                    </p>
-                  </Col>
-                  <Col md={6}>
-                    <p className="mb-1"><strong>Trip:</strong> {lastScanned.ticket.trip?.origin} to {lastScanned.ticket.trip?.destination}</p>
-                    <p className="mb-1"><strong>Seat:</strong> {lastScanned.ticket.seat_number || 'N/A'}</p>
-                    <p className="mb-1"><strong>Issued:</strong> {formatDate(lastScanned.ticket.issue_date)}</p>
-                  </Col>
-                </Row>
-              </div>
-            )}
+            <Row>
+              <Col lg={7}>
+                <p className="mb-3">
+                  Use the QR code scanner to scan a ticket, or enter the ticket number manually.
+                  {isScanning && <strong className="text-warning"> Scanner detected!</strong>}
+                </p>
+                
+                <Form onSubmit={handleSubmit} className={isScanning ? 'scanner-active scanning mb-4' : 'scanner-active mb-4'}>
+                  <Form.Group className="mb-3 position-relative">
+                    <Form.Label>Ticket Number</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Scan or enter ticket number"
+                      value={ticketNumber}
+                      onChange={handleInputChange}
+                      ref={inputRef}
+                      autoFocus
+                      readOnly={isLoading || isScanning}
+                      className="scanner-input"
+                      style={{ borderColor: isScanning ? THEME.warning : THEME.primary }}
+                    />
+                    {isScanning && (
+                      <div className="scanning-indicator" style={{ backgroundColor: THEME.warning }}>
+                        <Spinner animation="border" size="sm" className="me-2" />
+                        Reading...
+                      </div>
+                    )}
+                  </Form.Group>
+                  
+                  <div className="d-grid">
+                    <Button 
+                      type="submit" 
+                      disabled={isLoading || !ticketNumber.trim() || isScanning}
+                      style={{ backgroundColor: THEME.primary, borderColor: THEME.primary }}
+                    >
+                      {isLoading ? (
+                        <>
+                          <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" className="me-2" />
+                          Validating...
+                        </>
+                      ) : 'Validate Ticket'}
+                    </Button>
+                  </div>
+                </Form>
+                
+                {error && (
+                  <Alert variant="danger" className="mt-3">
+                    {error}
+                  </Alert>
+                )}
+                
+                {lastScanned && (
+                  <Card className="border-0 shadow-sm mt-4">
+                    <Card.Header
+                      style={{
+                        backgroundColor: lastScanned.valid ? THEME.success : THEME.danger,
+                        color: 'white'
+                      }}
+                    >
+                      <h5 className="mb-0">
+                        {lastScanned.valid ? 'Valid Ticket' : 'Invalid Ticket'}
+                      </h5>
+                    </Card.Header>
+                    <Card.Body>
+                      <p className="mb-2">
+                        <strong>Status:</strong> {lastScanned.message}
+                      </p>
+                      <p className="mb-0">
+                        <strong>Scanned at:</strong> {formatTimestamp(lastScanned.timestamp)}
+                      </p>
+                      
+                      {lastScanned.ticket && (
+                        <div className="mt-3 pt-3 border-top">
+                          <h6>Ticket Details</h6>
+                          <Row>
+                            <Col md={6}>
+                              <p className="mb-1"><strong>Ticket Number:</strong> {lastScanned.ticket.ticket_number}</p>
+                              <p className="mb-1"><strong>Passenger:</strong> {lastScanned.ticket.passenger?.name || 'N/A'}</p>
+                              <p className="mb-1">
+                                <strong>Status:</strong>{' '}
+                                <Badge
+                                  bg="none"
+                                  style={{ 
+                                    backgroundColor: getBoardingStatusColor(lastScanned.ticket.passenger?.boarding_status),
+                                    color: 'white'
+                                  }}
+                                >
+                                  {formatBoardingStatus(lastScanned.ticket.passenger?.boarding_status)}
+                                </Badge>
+                              </p>
+                            </Col>
+                            <Col md={6}>
+                              <p className="mb-1"><strong>Trip:</strong> {lastScanned.ticket.trip?.origin} to {lastScanned.ticket.trip?.destination}</p>
+                              <p className="mb-1"><strong>Seat:</strong> {lastScanned.ticket.seat_number || 'N/A'}</p>
+                              <p className="mb-1"><strong>Issued:</strong> {formatDate(lastScanned.ticket.issue_date)}</p>
+                            </Col>
+                          </Row>
+                        </div>
+                      )}
+                    </Card.Body>
+                  </Card>
+                )}
+              </Col>
+              
+              <Col lg={5}>
+                <Card className="border-0 shadow-sm h-100">
+                  <Card.Header style={{ backgroundColor: THEME.accent }}>
+                    <h5 className="mb-0">Recent Scans</h5>
+                  </Card.Header>
+                  <Card.Body className="p-0">
+                    <div className="table-responsive">
+                      <Table hover className="mb-0">
+                        <thead>
+                          <tr>
+                            <th>Timestamp</th>
+                            <th>Ticket Number</th>
+                            <th>Passenger</th>
+                            <th>Status</th>
+                            <th>Result</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {recentScans.length === 0 ? (
+                            <tr>
+                              <td colSpan="5" className="text-center py-3">No scans yet</td>
+                            </tr>
+                          ) : (
+                            recentScans.map((scan, index) => (
+                              <tr key={index}>
+                                <td>{formatTimestamp(scan.timestamp)}</td>
+                                <td>{scan.ticket?.ticket_number || 'N/A'}</td>
+                                <td>{scan.ticket?.passenger?.name || 'N/A'}</td>
+                                <td>
+                                  <Badge 
+                                    style={{ 
+                                      backgroundColor: scan.ticket ? getBoardingStatusColor(scan.ticket.passenger?.boarding_status) : '#6c757d',
+                                      color: 'white'
+                                    }}
+                                  >
+                                    {scan.ticket ? formatBoardingStatus(scan.ticket.passenger?.boarding_status) : 'N/A'}
+                                  </Badge>
+                                </td>
+                                <td>
+                                  <Badge 
+                                    bg={scan.valid ? 'success' : 'danger'}
+                                  >
+                                    {scan.valid ? 'Valid' : 'Invalid'}
+                                  </Badge>
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </Table>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
           </Card.Body>
         </Card>
-      )}
-      
-      {recentScans.length > 0 && (
-        <Card className="shadow-sm">
-          <Card.Header className="bg-light">
-            <h5 className="mb-0">Recent Scans</h5>
+        
+        <Card className="shadow-sm border-0">
+          <Card.Header style={{ backgroundColor: THEME.accent }}>
+            <h5 className="mb-0">Scanning Tips</h5>
           </Card.Header>
-          <Card.Body className="p-0">
-            <div className="table-responsive">
-              <table className="table table-hover mb-0">
-                <thead>
-                  <tr>
-                    <th>Timestamp</th>
-                    <th>Ticket Number</th>
-                    <th>Passenger</th>
-                    <th>Status</th>
-                    <th>Result</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentScans.map((scan, index) => (
-                    <tr key={index}>
-                      <td>{formatTimestamp(scan.timestamp)}</td>
-                      <td>{scan.ticket?.ticket_number || 'N/A'}</td>
-                      <td>{scan.ticket?.passenger?.name || 'N/A'}</td>
-                      <td>
-                        <Badge 
-                          style={{ 
-                            backgroundColor: scan.ticket ? getBoardingStatusColor(scan.ticket.passenger?.boarding_status) : '#6c757d',
-                            color: 'white'
-                          }}
-                        >
-                          {scan.ticket ? formatBoardingStatus(scan.ticket.passenger?.boarding_status) : 'N/A'}
-                        </Badge>
-                      </td>
-                      <td>
-                        <Badge 
-                          bg={scan.valid ? 'success' : 'danger'}
-                        >
-                          {scan.valid ? 'Valid' : 'Invalid'}
-                        </Badge>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <Card.Body>
+            <Row>
+              <Col md={6}>
+                <h6>For QR Scanner Users:</h6>
+                <ol>
+                  <li>Click in the text field to ensure it's focused</li>
+                  <li>Scan the ticket's QR code</li>
+                  <li>The scanner should automatically submit the code</li>
+                </ol>
+              </Col>
+              <Col md={6}>
+                <h6>For Manual Entry:</h6>
+                <ol>
+                  <li>Type the ticket number in the field</li>
+                  <li>Click "Validate Ticket" or press Enter</li>
+                  <li>Verify the ticket information matches the passenger</li>
+                </ol>
+              </Col>
+            </Row>
           </Card.Body>
         </Card>
-      )}
-    </Container>
+      </Container>
+    </div>
   );
 }
 
