@@ -4,47 +4,94 @@ import Navbar from '../navbar/navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button, Container, Card, Table, Badge, Spinner, Row, Col } from 'react-bootstrap';
+import { FaPlus } from 'react-icons/fa';
+import '../../css/passenger/passenger.css';
 
 function PassengerList() {
   const [passengers, setPassengers] = useState([]);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [passengerToDelete, setPassengerToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
+  const apiUrl = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000';
 
   useEffect(() => {
     const fetchPassengers = async () => {
+      setLoading(true);
       const token = localStorage.getItem('accessToken');
-      console.log('Token:', token);
+      
+      if (!token) {
+        setError('Authentication required');
+        setLoading(false);
+        return;
+      }
+      
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/passengers/`, {
+        // Get the passenger list with their bookings info included
+        const response = await axios.get(`${apiUrl}/api/passengers/`, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Token ${token}`,
           },
         });
 
-        const data = response.data;
-        console.log('Response data:', data);
+        const passengersData = response.data.passengers;
+        
+        // For each passenger, get their tickets
+        const passengersWithTickets = await Promise.all(
+          passengersData.map(async (passenger) => {
+            try {
+              // Get tickets issued to this passenger
+              const ticketsResponse = await axios.get(
+                `${apiUrl}/api/passengers/${passenger.id}/tickets/`,
+                {
+                  headers: {
+                    Authorization: `Token ${token}`,
+                  },
+                }
+              );
+              
+              // Count the tickets
+              const ticketCount = ticketsResponse.data.length || 0;
+              
+              // Update the boarding status based on the latest ticket
+              // If any ticket has BOARDED status, passenger should be BOARDED
+              let boardingStatus = passenger.boarding_status;
+              if (ticketsResponse.data.some(ticket => ticket.boarding_status === 'BOARDED')) {
+                boardingStatus = 'BOARDED';
+              }
+              
+              // Return passenger with ticket count
+              return {
+                ...passenger,
+                boarding_status: boardingStatus,
+                total_checked_tickets: ticketCount
+              };
+            } catch (error) {
+              console.error(`Error fetching tickets for passenger ${passenger.id}:`, error);
+              return {
+                ...passenger,
+                total_checked_tickets: 0
+              };
+            }
+          })
+        );
 
-        // Map passengers, but don't try to fetch tickets - just set total_checked_tickets to 0
-        // This avoids the 404 errors since the endpoint doesn't exist
-        const passengersWithDefaultTickets = data.passengers.map(passenger => ({
-          ...passenger,
-          total_checked_tickets: 0
-        }));
-
-        setPassengers(passengersWithDefaultTickets);
+        setPassengers(passengersWithTickets);
       } catch (error) {
         console.error('Error fetching passengers:', error);
         setError('Failed to fetch passengers');
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchPassengers();
-  }, []);
+  }, [apiUrl]);
 
   const openDeleteModal = (passenger) => {
     setPassengerToDelete(passenger);
@@ -63,15 +110,13 @@ function PassengerList() {
     const token = localStorage.getItem('accessToken');
     
     try {
-      const response = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/passengers/${passengerToDelete.id}/`, {
+      const response = await axios.delete(`${apiUrl}/api/passengers/${passengerToDelete.id}/`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Token ${token}`,
         },
       });
 
-      // Since the passenger is not actually deleted in the backend, don't remove it from the list
-      // Just show the success message to inform the user
       toast.info(response.data.detail || "Delete request has been logged for admin review");
       closeDeleteModal();
     } catch (error) {
@@ -84,108 +129,141 @@ function PassengerList() {
   };
 
   const handleView = async (id) => {
-    const token = localStorage.getItem('accessToken');
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/passengers/${id}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Token ${token}`,
-        },
-      });
-
-      const passengerData = response.data;
-      console.log('Passenger data:', passengerData);
-
-      navigate(`/passenger-info/${id}`, { state: { passenger: passengerData } });
-    } catch (error) {
-      console.error('Error fetching passenger:', error);
-      navigate(`/passenger-info/${id}`, { state: { error: 'Failed to fetch passenger' } });
-    }
+    navigate(`/passenger-info/${id}`);
   };
 
   const handleAddPassenger = () => {
     navigate('/add-passenger');
   };
 
+  // Filter passengers based on search term
+  const filteredPassengers = passengers.filter(passenger => 
+    passenger.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    passenger.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    passenger.phone?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div>
       <Navbar />
-      <div className="container mt-4">
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h2 className="text-center">Passenger Management</h2>
-          <button className="btn add-btn" onClick={handleAddPassenger}>+ Add</button>
-        </div>
-        <div className="card">
-          <div
-            className="card-header text-white"
-            style={{ backgroundColor: '#091057' }}
-          >
-            List of Passengers
-          </div>
-          <div className="card-body">
-            <div className="table-responsive">
-              <table className="table table-striped">
-                <thead style={{ backgroundColor: '#091057', color: 'white' }}>
-                  <tr>
-                    <th>Passenger ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Total Bookings</th>
-                    <th>Last Booking</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {passengers.map((passenger) => (
-                    <tr key={passenger.id}>
-                      <td>{passenger.id}</td>
-                      <td>{passenger.name}</td>
-                      <td>{passenger.email}</td>
-                      <td>{passenger.phone || passenger.contact}</td>
-                      <td>{passenger.total_checked_tickets || 0}</td>
-                      <td>{new Date(passenger.updated_at).toLocaleDateString()}</td>
-                      <td>
-                        <span
-                          className={`badge ${
-                            passenger.boarding_status === 'BOARDED'
-                              ? 'bg-success'
-                              : passenger.boarding_status === 'NOT_BOARDED'
-                              ? 'bg-warning text-dark'
-                              : passenger.boarding_status === 'CANCELLED'
-                              ? 'bg-danger'
-                              : 'bg-secondary'
-                          }`}
-                        >
-                          {passenger.boarding_status?.replace(/_/g, ' ') || 'N/A'}
-                        </span>
-                      </td>
-                      <td>
-                        <button
-                          className="btn btn-success btn-sm me-2 p-1"
-                          style={{ fontSize: '0.60rem' }}
-                          onClick={() => handleView(passenger.id)}
-                        >
-                          View
-                        </button>
-                        <button
-                          className="btn btn-warning btn-sm p-1"
-                          style={{ fontSize: '0.60rem' }}
-                          onClick={() => openDeleteModal(passenger)}
-                        >
-                          Request Delete
-                        </button>
-                      </td>
+      <Container fluid className="mt-4 px-4">
+        <Card className="shadow-sm border-0">
+          <Card.Header className="d-flex justify-content-between align-items-center">
+            <h4 className="mb-0">Passenger Management</h4>
+            <Button 
+              variant="outline-light"
+              className="back-btn"
+              onClick={handleAddPassenger}
+            >
+              <FaPlus className="me-2" /> Add Passenger
+            </Button>
+          </Card.Header>
+          <Card.Body>
+            <Row className="mb-3">
+              <Col md={6} lg={4}>
+                <div className="mb-3">
+                  <input 
+                    type="text" 
+                    className="form-control" 
+                    placeholder="Search passengers..." 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+              </Col>
+            </Row>
+
+            {loading ? (
+              <div className="d-flex justify-content-center p-5">
+                <Spinner animation="border" style={{ color: '#091057' }} />
+              </div>
+            ) : (
+              <div className="passenger-table-container">
+                <Table responsive hover className="align-middle passenger-table">
+                  <thead>
+                    <tr>
+                      <th style={{ width: '5%' }}>ID</th>
+                      <th style={{ width: '15%' }}>Name</th>
+                      <th style={{ width: '15%' }}>Email</th>
+                      <th style={{ width: '10%' }}>Phone</th>
+                      <th style={{ width: '10%', textAlign: 'center' }}>Bookings</th>
+                      <th style={{ width: '10%' }}>Last Updated</th>
+                      <th style={{ width: '15%' }}>Status</th>
+                      <th style={{ width: '20%' }}>Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-              {error && <p className="text-danger">{error}</p>}
-            </div>
-          </div>
-        </div>
-      </div>
+                  </thead>
+                  <tbody>
+                    {filteredPassengers.length === 0 ? (
+                      <tr>
+                        <td colSpan="8" className="text-center py-4">
+                          {searchTerm ? "No passengers match your search" : "No passengers found"}
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredPassengers.map((passenger) => (
+                        <tr key={passenger.id}>
+                          <td>{passenger.id}</td>
+                          <td>{passenger.name}</td>
+                          <td>{passenger.email || 'N/A'}</td>
+                          <td>{passenger.phone || passenger.contact || 'N/A'}</td>
+                          <td className="text-center">
+                            <Badge bg="none" style={{ 
+                              backgroundColor: passenger.total_checked_tickets > 0 ? '#e8f0fe' : '#f5f5f5',
+                              color: passenger.total_checked_tickets > 0 ? '#091057' : '#6c757d',
+                              fontSize: '0.85rem',
+                              padding: '6px 10px'
+                            }}>
+                              {passenger.total_checked_tickets || 0}
+                            </Badge>
+                          </td>
+                          <td>{new Date(passenger.updated_at).toLocaleDateString()}</td>
+                          <td>
+                            <Badge
+                              bg="none"
+                              style={{
+                                backgroundColor: 
+                                  passenger.boarding_status === 'BOARDED' ? '#34a853' :
+                                  passenger.boarding_status === 'NOT_BOARDED' ? '#fbbc04' :
+                                  passenger.boarding_status === 'CANCELLED' ? '#ea4335' : '#6c757d',
+                                color: 'white',
+                                fontSize: '0.8rem',
+                                padding: '6px 10px'
+                              }}
+                            >
+                              {passenger.boarding_status?.replace(/_/g, ' ') || 'N/A'}
+                            </Badge>
+                          </td>
+                          <td>
+                            <div className="action-buttons">
+                              <Button
+                                variant="outline-primary"
+                                size="sm"
+                                className="view-btn"
+                                onClick={() => handleView(passenger.id)}
+                              >
+                                View
+                              </Button>
+                              <Button
+                                variant="outline-warning"
+                                size="sm"
+                                className="delete-btn"
+                                onClick={() => openDeleteModal(passenger)}
+                              >
+                                Request Delete
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </Table>
+                {error && <p className="text-danger mt-3">{error}</p>}
+              </div>
+            )}
+          </Card.Body>
+        </Card>
+      </Container>
 
       {/* Delete Confirmation Modal */}
       <Modal show={showDeleteModal} onHide={closeDeleteModal} centered>
