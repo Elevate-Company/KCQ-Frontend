@@ -177,8 +177,8 @@ function Scanner() {
 
   // Render boarding status badge with proper styling
   const renderBoardingStatus = (ticket) => {
-    // Try different possible paths for boarding_status
-    const status = ticket?.boarding_status || ticket?.passenger?.boarding_status || 'N/A';
+    // Use ticket's boarding_status
+    const status = ticket?.boarding_status || 'N/A';
     
     if (!status || status === 'N/A') {
       return <span className="status-badge badge-na">N/A</span>;
@@ -193,6 +193,7 @@ function Scanner() {
         badgeClass = "badge-boarded";
         break;
       case 'NOT_CHECKED_IN':
+      case 'NOT_BOARDED':
         badgeClass = "badge-na";
         break;
       case 'CANCELLED':
@@ -203,11 +204,9 @@ function Scanner() {
         badgeClass = "badge-na";
     }
     
-    return (
-      <span className={`status-badge ${badgeClass}`}>
-        {formatBoardingStatus(status)}
-      </span>
-    );
+    return <span className={`status-badge ${badgeClass}`}>
+      {status.replace(/_/g, ' ')}
+    </span>;
   };
 
   // Render validation result badge

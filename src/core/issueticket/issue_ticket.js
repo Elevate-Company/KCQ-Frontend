@@ -60,8 +60,41 @@ function IssueTicket() {
           },
         });
 
-        const data = response.data.passengers;
-        setPassengers(data);
+        const passengersData = response.data.passengers;
+        
+        // For each passenger, get their tickets
+        const passengersWithTickets = await Promise.all(
+          passengersData.map(async (passenger) => {
+            try {
+              // Get tickets issued to this passenger
+              const ticketsResponse = await axios.get(
+                `${process.env.REACT_APP_API_BASE_URL}/api/tickets/by-passenger/${passenger.id}/`,
+                {
+                  headers: {
+                    Authorization: `Token ${token}`,
+                  },
+                }
+              );
+              
+              // Count the tickets
+              const ticketCount = ticketsResponse.data.length || 0;
+              
+              // Return passenger with ticket count
+              return {
+                ...passenger,
+                total_checked_tickets: ticketCount
+              };
+            } catch (error) {
+              console.error(`Error fetching tickets for passenger ${passenger.id}:`, error);
+              return {
+                ...passenger,
+                total_checked_tickets: 0
+              };
+            }
+          })
+        );
+
+        setPassengers(passengersWithTickets);
       } catch (error) {
         console.error('Error fetching passengers:', error);
         setError('Failed to fetch passengers');
@@ -130,7 +163,7 @@ function IssueTicket() {
         name: selectedPassenger.name,
         email: selectedPassenger.email,
         phone: selectedPassenger.phone,
-        total_bookings: selectedPassenger.total_bookings || 'N/A',
+        total_bookings: selectedPassenger.total_checked_tickets || 'N/A',
         boarding_status: selectedPassenger.boarding_status || 'NOT_CHECKED_IN',
         created_by: username || 'Unknown',
       };
@@ -185,6 +218,7 @@ function IssueTicket() {
       trip: selectedTrip,
       amount: calculateAmount(passengerType),
       baggage_ticket: false,
+      boarding_status: 'NOT_BOARDED',
     };
 
     // Verify the passenger ID is present in the ticket data
@@ -328,10 +362,10 @@ function IssueTicket() {
           </div>
         </div>
         {tickets.length > 0 && (
-          <div className="tickets-table-container mt-5">
+          <div className="tickets-table-container">
             <h3>Passenger Details</h3>
             <div className="table-responsive">
-              <table className="tickets-table mt-2">
+              <table className="tickets-table">
                 <thead>
                   <tr>
                     <th>Name</th>
@@ -341,40 +375,58 @@ function IssueTicket() {
                     <th>Boarding Status</th>
                     <th>Created By</th>
                     <th>Ticket Number</th>
-                    <th>Seat Number</th>
+                    <th>Seat</th>
                     <th>Age Group</th>
-                    <th>Trip</th>
-                    <th>Amount</th>
-                    <th>Baggage Ticket</th>
+                    <th>Price</th>
+                    <th>Route</th>
+                    <th>Baggage</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {tickets.map((ticket, index) => (
                     <tr key={index}>
                       <td>{ticket.passenger.name}</td>
-                      <td>{ticket.passenger.email}</td>
-                      <td>{ticket.passenger.phone}</td>
-                      <td>{ticket.passenger.total_bookings || 'N/A'}</td>
-                      <td>{ticket.passenger.boarding_status || 'N/A'}</td>
-                      <td>{ticket.passenger.created_by || username || 'Unknown'}</td>
+                      <td>{ticket.passenger.email || 'N/A'}</td>
+                      <td>{ticket.passenger.phone || 'N/A'}</td>
+                      <td className="text-center">{ticket.passenger.total_bookings}</td>
+                      <td>
+                        <span className={`badge-boarding-status badge-${ticket.boarding_status?.toLowerCase() || 'not-boarded'}`}>
+                          {ticket.boarding_status?.replace(/_/g, ' ') || 'NOT BOARDED'}
+                        </span>
+                      </td>
+                      <td>{ticket.passenger.created_by || 'N/A'}</td>
                       <td>{ticket.ticket_number}</td>
                       <td>{ticket.seat_number}</td>
-                      <td>{ticket.age_group}</td>
-                      <td>{ticket.trip?.origin || 'N/A'} to {ticket.trip?.destination || 'N/A'}</td>
-                      <td>PHP {ticket.amount}</td>
+                      <td className="text-capitalize">{ticket.age_group}</td>
+                      <td>PHP {ticket.price}</td>
                       <td>
-                        <input
-                          type="checkbox"
-                          checked={ticket.baggage_ticket}
-                          onChange={handleBaggageTicketChange}
-                        />
+                        {ticket.trip ? `${ticket.trip.origin} to ${ticket.trip.destination}` : 'N/A'}
+                      </td>
+                      <td>
+                        <div className="form-check form-switch">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            checked={ticket.baggage_ticket || false}
+                            onChange={() => handleBaggageTicketChange()}
+                            id={`baggageSwitch-${index}`}
+                          />
+                        </div>
+                      </td>
+                      <td className="action-column">
+                        <button
+                          className="btn btn-link btn-sm p-0"
+                          onClick={() => {
+                            setTickets([]);
+                            localStorage.removeItem('tickets');
+                          }}
+                        >
+                          <i className="fa fa-trash"></i>
+                        </button>
                       </td>
                     </tr>
                   ))}
-                  <tr>
-                    <td colSpan="11" style={{ textAlign: 'right', fontWeight: 'bold' }}>Total</td>
-                    <td style={{ fontWeight: 'bold' }}>PHP {calculateTotalAmount()}</td>
-                  </tr>
                 </tbody>
               </table>
             </div>

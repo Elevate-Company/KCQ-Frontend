@@ -12,7 +12,6 @@ function AddPassenger() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [totalBookings, setTotalBookings] = useState(0);
-  const [boardingStatus, setBoardingStatus] = useState("NOT_BOARDED");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,7 +29,6 @@ function AddPassenger() {
       email,
       phone,
       total_bookings: totalBookings,
-      boarding_status: boardingStatus,
     };
 
     try {
@@ -61,7 +59,6 @@ function AddPassenger() {
       setEmail("");
       setPhone("");
       setTotalBookings(0);
-      setBoardingStatus("NOT_BOARDED");
       
       // After 2 seconds, redirect to passenger list
       setTimeout(() => {
@@ -167,7 +164,7 @@ function AddPassenger() {
                   </Row>
                   
                   <Row>
-                    <Col md={6}>
+                    <Col md={12}>
                       <Form.Group className="mb-3">
                         <Form.Label className="d-flex align-items-center">
                           <FaCalendarCheck className="me-2" style={{ color: '#091057' }} />
@@ -182,24 +179,6 @@ function AddPassenger() {
                         />
                         <Form.Text className="text-muted">
                           Usually 0 for new passengers
-                        </Form.Text>
-                      </Form.Group>
-                    </Col>
-                    <Col md={6}>
-                      <Form.Group className="mb-3">
-                        <Form.Label className="d-flex align-items-center">
-                          <i className="fas fa-tag me-2" style={{ color: '#091057' }}></i>
-                          Boarding Status
-                        </Form.Label>
-                        <Form.Select
-                          value={boardingStatus}
-                          onChange={(e) => setBoardingStatus(e.target.value)}
-                          disabled
-                        >
-                          <option value="NOT_BOARDED">Not Boarded</option>
-                        </Form.Select>
-                        <Form.Text className="text-muted">
-                          New passengers always start with 'Not Boarded' status
                         </Form.Text>
                       </Form.Group>
                     </Col>

@@ -4,7 +4,7 @@ import Navbar from '../navbar/navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import { Container, Row, Col, Card, Badge, Button, Spinner } from 'react-bootstrap';
-import { FaUser, FaEnvelope, FaPhone, FaCalendarAlt, FaTicketAlt, FaShip, FaArrowLeft } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaPhone, FaCalendarAlt, FaTicketAlt, FaShip, FaArrowLeft, FaClock } from 'react-icons/fa';
 import '../../css/passenger/passenger.css';
 
 function PassengerInfo() {
@@ -66,6 +66,23 @@ function PassengerInfo() {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
     return date.toLocaleString();
+  };
+
+  const calculateDuration = (departureTime, arrivalTime) => {
+    if (!departureTime || !arrivalTime) return 'N/A';
+    
+    const departureDate = new Date(departureTime);
+    const arrivalDate = new Date(arrivalTime);
+    
+    // Calculate the difference in minutes
+    const duration = (arrivalDate - departureDate) / (1000 * 60);
+    
+    if (isNaN(duration) || duration < 0) return 'N/A';
+    
+    const hours = Math.floor(duration / 60);
+    const minutes = Math.floor(duration % 60);
+    
+    return `${hours}h ${minutes}m`;
   };
 
   const getBoardingStatusColor = (status) => {
@@ -173,16 +190,6 @@ function PassengerInfo() {
                     <FaUser size={48} color="#091057" />
                   </div>
                   <h4 className="mt-3">{passenger.name}</h4>
-                  <Badge 
-                    bg="none" 
-                    style={{ 
-                      backgroundColor: getBoardingStatusColor(passenger.boarding_status),
-                      color: 'white'
-                    }}
-                    className="mt-2 px-3 py-2"
-                  >
-                    {passenger.boarding_status?.replace(/_/g, ' ') || 'Status Unknown'}
-                  </Badge>
                 </div>
               </Col>
               
@@ -276,6 +283,7 @@ function PassengerInfo() {
                       <th>Ticket Number</th>
                       <th>Trip</th>
                       <th>Date</th>
+                      <th>Duration</th>
                       <th>Status</th>
                       <th>Class</th>
                     </tr>
@@ -290,17 +298,21 @@ function PassengerInfo() {
                             {ticket.trip?.origin} to {ticket.trip?.destination}
                           </div>
                         </td>
-                        <td>{formatDate(ticket.trip?.departure_date)}</td>
+                        <td>{formatDate(ticket.trip?.departure_time)}</td>
                         <td>
-                          <Badge 
-                            bg="none" 
-                            style={{ 
-                              backgroundColor: getBoardingStatusColor(ticket.boarding_status),
-                              color: 'white'
-                            }}
-                          >
-                            {ticket.boarding_status?.replace(/_/g, ' ') || 'Unknown'}
-                          </Badge>
+                          <div className="d-flex align-items-center">
+                            <FaClock className="me-2 text-muted" />
+                            {calculateDuration(ticket.trip?.departure_time, ticket.trip?.arrival_time)}
+                          </div>
+                        </td>
+                        <td>
+                          <span className="badge" style={{
+                            backgroundColor: getBoardingStatusColor(ticket.boarding_status),
+                            color: ticket.boarding_status?.toUpperCase() === 'NOT_BOARDED' ? '#212529' : 'white',
+                            padding: '6px 10px'
+                          }}>
+                            {ticket.boarding_status?.replace(/_/g, ' ') || 'NOT BOARDED'}
+                          </span>
                         </td>
                         <td>{ticket.ticket_class || 'Standard'}</td>
                       </tr>

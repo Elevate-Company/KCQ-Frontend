@@ -58,17 +58,9 @@ function PassengerList() {
               // Count the tickets
               const ticketCount = ticketsResponse.data.length || 0;
               
-              // Update the boarding status based on the latest ticket
-              // If any ticket has BOARDED status, passenger should be BOARDED
-              let boardingStatus = passenger.boarding_status;
-              if (ticketsResponse.data.some(ticket => ticket.boarding_status === 'BOARDED')) {
-                boardingStatus = 'BOARDED';
-              }
-              
               // Return passenger with ticket count
               return {
                 ...passenger,
-                boarding_status: boardingStatus,
                 total_checked_tickets: ticketCount
               };
             } catch (error) {
@@ -184,19 +176,18 @@ function PassengerList() {
                   <thead>
                     <tr>
                       <th style={{ width: '5%' }}>ID</th>
-                      <th style={{ width: '15%' }}>Name</th>
-                      <th style={{ width: '15%' }}>Email</th>
-                      <th style={{ width: '10%' }}>Phone</th>
+                      <th style={{ width: '20%' }}>Name</th>
+                      <th style={{ width: '20%' }}>Email</th>
+                      <th style={{ width: '15%' }}>Phone</th>
                       <th style={{ width: '10%', textAlign: 'center' }}>Bookings</th>
                       <th style={{ width: '10%' }}>Last Updated</th>
-                      <th style={{ width: '15%' }}>Status</th>
                       <th style={{ width: '20%' }}>Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredPassengers.length === 0 ? (
                       <tr>
-                        <td colSpan="8" className="text-center py-4">
+                        <td colSpan="7" className="text-center py-4">
                           {searchTerm ? "No passengers match your search" : "No passengers found"}
                         </td>
                       </tr>
@@ -219,22 +210,6 @@ function PassengerList() {
                           </td>
                           <td>{new Date(passenger.updated_at).toLocaleDateString()}</td>
                           <td>
-                            <Badge
-                              bg="none"
-                              style={{
-                                backgroundColor: 
-                                  passenger.boarding_status === 'BOARDED' ? '#34a853' :
-                                  passenger.boarding_status === 'NOT_BOARDED' ? '#fbbc04' :
-                                  passenger.boarding_status === 'CANCELLED' ? '#ea4335' : '#6c757d',
-                                color: 'white',
-                                fontSize: '0.8rem',
-                                padding: '6px 10px'
-                              }}
-                            >
-                              {passenger.boarding_status?.replace(/_/g, ' ') || 'N/A'}
-                            </Badge>
-                          </td>
-                          <td>
                             <div className="action-buttons">
                               <Button
                                 variant="outline-primary"
@@ -250,7 +225,7 @@ function PassengerList() {
                                 className="delete-btn"
                                 onClick={() => openDeleteModal(passenger)}
                               >
-                                Request Delete
+                                Delete
                               </Button>
                             </div>
                           </td>
@@ -259,7 +234,6 @@ function PassengerList() {
                     )}
                   </tbody>
                 </Table>
-                {error && <p className="text-danger mt-3">{error}</p>}
               </div>
             )}
           </Card.Body>
@@ -269,20 +243,14 @@ function PassengerList() {
       {/* Delete Confirmation Modal */}
       <Modal show={showDeleteModal} onHide={closeDeleteModal} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Request Passenger Deletion</Modal.Title>
+          <Modal.Title>Delete Passenger</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {passengerToDelete && (
-            <div>
-              <p>
-                Are you sure you want to request deletion of passenger <strong>{passengerToDelete.name}</strong>?
-              </p>
-              <p>
-                <strong>Note:</strong> This will not immediately delete the passenger. 
-                The request will be logged for administrator review.
-              </p>
-            </div>
-          )}
+          Are you sure you want to request deletion of passenger: 
+          <strong> {passengerToDelete?.name}</strong>?
+          <p className="text-muted mt-2">
+            Note: This will be reviewed by an administrator before permanent deletion.
+          </p>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={closeDeleteModal}>
@@ -293,7 +261,12 @@ function PassengerList() {
             onClick={handleDelete}
             disabled={isDeleting}
           >
-            {isDeleting ? 'Submitting...' : 'Submit Request'}
+            {isDeleting ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Processing...
+              </>
+            ) : "Delete"}
           </Button>
         </Modal.Footer>
       </Modal>

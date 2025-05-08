@@ -149,12 +149,12 @@ function TicketDetails() {
                   <span 
                     className="px-3 py-1 rounded-pill" 
                     style={{ 
-                      backgroundColor: getBoardingStatusColor(ticket.passenger?.boarding_status), 
+                      backgroundColor: getBoardingStatusColor(ticket.boarding_status), 
                       color: 'white',
                       fontSize: '0.85rem'
                     }}
                   >
-                    {ticket.passenger?.boarding_status?.replace(/_/g, ' ') || 'NOT CHECKED IN'}
+                    {ticket.boarding_status?.replace(/_/g, ' ') || 'NOT CHECKED IN'}
                   </span>
                 </div>
               </div>

@@ -179,25 +179,53 @@ hr {
 }
 
 .tickets-table-container {
-  margin-top: 40px; /* Increased margin from the top */
+  margin-top: 40px;
+  width: 100%;
   overflow-x: auto; /* Enable horizontal scrolling */
+  padding-bottom: 15px; /* Add padding at the bottom for scrollbar */
 }
 
 .tickets-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .tickets-table th,
 .tickets-table td {
-  border: 1px solid #ccc;
-  padding: 10px;
+  padding: 12px 15px;
   text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+  white-space: nowrap; /* Prevent line breaks within cells */
 }
 
 .tickets-table th {
-  background-color: #f4f4f4;
-  font-weight: bold;
+  background-color: #f8f9fa;
+  color: #091057;
+  font-weight: 600;
+  font-size: 0.9rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.tickets-table tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+.tickets-table th:first-child {
+  padding-left: 20px;
+}
+
+.tickets-table td:first-child {
+  padding-left: 20px;
+}
+
+.tickets-table td:last-child {
+  padding-right: 20px;
 }
 
 .action-column {
@@ -215,6 +243,90 @@ hr {
 .fa-trash {
   cursor: pointer;
   color: #091057;
+}
+
+/* Add fixed width to each column for better layout */
+.tickets-table th:nth-child(1), 
+.tickets-table td:nth-child(1) {
+  width: 12%; /* Name */
+}
+
+.tickets-table th:nth-child(2), 
+.tickets-table td:nth-child(2) {
+  width: 15%; /* Email */
+}
+
+.tickets-table th:nth-child(3), 
+.tickets-table td:nth-child(3) {
+  width: 12%; /* Phone */
+}
+
+.tickets-table th:nth-child(4), 
+.tickets-table td:nth-child(4) {
+  width: 8%; /* Total Bookings */
+}
+
+.tickets-table th:nth-child(5), 
+.tickets-table td:nth-child(5) {
+  width: 12%; /* Boarding Status */
+}
+
+.tickets-table th:nth-child(6), 
+.tickets-table td:nth-child(6) {
+  width: 10%; /* Created By */
+}
+
+.tickets-table th:nth-child(7), 
+.tickets-table td:nth-child(7) {
+  width: 10%; /* Ticket Number */
+}
+
+.tickets-table th:nth-child(8), 
+.tickets-table td:nth-child(8) {
+  width: 8%; /* Seat Number */
+}
+
+.tickets-table th:nth-child(9), 
+.tickets-table td:nth-child(9) {
+  width: 8%; /* Age Group */
+}
+
+.tickets-table th:nth-child(10), 
+.tickets-table td:nth-child(10) {
+  width: 10%; /* Price */
+}
+
+.tickets-table th:nth-child(11), 
+.tickets-table td:nth-child(11) {
+  width: 10%; /* Route */
+}
+
+.tickets-table th:nth-child(12), 
+.tickets-table td:nth-child(12) {
+  width: 8%; /* Baggage Ticket */
+}
+
+.badge-boarding-status {
+  font-size: 0.75rem;
+  padding: 0.35em 0.65em;
+  border-radius: 0.375rem;
+  display: inline-block;
+  font-weight: 600;
+}
+
+.badge-not-boarded {
+  background-color: #fbbc04;
+  color: #212529;
+}
+
+.badge-boarded {
+  background-color: #34a853;
+  color: white;
+}
+
+.badge-cancelled {
+  background-color: #ea4335;
+  color: white;
 }
 
 .select-trip-container {

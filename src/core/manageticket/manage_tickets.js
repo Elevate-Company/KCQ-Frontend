@@ -55,20 +55,20 @@ function ManageTickets() {
     let filtered = [];
     if (filter === 'upcoming') {
       filtered = tickets.filter(ticket => {
-        return ticket.passenger?.boarding_status === 'NOT_CHECKED_IN' && 
+        return ticket.boarding_status === 'NOT_BOARDED' && 
                new Date(ticket.trip.departure_time) > currentDate;
       });
     } else if (filter === 'checkin') {
       filtered = tickets.filter(ticket => 
-        ticket.passenger?.boarding_status === 'CHECKED_IN'
+        ticket.boarding_status === 'CHECKED_IN'
       );
     } else if (filter === 'completed') {
       filtered = tickets.filter(ticket => 
-        ticket.passenger?.boarding_status === 'BOARDED'
+        ticket.boarding_status === 'BOARDED'
       );
     } else if (filter === 'cancelled') {
       filtered = tickets.filter(ticket => 
-        ticket.passenger?.boarding_status === 'CANCELLED'
+        ticket.boarding_status === 'CANCELLED'
       );
     } else {
       filtered = tickets;

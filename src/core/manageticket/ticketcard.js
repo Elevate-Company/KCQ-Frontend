@@ -12,7 +12,7 @@ function TicketCard({ ticket }) {
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [reason, setReason] = useState('');
   const [loading, setLoading] = useState(false);
-  const [currentStatus, setCurrentStatus] = useState(ticket?.passenger?.boarding_status || 'NOT_CHECKED_IN');
+  const [currentStatus, setCurrentStatus] = useState(ticket?.boarding_status || 'NOT_BOARDED');
   const [selectedStatus, setSelectedStatus] = useState('');
   const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000';
