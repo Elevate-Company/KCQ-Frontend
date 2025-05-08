@@ -23,6 +23,7 @@ function IssueTicket() {
   const [price, setPrice] = useState(400);
   const [passengers, setPassengers] = useState([]);
   const [username, setUsername] = useState('');
+  const [availablePassengers, setAvailablePassengers] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -79,16 +80,18 @@ function IssueTicket() {
               // Count the tickets
               const ticketCount = ticketsResponse.data.length || 0;
               
-              // Return passenger with ticket count
+              // Return passenger with ticket count and tickets data
               return {
                 ...passenger,
-                total_checked_tickets: ticketCount
+                total_checked_tickets: ticketCount,
+                tickets: ticketsResponse.data
               };
             } catch (error) {
               console.error(`Error fetching tickets for passenger ${passenger.id}:`, error);
               return {
                 ...passenger,
-                total_checked_tickets: 0
+                total_checked_tickets: 0,
+                tickets: []
               };
             }
           })
@@ -111,6 +114,59 @@ function IssueTicket() {
   useEffect(() => {
     localStorage.setItem('tickets', JSON.stringify(tickets));
   }, [tickets]);
+
+  useEffect(() => {
+    if (selectedTrip) {
+      filterAvailablePassengers();
+    } else {
+      setAvailablePassengers([]);
+      // Clear passenger selection if trip is deselected
+      setPassengerName('');
+      setPassengerEmail('');
+      setPassengerPhone('');
+      localStorage.removeItem('selectedPassenger');
+    }
+  }, [selectedTrip, passengers]);
+
+  const filterAvailablePassengers = () => {
+    if (!selectedTrip) {
+      setAvailablePassengers([]);
+      return;
+    }
+
+    const currentTripDepartureTime = new Date(selectedTrip.departure_time);
+    const currentTripArrivalTime = new Date(selectedTrip.arrival_time || currentTripDepartureTime.getTime() + 3 * 60 * 60 * 1000); // Default 3 hours if arrival_time not set
+
+    const filteredPassengers = passengers.filter(passenger => {
+      // Check if passenger already has a ticket for this trip
+      const hasTicketForTrip = passenger.tickets?.some(ticket => 
+        ticket.trip && ticket.trip.id === selectedTrip.id
+      );
+
+      if (hasTicketForTrip) {
+        return false; // Passenger already has a ticket for this trip
+      }
+
+      // Check for time conflicts with other trips
+      const hasTimeConflict = passenger.tickets?.some(ticket => {
+        if (!ticket.trip || !ticket.trip.departure_time) return false;
+        
+        const ticketDepartureTime = new Date(ticket.trip.departure_time);
+        const ticketArrivalTime = new Date(ticket.trip.arrival_time || ticketDepartureTime.getTime() + 3 * 60 * 60 * 1000);
+
+        // Check if the trips overlap
+        return (
+          (currentTripDepartureTime >= ticketDepartureTime && currentTripDepartureTime <= ticketArrivalTime) ||
+          (currentTripArrivalTime >= ticketDepartureTime && currentTripArrivalTime <= ticketArrivalTime) ||
+          (ticketDepartureTime >= currentTripDepartureTime && ticketDepartureTime <= currentTripArrivalTime)
+        );
+      });
+
+      return !hasTimeConflict;
+    });
+
+    setAvailablePassengers(filteredPassengers);
+  };
 
   const calculateAmount = (type) => {
     const basePrice = 400;
@@ -150,8 +206,27 @@ function IssueTicket() {
     setPrice(calculateAmount(selectedType));
   };
 
+  const handleTripSelect = (trip) => {
+    setSelectedTrip(trip);
+    localStorage.setItem('selectedTrip', JSON.stringify(trip));
+
+    // Reset passenger selection when trip changes
+    setPassengerName('');
+    setPassengerEmail('');
+    setPassengerPhone('');
+    localStorage.removeItem('selectedPassenger');
+  };
+
   const handlePassengerSelect = (e) => {
     const selectedPassengerId = e.target.value;
+    if (!selectedPassengerId) {
+      setPassengerName('');
+      setPassengerEmail('');
+      setPassengerPhone('');
+      localStorage.removeItem('selectedPassenger');
+      return;
+    }
+    
     const selectedPassenger = passengers.find(p => p.id === parseInt(selectedPassengerId));
     if (selectedPassenger) {
       setPassengerName(selectedPassenger.name);
@@ -159,12 +234,11 @@ function IssueTicket() {
       setPassengerPhone(selectedPassenger.phone);
 
       const passengerData = {
-        id: selectedPassenger.id, // Add the ID
+        id: selectedPassenger.id,
         name: selectedPassenger.name,
         email: selectedPassenger.email,
         phone: selectedPassenger.phone,
         total_bookings: selectedPassenger.total_checked_tickets || 'N/A',
-        boarding_status: selectedPassenger.boarding_status || 'NOT_CHECKED_IN',
         created_by: username || 'Unknown',
       };
 
@@ -173,6 +247,11 @@ function IssueTicket() {
   };
 
   const handleAddTicket = () => {
+    if (!selectedTrip) {
+      toast.error('Please select a trip first.');
+      return;
+    }
+    
     const storedPassenger = JSON.parse(localStorage.getItem('selectedPassenger'));
     if (!storedPassenger) {
       toast.error('Please select a passenger.');
@@ -194,14 +273,14 @@ function IssueTicket() {
       return;
     }
 
-    const selectedTrip = JSON.parse(localStorage.getItem('selectedTrip'));
-    if (!selectedTrip || !selectedTrip.id) {
+    const storedTrip = JSON.parse(localStorage.getItem('selectedTrip'));
+    if (!storedTrip || !storedTrip.id) {
       toast.error('Please select a trip before adding a ticket.');
       return;
     }
 
     // Verify that the trip has the necessary data
-    if (!selectedTrip.origin || !selectedTrip.destination || !selectedTrip.departure_time) {
+    if (!storedTrip.origin || !storedTrip.destination || !storedTrip.departure_time) {
       toast.error('Selected trip has incomplete information. Please select another trip.');
       return;
     }
@@ -213,9 +292,9 @@ function IssueTicket() {
       },
       ticket_number: ticketNumber,
       seat_number: seatNumber,
-      age_group: passengerType.toLowerCase(),  // Use lowercase directly
+      age_group: passengerType.toLowerCase(),
       price: price,
-      trip: selectedTrip,
+      trip: storedTrip,
       amount: calculateAmount(passengerType),
       baggage_ticket: false,
       boarding_status: 'NOT_BOARDED',
@@ -264,7 +343,7 @@ function IssueTicket() {
             <div className="card-select">
               Select Trip
             </div>
-            <SelectTrip trips={trips} onSelect={setSelectedTrip} error={error} />
+            <SelectTrip trips={trips} onSelect={handleTripSelect} error={error} />
           </div>
 
           <div className="card-contact-issue contact-card">
@@ -276,15 +355,28 @@ function IssueTicket() {
               <form className="contact-form">
                 <label>
                   Select Passenger:
-                  <select onChange={handlePassengerSelect}>
+                  <select onChange={handlePassengerSelect} disabled={!selectedTrip}>
                     <option value="">Select a passenger</option>
-                    {passengers.map(passenger => (
-                      <option key={passenger.id} value={passenger.id}>
-                        {passenger.name}
+                    {availablePassengers.length > 0 ? (
+                      availablePassengers.map(passenger => (
+                        <option key={passenger.id} value={passenger.id}>
+                          {passenger.name}
+                        </option>
+                      ))
+                    ) : (
+                      <option value="" disabled>
+                        {selectedTrip 
+                          ? "No available passengers for this trip" 
+                          : "Please select a trip first"}
                       </option>
-                    ))}
+                    )}
                   </select>
                 </label>
+                {!selectedTrip && (
+                  <div className="alert alert-warning mt-2">
+                    Please select a trip before selecting a passenger.
+                  </div>
+                )}
                 <label>
                   Passenger Name:
                   <input
