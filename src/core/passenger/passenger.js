@@ -154,7 +154,7 @@ function PassengerList() {
               variant="outline-light"
               className="back-btn"
               onClick={handleAddPassenger}
-              style={{ minWidth: '110px', padding: '0.4rem 0.75rem' }}
+              style={{ width: 'auto', minWidth: '120px' }}
             >
               <FaPlus className="me-2" /> Add Passenger
             </Button>

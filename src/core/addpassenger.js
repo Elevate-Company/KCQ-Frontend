@@ -92,7 +92,7 @@ function AddPassenger() {
                   variant="outline-light" 
                   onClick={() => navigate('/passenger')}
                   className="back-btn"
-                  style={{ minWidth: '110px', padding: '0.4rem 0.75rem' }}
+                  style={{ width: 'auto', minWidth: '120px' }}
                 >
                   <FaArrowLeft className="me-2" /> Back to List
                 </Button>

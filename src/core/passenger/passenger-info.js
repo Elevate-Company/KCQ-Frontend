@@ -111,7 +111,7 @@ function PassengerInfo() {
                 variant="outline-light" 
                 onClick={() => navigate('/passenger')}
                 className="back-btn"
-                style={{ minWidth: '110px', padding: '0.4rem 0.75rem', backgroundColor: '#091057' }}
+                style={{ backgroundColor: '#091057', width: 'auto', minWidth: '120px' }}
               >
                 <FaArrowLeft className="me-2" /> Back to List
               </Button>
@@ -132,7 +132,7 @@ function PassengerInfo() {
             variant="outline-light" 
             onClick={() => navigate('/passenger')}
             className="back-btn"
-            style={{ minWidth: '110px', padding: '0.4rem 0.75rem', backgroundColor: '#091057' }}
+            style={{ backgroundColor: '#091057', width: 'auto', minWidth: '120px' }}
           >
             <FaArrowLeft className="me-2" /> Back to List
           </Button>
@@ -156,8 +156,8 @@ function PassengerInfo() {
                 <Button 
                   variant="outline-light" 
                   onClick={() => navigate('/passenger')}
-                  className="back-btn main-header-btn"
-                  style={{ minWidth: '110px', padding: '0.4rem 0.75rem' }}
+                  className="back-btn"
+                  style={{ backgroundColor: '#091057', width: 'auto', minWidth: '120px' }}
                 >
                   <FaArrowLeft className="me-2" /> Back to List
                 </Button>
