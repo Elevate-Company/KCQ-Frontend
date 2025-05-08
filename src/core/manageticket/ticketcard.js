@@ -1,11 +1,23 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../css/manageticket/ticketcard.css';
-import boatLogo from '../../assets/boatlogo.png';
+// Replace boat logo with Font Awesome icon
+// import boatLogo from '../../assets/boatlogo.png';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+
+// Define theme colors to match the design
+const THEME = {
+  primary: '#0a215a',  // Dark blue
+  secondary: '#071c4d', // Darker variant
+  accent: '#e8f0fe',
+  success: '#34a853',
+  danger: '#ea4335',
+  warning: '#fbbc04',
+  light: '#f8f9fa'
+};
 
 function TicketCard({ ticket }) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -26,11 +38,24 @@ function TicketCard({ ticket }) {
     navigate(`/ticket-details/${ticketNumber}`);
   };
 
+  // Format departure time for display
+  const formatTripTime = (dateTimeString) => {
+    if (!dateTimeString) return 'N/A';
+    
+    const dateTime = new Date(dateTimeString);
+    const date = dateTime.toLocaleDateString();
+    const time = dateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    return { date, time };
+  };
+
   // Quick status check for badge color
   const getBadgeClass = (status) => {
     switch(status) {
       case 'BOARDED':
         return 'badge bg-success';
+      case 'CHECKED_IN':
+        return 'badge bg-primary';
       case 'CANCELLED':
         return 'badge bg-danger';
       case 'NOT_BOARDED':
@@ -106,57 +131,91 @@ function TicketCard({ ticket }) {
     ticket_number,
     trip,
     passenger,
+    seat_number,
   } = ticket;
   
   const destination = trip?.destination || 'N/A';
+  const origin = trip?.origin || 'N/A';
   const customer = passenger?.name || 'N/A';
   const capacity = trip?.available_seats || 'N/A';
   const ferryBoat = trip?.ferry_boat || 'N/A';
   const typeBoat = typeof ferryBoat === 'object' ? (ferryBoat.name || ferryBoat.slug || 'N/A') : ferryBoat;
+  
+  // Format trip time
+  const departureInfo = trip?.departure_time ? formatTripTime(trip.departure_time) : { date: 'N/A', time: 'N/A' };
+  const arrivalInfo = trip?.arrival_time ? formatTripTime(trip.arrival_time) : { date: 'N/A', time: 'N/A' };
 
   return (
     <div className="ticket-card mb-3">
-      <div className="card">
-        <div className="card-body">
-          <div className="row">
-            <div className="col-md-1 d-flex align-items-center justify-content-center">
-              <img src={boatLogo} alt="Boat Logo" className="boat-logo-ticketcard" />
+      <div className="card shadow-sm">
+        <div className="card-body p-3">
+          <div className="row align-items-center">
+            {/* Logo column */}
+            <div className="col-md-1 d-flex align-items-center justify-content-center mb-2 mb-md-0">
+              <i className="fas fa-ship" style={{ fontSize: "30px", color: THEME.primary }}></i>
             </div>
-            <div className="col-md-2 d-flex align-items-center">
-              <div>
-                <h6 className="mb-0">Destination</h6>
-                <p className="mb-0">{destination}</p>
+            
+            {/* Trip info column */}
+            <div className="col-md-3 mb-2 mb-md-0">
+              <div className="d-flex flex-column">
+                <h6 className="mb-1 text-muted">Route</h6>
+                <p className="mb-1 fw-bold">
+                  <span>{origin}</span>
+                  <i className="fas fa-arrow-right mx-1"></i>
+                  <span>{destination}</span>
+                </p>
+                <div className="d-flex flex-wrap align-items-center mt-1">
+                  <div className="d-flex align-items-center me-2 mb-1">
+                    <i className="fas fa-calendar-alt me-1 text-muted"></i>
+                    <span className="small text-muted">{departureInfo.date}</span>
+                  </div>
+                  <div className="d-flex align-items-center mb-1">
+                    <i className="fas fa-clock me-1 text-muted"></i>
+                    <span className="small text-muted">{departureInfo.time}</span>
+                  </div>
+                </div>
+                {trip?.arrival_time && (
+                  <div className="d-flex align-items-center mt-1">
+                    <i className="fas fa-ship me-1 text-success"></i>
+                    <span className="small">Arrival: {arrivalInfo.time} ({arrivalInfo.date})</span>
+                  </div>
+                )}
               </div>
             </div>
-            <div className="col-md-2 d-flex align-items-center">
-              <div>
-                <h6 className="mb-0">Customer</h6>
-                <p className="mb-0">{customer}</p>
+            
+            {/* Passenger info column */}
+            <div className="col-md-3 mb-2 mb-md-0">
+              <div className="d-flex flex-column">
+                <h6 className="mb-1 text-muted">Passenger</h6>
+                <p className="mb-0 fw-bold">{customer}</p>
+                <div className="d-flex align-items-center mt-1">
+                  <span className="ticket-number-badge me-2">
+                    #{ticket_number}
+                  </span>
+                  <span className="seat-badge">
+                    <i className="fas fa-chair me-1"></i> {seat_number || 'N/A'}
+                  </span>
+                </div>
               </div>
             </div>
-            <div className="col-md-2 d-flex align-items-center">
-              <div>
-                <h6 className="mb-0">Ticket Number</h6>
-                <p className="mb-0">{ticket_number}</p>
+            
+            {/* Boat info column */}
+            <div className="col-md-2 mb-2 mb-md-0">
+              <div className="d-flex flex-column">
+                <h6 className="mb-1 text-muted">Boat</h6>
+                <p className="mb-0 fw-bold">{typeBoat}</p>
+                <span className="capacity-badge mt-1">
+                  <i className="fas fa-users me-1"></i> {capacity} seats
+                </span>
               </div>
             </div>
-            <div className="col-md-1 d-flex align-items-center">
-              <div>
-                <h6 className="mb-0">Boat</h6>
-                <p className="mb-0">{typeBoat}</p>
-              </div>
-            </div>
-            <div className="col-md-1 d-flex align-items-center">
-              <div>
-                <h6 className="mb-0">Capacity</h6>
-                <p className="mb-0">{capacity}</p>
-              </div>
-            </div>
-            <div className="col-md-1 d-flex align-items-center">
-              <div>
-                <h6 className="mb-0">Status</h6>
+            
+            {/* Status column */}
+            <div className="col-6 col-md-1 mb-2 mb-md-0">
+              <div className="d-flex flex-column align-items-start">
+                <h6 className="mb-1 text-muted">Status</h6>
                 <button 
-                  className="status-button" 
+                  className="status-button"
                   onClick={openStatusModal}
                   disabled={loading}
                 >
@@ -166,13 +225,16 @@ function TicketCard({ ticket }) {
                 </button>
               </div>
             </div>
-            <div className="col-md-2 d-flex align-items-center justify-content-end">
+            
+            {/* Actions column */}
+            <div className="col-6 col-md-2 d-flex align-items-center justify-content-end">
               <button
                 type="button"
                 className="trash-button-ticketcard me-2"
                 onClick={() => {
                   setShowDeleteModal(true);
                 }}
+                title="Delete Ticket"
               >
                 <i className="fas fa-trash"></i>
               </button>
@@ -218,7 +280,7 @@ function TicketCard({ ticket }) {
 
       {/* Status Update Modal */}
       <Modal show={showStatusModal} onHide={() => setShowStatusModal(false)} centered>
-        <Modal.Header closeButton>
+        <Modal.Header closeButton style={{ backgroundColor: THEME.primary, color: 'white' }}>
           <Modal.Title>Update Boarding Status</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -248,11 +310,10 @@ function TicketCard({ ticket }) {
                     name="boardingStatus"
                     checked={selectedStatus === 'BOARDED'}
                     onChange={() => setSelectedStatus('BOARDED')}
-                    disabled={true}
+                    disabled={currentStatus === 'NOT_BOARDED'}
                   />
                   <label htmlFor="status-boarded" className="ms-2">
                     <span className="badge bg-success">BOARDED</span>
-                    <small className="text-muted ms-2">(Only via scan)</small>
                   </label>
                 </div>
                 <div className={`status-option ${selectedStatus === 'CANCELLED' ? 'selected' : ''}`}>
@@ -273,15 +334,27 @@ function TicketCard({ ticket }) {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowStatusModal(false)}>
+          <Button 
+            variant="secondary" 
+            onClick={() => setShowStatusModal(false)}
+            disabled={loading}
+          >
             Cancel
           </Button>
           <Button 
-            style={{ backgroundColor: '#0a215a', borderColor: '#0a215a' }}
+            variant="primary" 
             onClick={updateBoardingStatus}
-            disabled={loading || selectedStatus === currentStatus}
+            disabled={loading || currentStatus === selectedStatus}
+            style={{ backgroundColor: THEME.primary, borderColor: THEME.primary }}
           >
-            {loading ? 'Updating...' : 'Update Status'}
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Updating...
+              </>
+            ) : (
+              'Update Status'
+            )}
           </Button>
         </Modal.Footer>
       </Modal>

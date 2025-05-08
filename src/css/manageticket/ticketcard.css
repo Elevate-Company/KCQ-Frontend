@@ -47,11 +47,11 @@
 .trash-button-ticketcard {
     background: none;
     border: none;
-    color: #091057;
+    color: #0a215a;
     font-size: 14px;
     cursor: pointer;
-    margin-right: 10px;
     padding: 0;
+    transition: color 0.2s;
 }
 
 .trash-button-ticketcard:hover {
@@ -59,19 +59,23 @@
 }
 
 .view-details-button-ticketcard {
-    background-color: rgb(189, 189, 189);
-    border: 1px solid grey;
+    background-color: #e6e9f0;
+    border: none;
     border-radius: 25px;
-    color: #091057;
-    padding: 5px 10px;
+    color: #0a215a;
+    padding: 5px 15px;
     font-size: 12px;
     cursor: pointer;
-    width: 150px; /* Set a fixed width */
-    text-align: center; /* Center the text */
+    width: 120px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
 }
 
 .view-details-button-ticketcard:hover {
-    background-color: #e2e3e5;
+    background-color: #0a215a;
+    color: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .ticket-list {
@@ -88,19 +92,18 @@
 /* New ticket card styles */
 .ticket-card {
     margin-bottom: 15px;
+    transition: transform 0.3s ease;
+}
+
+.ticket-card:hover {
+    transform: translateY(-3px);
 }
 
 .ticket-card .card {
     border: none;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
     background-color: #ffffff;
-}
-
-.ticket-card .card:hover {
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
 }
 
 .ticket-card h6 {
@@ -114,9 +117,37 @@
     color: #212529;
 }
 
-.ticket-card .badge {
+.ticket-card .fa-arrow-right {
     font-size: 0.75rem;
-    padding: 5px 8px;
+    color: #0a215a;
+}
+
+/* Badge styles */
+.ticket-number-badge {
+    display: inline-block;
+    background-color: #0a215a;
+    color: white;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+}
+
+.seat-badge {
+    display: inline-block;
+    background-color: #e6e9f0;
+    color: #0a215a;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+}
+
+.capacity-badge {
+    display: inline-block;
+    background-color: #e6e9f0;
+    color: #0a215a;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
 }
 
 /* Status dropdown styling */
@@ -161,11 +192,11 @@
     border: none;
     padding: 0;
     cursor: pointer;
-    transition: opacity 0.2s;
+    transition: transform 0.2s;
 }
 
 .status-button:hover {
-    opacity: 0.9;
+    transform: scale(1.05);
 }
 
 .status-button:disabled {
@@ -173,19 +204,29 @@
     opacity: 0.7;
 }
 
-/* Status modal styling */
+.status-button .badge {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    font-weight: 500;
+    text-transform: uppercase;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+}
+
+/* Status options for the modal */
 .status-options {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     margin-top: 10px;
 }
 
 .status-option {
     display: flex;
     align-items: center;
-    padding: 8px 12px;
-    border-radius: 6px;
+    padding: 8px;
+    border-radius: 4px;
     transition: background-color 0.2s;
 }
 
@@ -194,36 +235,71 @@
 }
 
 .status-option.selected {
-    background-color: #f0f0f0;
+    background-color: #e8f0fe;
 }
 
-.status-option label {
-    cursor: pointer;
-    margin-bottom: 0;
-    font-weight: 500;
+.status-option .badge {
+    padding: 5px 10px;
+    min-width: 100px;
+    text-align: center;
 }
 
-/* Responsive adjustments */
+/* Responsive styles */
 @media (max-width: 992px) {
-    .ticket-card .row > div {
+    .ticket-card .row {
+        flex-direction: column;
+    }
+    
+    .ticket-card .col-md-3,
+    .ticket-card .col-md-2,
+    .ticket-card .col-md-1 {
+        width: 100%;
         margin-bottom: 10px;
     }
 }
 
 @media (max-width: 768px) {
-    .ticket-card .row {
-        flex-direction: column;
+    .ticket-card .card-body {
+        padding: 15px 10px;
     }
     
-    .ticket-card .col-md-1,
-    .ticket-card .col-md-2 {
-        width: 100%;
-        text-align: center;
-        margin-bottom: 10px;
+    /* Improve action buttons layout on mobile */
+    .ticket-card .col-6.col-md-2 {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 10px;
     }
     
-    .ticket-card .col-md-1 div,
-    .ticket-card .col-md-2 div {
-        width: 100%;
+    /* Ensure text doesn't overflow on small screens */
+    .ticket-card p, .ticket-card .small {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    /* Improve spacing for the arrival information */
+    .ticket-card .d-flex.align-items-center.mt-1 {
+        margin-top: 8px !important;
+    }
+    
+    /* Make the boat icon in the arrival info more visible */
+    .ticket-card .fas.fa-ship.text-success {
+        color: #34a853 !important;
+        font-size: 1rem;
+    }
+    
+    /* Improve status badge display on mobile */
+    .ticket-card .status-button .badge {
+        min-width: 100px;
+    }
+    
+    /* Ensure buttons have enough tap area */
+    .trash-button-ticketcard,
+    .view-details-button-ticketcard {
+        padding: 8px 12px;
+        min-height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 }

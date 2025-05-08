@@ -13,3 +13,86 @@
     background-color: #070b3a; /* Darken the button color on hover */
     border-color: #070b3a; /* Darken the button border color on hover */
 }
+
+.form-control-lg {
+  height: 50px;
+  border-radius: 8px;
+  font-size: 16px;
+  border: 1px solid #dee2e6;
+}
+
+.form-control-lg:focus {
+  border-color: #0a215a;
+  box-shadow: 0 0 0 0.2rem rgba(10, 33, 90, 0.25);
+}
+
+.form-select:focus {
+  border-color: #0a215a;
+  box-shadow: 0 0 0 0.2rem rgba(10, 33, 90, 0.25);
+}
+
+/* Route visualization */
+.route-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.route-line {
+  width: 2px;
+  height: 30px;
+  background-color: #0a215a;
+  margin: 5px 0;
+}
+
+.route-icon .fa-map-marker-alt {
+  color: #0a215a;
+  font-size: 16px;
+}
+
+.route-icon .fa-map-marker {
+  color: #34a853;
+  font-size: 16px;
+}
+
+/* Time info styling */
+.time-info {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+/* Card styling */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Form label styling */
+.fw-medium {
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .form-control-lg {
+    height: 45px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .route-icon {
+    display: none;
+  }
+  
+  .form-control-lg {
+    height: 40px;
+    font-size: 14px;
+  }
+}

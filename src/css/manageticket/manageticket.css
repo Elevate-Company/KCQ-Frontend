@@ -72,17 +72,17 @@
 }
 
 /* Pagination styling */
-.pagination-container .pagination .page-item .page-link {
+.pagination .page-item .page-link {
   color: #0a215a;
 }
 
-.pagination-container .pagination .page-item.active .page-link {
+.pagination .page-item.active .page-link {
   background-color: #0a215a;
   border-color: #0a215a;
   color: white;
 }
 
-.pagination-container .pagination .page-item.disabled .page-link {
+.pagination .page-item.disabled .page-link {
   color: #6c757d;
 }
 
@@ -107,5 +107,11 @@
 @media (max-width: 768px) {
   .manage-tickets-container {
     padding: 15px;
+  }
+
+  .form-control, 
+  .form-select {
+    font-size: 14px;
+    padding: 0.375rem 0.75rem;
   }
 }

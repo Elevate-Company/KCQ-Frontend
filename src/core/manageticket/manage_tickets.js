@@ -3,7 +3,18 @@ import '../../css/manageticket/manageticket.css';
 import TicketCard from './ticketcard';
 import Navbar from '../navbar/navbar';
 import axios from 'axios';
-import { Pagination } from 'react-bootstrap';
+import { Pagination, Container, Spinner, Alert } from 'react-bootstrap';
+
+// Define theme colors for consistent design
+const THEME = {
+  primary: '#0a215a',  // Dark blue
+  secondary: '#071c4d', // Darker variant
+  accent: '#e8f0fe',
+  success: '#34a853',
+  danger: '#ea4335',
+  warning: '#fbbc04',
+  light: '#f8f9fa'
+};
 
 function ManageTickets() {
   const [tickets, setTickets] = useState([]);
@@ -111,48 +122,48 @@ function ManageTickets() {
 
   if (loading) {
     return (
-      <div>
+      <>
         <Navbar />
-        <div className="manage-tickets-container container text-center mt-5">
-          <div className="spinner-border text-primary" role="status" style={{ color: '#0a215a' }}>
+        <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: "70vh" }}>
+          <Spinner animation="border" role="status" style={{ color: THEME.primary }}>
             <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      </div>
+          </Spinner>
+        </Container>
+      </>
     );
   }
 
   if (error) {
     return (
-      <div>
+      <>
         <Navbar />
-        <div className="manage-tickets-container container mt-5">
-          <div className="alert alert-danger" role="alert">
-            {error}
-          </div>
-        </div>
-      </div>
+        <Container className="mt-5">
+          <Alert variant="danger">{error}</Alert>
+        </Container>
+      </>
     );
   }
 
   return (
-    <div>
+    <>
       <Navbar />
-      <div className="manage-tickets-container container">
-        <div className="header-search-dropdown-row">
-          <h1 className="header-ticket mt-3">Manage Ticket</h1>
-          <div className="search-dropdown-container mt-3">
+      <Container className="py-4">
+        <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+          <h2 className="mb-3 mb-md-0" style={{ color: THEME.primary }}>Manage Tickets</h2>
+          <div className="d-flex flex-column flex-md-row">
             <input 
               type="text" 
-              className="search-input-ticket" 
+              className="form-control me-md-2 mb-2 mb-md-0" 
               placeholder="Search passenger name..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ maxWidth: "250px" }}
             />
             <select
-              className="filter-dropdown-ticket"
+              className="form-select"
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
+              style={{ maxWidth: "150px" }}
             >
               <option value="all">All</option>
               <option value="upcoming">Upcoming</option>
@@ -169,14 +180,14 @@ function ManageTickets() {
               <TicketCard key={ticket.id || ticket.ticket_number} ticket={ticket} />
             ))
           ) : (
-            <div className="no-tickets-message text-center mt-5">
-              <p>No tickets found. Try adjusting your search or filter.</p>
+            <div className="text-center p-5 bg-light rounded">
+              <p className="mb-0">No tickets found. Try adjusting your search or filter.</p>
             </div>
           )}
         </div>
 
-        {filteredTickets.length > 0 && (
-          <div className="pagination-container mt-4 d-flex justify-content-center">
+        {filteredTickets.length > 0 && totalPages > 1 && (
+          <div className="d-flex justify-content-center mt-4">
             <Pagination>
               <Pagination.Prev
                 onClick={goToPreviousPage}
@@ -200,8 +211,8 @@ function ManageTickets() {
             </Pagination>
           </div>
         )}
-      </div>
-    </div>
+      </Container>
+    </>
   );
 }
 

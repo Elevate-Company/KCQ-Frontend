@@ -59,4 +59,143 @@ h1 {
 
 .details-table td:last-child {
   padding-right: 0;
+}
+
+.compact-qrcode {
+  max-width: 150px;
+}
+
+.details-column {
+  max-width: 350px;
+  word-wrap: break-word;
+}
+
+/* Route display styling */
+.route-display {
+  margin: 15px 0;
+}
+
+.route-line {
+  height: 2px;
+  background-color: #0a215a;
+  width: 60px;
+  display: inline-block;
+  position: relative;
+}
+
+/* Route detail styling */
+.route-detail-container {
+  position: relative;
+}
+
+.route-detail-item {
+  display: flex;
+  margin-bottom: 20px;
+  align-items: flex-start;
+}
+
+.route-detail-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 15px;
+}
+
+.icon-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.icon-circle.origin {
+  background-color: #0a215a;
+}
+
+.icon-circle.destination {
+  background-color: #34a853;
+}
+
+.route-detail-icon .route-line {
+  width: 2px;
+  height: 40px;
+  background-color: #0a215a;
+  margin: 5px 0;
+}
+
+.route-detail-text small {
+  display: block;
+  margin-bottom: 2px;
+}
+
+/* Time display styling */
+.time-display {
+  display: flex;
+  align-items: center;
+}
+
+.duration-display {
+  border-top: 1px solid #dee2e6;
+  padding-top: 15px;
+  width: 50%;
+}
+
+/* Responsive print styling */
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: white;
+  }
+  
+  .navbar, 
+  .footer,
+  button:not(.print-button) {
+    display: none !important;
+  }
+  
+  .container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #dee2e6 !important;
+  }
+  
+  .card-header {
+    border-bottom: 1px solid #dee2e6 !important;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .ticket-header {
+    text-align: center;
+  }
+  
+  .route-line {
+    width: 40px;
+  }
+  
+  .route-detail-container {
+    margin-bottom: 20px;
+  }
+  
+  .schedule-container {
+    margin-top: 20px;
+  }
+}
+
+/* Status badge styling */
+.status-badge {
+  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 0.5px;
 } 

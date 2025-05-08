@@ -307,7 +307,7 @@ function PassengerInfo() {
                         </td>
                         <td>
                           <span className="badge" style={{
-                            backgroundColor: getBoardingStatusColor(ticket.boarding_status),
+                              backgroundColor: getBoardingStatusColor(ticket.boarding_status),
                             color: ticket.boarding_status?.toUpperCase() === 'NOT_BOARDED' ? '#212529' : 'white',
                             padding: '6px 10px'
                           }}>
