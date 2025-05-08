@@ -55,7 +55,7 @@ function UpcomingTripCard() {
                 <p className="text-center">No upcoming trips available</p>
               ) : (
                 <div className="scrollable-container">
-                  <table className="table table-bordered">
+                  <table className="table table-bordered table-striped table-hover">
                     <thead>
                       <tr>
                         <th>From</th>

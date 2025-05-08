@@ -4,6 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { createScannerDetector } from '../../utils/scannerDetector';
 import '../../css/scanner/scanner.css';
+import '../../css/scanner/scanner-fixes.css'; // Import the fixes CSS
 import Navbar from '../navbar/navbar';
 
 // Define consistent colors to match the sidebar
@@ -118,6 +119,9 @@ function Scanner() {
         }
       );
       
+      // Log the structure to debug
+      console.log('Ticket validation response:', response.data);
+      
       // Update last scanned ticket and add to recent scans
       setLastScanned({
         timestamp: new Date(),
@@ -166,25 +170,53 @@ function Scanner() {
     return date.toLocaleString();
   };
 
-  const getBoardingStatusColor = (status) => {
-    switch(status) {
-      case 'CHECKED_IN':
-        return THEME.success;
-      case 'BOARDED':
-        return THEME.primary;
-      case 'NOT_CHECKED_IN':
-        return THEME.warning;
-      case 'CANCELLED':
-      case 'MISSED':
-        return THEME.danger;
-      default:
-        return '#6c757d'; // Gray
-    }
-  };
-
   const formatBoardingStatus = (status) => {
     if (!status) return 'N/A';
     return status.replace(/_/g, ' ');
+  };
+
+  // Render boarding status badge with proper styling
+  const renderBoardingStatus = (ticket) => {
+    // Try different possible paths for boarding_status
+    const status = ticket?.boarding_status || ticket?.passenger?.boarding_status || 'N/A';
+    
+    if (!status || status === 'N/A') {
+      return <span className="status-badge badge-na">N/A</span>;
+    }
+    
+    let badgeClass = "badge-na";
+    switch(status) {
+      case 'CHECKED_IN':
+        badgeClass = "badge-valid";
+        break;
+      case 'BOARDED':
+        badgeClass = "badge-boarded";
+        break;
+      case 'NOT_CHECKED_IN':
+        badgeClass = "badge-na";
+        break;
+      case 'CANCELLED':
+      case 'MISSED':
+        badgeClass = "badge-invalid";
+        break;
+      default:
+        badgeClass = "badge-na";
+    }
+    
+    return (
+      <span className={`status-badge ${badgeClass}`}>
+        {formatBoardingStatus(status)}
+      </span>
+    );
+  };
+
+  // Render validation result badge
+  const renderValidationBadge = (isValid) => {
+    return (
+      <span className={`status-badge ${isValid ? 'badge-valid' : 'badge-invalid'}`}>
+        {isValid ? 'Valid' : 'Invalid'}
+      </span>
+    );
   };
 
   return (
@@ -192,7 +224,7 @@ function Scanner() {
       <Navbar />
       <Container fluid className="py-4 px-4">
         <Card className="shadow-sm border-0 mb-4">
-          <Card.Header style={{ backgroundColor: THEME.primary, color: 'white' }}>
+          <Card.Header className="card-header-primary">
             <h4 className="mb-0">{isScanning ? 'Scanning...' : 'Ticket Scanner'}</h4>
           </Card.Header>
           <Card.Body>
@@ -250,10 +282,7 @@ function Scanner() {
                 {lastScanned && (
                   <Card className="border-0 shadow-sm mt-4">
                     <Card.Header
-                      style={{
-                        backgroundColor: lastScanned.valid ? THEME.success : THEME.danger,
-                        color: 'white'
-                      }}
+                      className={lastScanned.valid ? 'validation-header' : 'validation-header-invalid'}
                     >
                       <h5 className="mb-0">
                         {lastScanned.valid ? 'Valid Ticket' : 'Invalid Ticket'}
@@ -276,15 +305,7 @@ function Scanner() {
                               <p className="mb-1"><strong>Passenger:</strong> {lastScanned.ticket.passenger?.name || 'N/A'}</p>
                               <p className="mb-1">
                                 <strong>Status:</strong>{' '}
-                                <Badge
-                                  bg="none"
-                                  style={{ 
-                                    backgroundColor: getBoardingStatusColor(lastScanned.ticket.passenger?.boarding_status),
-                                    color: 'white'
-                                  }}
-                                >
-                                  {formatBoardingStatus(lastScanned.ticket.passenger?.boarding_status)}
-                                </Badge>
+                                {renderBoardingStatus(lastScanned.ticket)}
                               </p>
                             </Col>
                             <Col md={6}>
@@ -302,13 +323,13 @@ function Scanner() {
               
               <Col lg={5}>
                 <Card className="border-0 shadow-sm h-100">
-                  <Card.Header style={{ backgroundColor: THEME.accent }}>
+                  <Card.Header className="recent-scans-header">
                     <h5 className="mb-0">Recent Scans</h5>
                   </Card.Header>
                   <Card.Body className="p-0">
                     <div className="table-responsive">
-                      <Table hover className="mb-0">
-                        <thead>
+                      <Table striped hover responsive className="mt-3 recent-scans-table">
+                        <thead className="table-header">
                           <tr>
                             <th>Timestamp</th>
                             <th>Ticket Number</th>
@@ -320,7 +341,7 @@ function Scanner() {
                         <tbody>
                           {recentScans.length === 0 ? (
                             <tr>
-                              <td colSpan="5" className="text-center py-3">No scans yet</td>
+                              <td colSpan="5" className="text-center">No scans yet</td>
                             </tr>
                           ) : (
                             recentScans.map((scan, index) => (
@@ -329,21 +350,10 @@ function Scanner() {
                                 <td>{scan.ticket?.ticket_number || 'N/A'}</td>
                                 <td>{scan.ticket?.passenger?.name || 'N/A'}</td>
                                 <td>
-                                  <Badge 
-                                    style={{ 
-                                      backgroundColor: scan.ticket ? getBoardingStatusColor(scan.ticket.passenger?.boarding_status) : '#6c757d',
-                                      color: 'white'
-                                    }}
-                                  >
-                                    {scan.ticket ? formatBoardingStatus(scan.ticket.passenger?.boarding_status) : 'N/A'}
-                                  </Badge>
+                                  {renderBoardingStatus(scan.ticket)}
                                 </td>
                                 <td>
-                                  <Badge 
-                                    bg={scan.valid ? 'success' : 'danger'}
-                                  >
-                                    {scan.valid ? 'Valid' : 'Invalid'}
-                                  </Badge>
+                                  {renderValidationBadge(scan.valid)}
                                 </td>
                               </tr>
                             ))
@@ -359,7 +369,7 @@ function Scanner() {
         </Card>
         
         <Card className="shadow-sm border-0">
-          <Card.Header style={{ backgroundColor: THEME.accent }}>
+          <Card.Header className="card-header-primary">
             <h5 className="mb-0">Scanning Tips</h5>
           </Card.Header>
           <Card.Body>

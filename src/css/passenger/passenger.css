@@ -100,7 +100,6 @@
   border-radius: 4px !important;
   transition: all 0.3s ease !important;
   min-width: 120px !important;
-  max-width: 160px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -122,8 +121,6 @@
   border-radius: 4px !important;
   transition: all 0.3s ease !important;
   font-size: 0.9rem !important;
-  min-width: 120px !important;
-  max-width: 180px !important;
 }
 
 .add-passenger-btn:hover {
@@ -327,10 +324,9 @@
   }
   
   .add-passenger-btn, .back-btn {
-    width: auto !important;
+    width: 100% !important;
     margin-top: 10px !important;
     min-width: auto !important;
-    max-width: 160px !important;
     padding: 0.5rem 0.75rem !important;
     font-size: 0.85rem !important;
     min-height: 44px !important;

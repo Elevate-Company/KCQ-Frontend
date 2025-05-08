@@ -69,6 +69,83 @@
   font-weight: 500;
   padding: 5px 8px;
   border-radius: 4px;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+/* Status badge styles */
+.badge-boarded {
+  background-color: var(--primary) !important;
+  color: white !important;
+}
+
+.badge-checked-in {
+  background-color: var(--success) !important;
+  color: white !important;
+}
+
+.badge-not-checked-in {
+  background-color: var(--warning) !important;
+  color: black !important;
+}
+
+.badge-cancelled, .badge-missed, .badge-invalid {
+  background-color: var(--danger) !important;
+  color: white !important;
+}
+
+.badge-valid {
+  background-color: var(--success) !important;
+  color: white !important;
+}
+
+.badge-secondary {
+  background-color: #6c757d !important;
+  color: white !important;
+}
+
+/* Status indicator in the results table */
+.status-indicator {
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 4px;
+  display: inline-block;
+  text-align: center;
+  min-width: 90px;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  margin: 2px 0;
+  transition: all 0.2s ease;
+}
+
+/* Base status colors */
+.status-indicator.badge-valid, .status-indicator.badge-checked-in {
+  background-color: var(--success);
+  color: white;
+}
+
+.status-indicator.badge-invalid, .status-indicator.badge-cancelled, .status-indicator.badge-missed {
+  background-color: var(--danger);
+  color: white;
+}
+
+.status-indicator.badge-boarded {
+  background-color: var(--primary);
+  color: white;
+}
+
+.status-indicator.badge-not-checked-in {
+  background-color: var(--warning);
+  color: black;
+}
+
+.status-indicator.badge-secondary {
+  background-color: #6c757d;
+  color: white;
 }
 
 /* Animation for scanner */
@@ -128,7 +205,36 @@
 
 /* Custom table styling */
 thead {
-  background-color: var(--accent);
+  background-color: var(--primary);
+  color: white;
+  font-weight: 600;
+}
+
+.table thead th {
+  background-color: var(--primary);
+  color: white;
+  font-weight: 600;
+  padding: 10px 8px;
+  vertical-align: middle;
+  border-color: #0d1875;
+}
+
+/* Improve table styling */
+.recent-scans-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.recent-scans-table th:first-child {
+  border-top-left-radius: 4px;
+}
+
+.recent-scans-table th:last-child {
+  border-top-right-radius: 4px;
+}
+
+.recent-scans-table tbody tr:hover {
+  background-color: rgba(9, 16, 87, 0.05);
 }
 
 /* Enhanced responsive design */
@@ -206,4 +312,30 @@ thead {
 .btn-primary:disabled {
   background-color: rgba(9, 16, 87, 0.65);
   border-color: rgba(9, 16, 87, 0.65);
+}
+
+.table-header th {
+  background-color: var(--primary);
+  color: white;
+  font-weight: 600;
+  padding: 10px 8px;
+  border-color: #0d1875;
+}
+
+.status-indicator:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 5px rgba(0,0,0,0.15);
+}
+
+/* Custom styling for INVALID badge */
+.invalid-badge {
+  background-color: var(--danger);
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  display: inline-block;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
 } 

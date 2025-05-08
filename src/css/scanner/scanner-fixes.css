@@ -1,0 +1,85 @@
+/* Scanner fixes for status badges and table headers */
+
+/* Fix table headers */
+.table-header th,
+.card-header-primary {
+  background-color: #091057 !important;
+  color: white !important;
+  font-weight: 600 !important;
+  padding: 10px 8px !important;
+}
+
+/* Badge status fixes */
+.status-badge {
+  display: inline-block !important;
+  padding: 6px 12px !important;
+  border-radius: 4px !important;
+  text-align: center !important;
+  font-weight: 600 !important;
+  min-width: 100px !important;
+  text-transform: uppercase !important;
+  font-size: 12px !important;
+  letter-spacing: 0.5px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12) !important;
+  margin: 2px 0 !important;
+}
+
+.badge-boarded {
+  background-color: #091057 !important;
+  color: white !important;
+}
+
+.badge-valid {
+  background-color: #34a853 !important;
+  color: white !important;
+}
+
+.badge-invalid {
+  background-color: #ea4335 !important;
+  color: white !important;
+}
+
+/* Fix N/A status */
+.badge-na {
+  background-color: #6c757d !important;
+  color: white !important;
+}
+
+/* Recent scans header */
+.recent-scans-header {
+  background-color: #091057 !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+/* Validation result header */
+.validation-header {
+  background-color: #34a853 !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.validation-header-invalid {
+  background-color: #ea4335 !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+/* Ensure validation header text is white */
+.validation-header h5, 
+.validation-header-invalid h5 {
+  color: white !important;
+}
+
+/* Fix for INVALID badge in Recent Scans table */
+.status-badge.badge-invalid {
+  background-color: #ea4335 !important;
+  color: white !important;
+  font-weight: bold !important;
+}
+
+/* Add more contrast to Recent Scans header */
+.recent-scans-header h5 {
+  color: white !important;
+  font-weight: bold !important;
+} 

@@ -40,7 +40,7 @@ function PassengerInfo() {
 
         // Fetch tickets for this passenger
         try {
-          const ticketsResponse = await axios.get(`${apiUrl}/api/passengers/${id}/tickets/`, {
+          const ticketsResponse = await axios.get(`${apiUrl}/api/tickets/by-passenger/${id}/`, {
             headers: {
               Authorization: `Token ${token}`,
             },
@@ -111,7 +111,7 @@ function PassengerInfo() {
                 variant="outline-light" 
                 onClick={() => navigate('/passenger')}
                 className="back-btn"
-                style={{ backgroundColor: '#091057' }}
+                style={{ minWidth: '110px', padding: '0.4rem 0.75rem', backgroundColor: '#091057' }}
               >
                 <FaArrowLeft className="me-2" /> Back to List
               </Button>
@@ -132,7 +132,7 @@ function PassengerInfo() {
             variant="outline-light" 
             onClick={() => navigate('/passenger')}
             className="back-btn"
-            style={{ backgroundColor: '#091057' }}
+            style={{ minWidth: '110px', padding: '0.4rem 0.75rem', backgroundColor: '#091057' }}
           >
             <FaArrowLeft className="me-2" /> Back to List
           </Button>
@@ -156,7 +156,8 @@ function PassengerInfo() {
                 <Button 
                   variant="outline-light" 
                   onClick={() => navigate('/passenger')}
-                  className="back-btn"
+                  className="back-btn main-header-btn"
+                  style={{ minWidth: '110px', padding: '0.4rem 0.75rem' }}
                 >
                   <FaArrowLeft className="me-2" /> Back to List
                 </Button>

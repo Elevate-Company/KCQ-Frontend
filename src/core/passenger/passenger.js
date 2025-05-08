@@ -47,7 +47,7 @@ function PassengerList() {
             try {
               // Get tickets issued to this passenger
               const ticketsResponse = await axios.get(
-                `${apiUrl}/api/passengers/${passenger.id}/tickets/`,
+                `${apiUrl}/api/tickets/by-passenger/${passenger.id}/`,
                 {
                   headers: {
                     Authorization: `Token ${token}`,
@@ -154,6 +154,7 @@ function PassengerList() {
               variant="outline-light"
               className="back-btn"
               onClick={handleAddPassenger}
+              style={{ minWidth: '110px', padding: '0.4rem 0.75rem' }}
             >
               <FaPlus className="me-2" /> Add Passenger
             </Button>

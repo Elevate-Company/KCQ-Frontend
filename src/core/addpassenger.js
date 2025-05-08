@@ -92,6 +92,7 @@ function AddPassenger() {
                   variant="outline-light" 
                   onClick={() => navigate('/passenger')}
                   className="back-btn"
+                  style={{ minWidth: '110px', padding: '0.4rem 0.75rem' }}
                 >
                   <FaArrowLeft className="me-2" /> Back to List
                 </Button>
@@ -209,7 +210,7 @@ function AddPassenger() {
                       type="submit" 
                       className="add-passenger-btn py-2"
                       disabled={isSubmitting}
-                      style={{ minHeight: '44px', maxWidth: '180px', marginRight: 'auto', marginLeft: 'auto' }}
+                      style={{ minHeight: '44px' }}
                     >
                       {isSubmitting ? (
                         <>
@@ -226,9 +227,6 @@ function AddPassenger() {
                       style={{ 
                         fontWeight: '500', 
                         minHeight: '44px',
-                        maxWidth: '180px',
-                        marginRight: 'auto',
-                        marginLeft: 'auto',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center'
