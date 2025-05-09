@@ -9,7 +9,7 @@ import '../../css/issueticket/ticket.css';
 
 // Define consistent colors for the application
 const THEME = {
-  primary: '#0a215a',  // Changed to match the sidebar dark blue
+  primary: '#0a215a',  // Dark blue
   secondary: '#071c4d', // Darker variant
   accent: '#e8f0fe',
   success: '#34a853',
@@ -78,10 +78,22 @@ const Ticket = () => {
 
   // Function to handle printing ticket
   const handlePrint = () => {
-    // Using setTimeout to ensure React has updated the DOM before printing
+    // Set a slight delay to ensure all styles are applied
     setTimeout(() => {
+      // Save the current document title
+      const originalTitle = document.title;
+      
+      // Change title for the print job
+      document.title = `KCQ Express Ticket - ${ticketsToPrint[0]?.ticket_number || 'Ticket'}`;
+      
+      // Print the document
       window.print();
-    }, 100);
+      
+      // Restore the original title
+      setTimeout(() => {
+        document.title = originalTitle;
+      }, 100);
+    }, 300);
   };
 
   return (
@@ -98,180 +110,123 @@ const Ticket = () => {
         return (
           <div key={index} className="printable-ticket" ref={ticketRef}>
             <div className="ticket-container">
-              {/* Passenger Section */}
-              <div className="passenger-section">
-                <div style={{ 
-                  background: THEME.primary,
-                  color: "white",
-                  padding: "10px",
-                  borderBottom: `1px solid ${THEME.primary}`
-                }}>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div className="d-flex align-items-center">
-                      <i className="fas fa-ship fa-lg me-2"></i>
-                      <div>
-                        <h4 className="mb-0 fw-bold">KCQ EXPRESS</h4>
-                        <small>Ferry Ticketing System</small>
+              {/* Main Ticket Container */}
+              <div className="ticket-main">
+                {/* Passenger Section - Blue bordered design */}
+                <div className="passenger-section">
+                  <div className="passenger-header">
+                    Passenger
+                  </div>
+                  <div className="passenger-name">
+                    {getPassengerName(ticket).toUpperCase()}
+                  </div>
+                  
+                  <div className="passenger-details">
+                    <div className="detail-row">
+                      <div className="detail-cell">
+                        <div className="detail-label">Departure Time</div>
+                        <div className="detail-value">{departureTime}</div>
+                      </div>
+                      <div className="detail-cell">
+                        <div className="detail-label">Arrival Time</div>
+                        <div className="detail-value">{arrivalTime}</div>
                       </div>
                     </div>
-                    <Badge 
-                      style={{ 
-                        background: "white", 
-                        color: THEME.primary, 
-                        padding: "6px 10px",
-                        borderRadius: "4px",
-                        fontWeight: "600"
-                      }}
-                    >
-                      {ticket.ticket_number}
-                    </Badge>
+                    
+                    <div className="detail-row">
+                      <div className="detail-cell">
+                        <div className="detail-label">Date</div>
+                        <div className="detail-value">{date}</div>
+                      </div>
+                      <div className="detail-cell">
+                        <div className="detail-label">ID</div>
+                        <div className="detail-value">{ticket.ticket_number}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="detail-row">
+                      <div className="detail-cell">
+                        <div className="detail-label">From</div>
+                        <div className="detail-value">{ticket.trip?.origin}</div>
+                      </div>
+                      <div className="detail-cell">
+                        <div className="detail-label">To</div>
+                        <div className="detail-value">{ticket.trip?.destination}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="detail-row">
+                      <div className="detail-cell">
+                        <div className="detail-label">Type</div>
+                        <div className="detail-value text-capitalize">{ticket.age_group}</div>
+                      </div>
+                      <div className="detail-cell">
+                        <div className="detail-label">Seat</div>
+                        <div className="detail-value">{ticket.seat_number}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="detail-row">
+                      <div className="detail-cell full-width">
+                        <div className="detail-label">Vessel</div>
+                        <div className="detail-value">KCQ Express</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-
-                <div className="card-body-compact">
-                  {/* Passenger Name and Basic Info */}
-                  <Row className="compact-row">
-                    <Col>
-                      <h5 className="fw-bold mb-1">{getPassengerName(ticket)?.toUpperCase()}</h5>
-                      <div className="d-flex justify-content-between align-items-center mb-2">
-                        <div><small className="text-muted">{ticket.age_group || 'Adult'} • Seat {ticket.seat_number || 'N/A'}</small></div>
-                        <div><small className="text-muted">{date}</small></div>
-                      </div>
-                    </Col>
-                  </Row>
-
-                  {/* From - To */}
-                  <Row className="compact-row text-center">
-                    <Col xs={5}>
-                      <h6 className="fw-bold mb-0">{ticket.trip?.origin || 'Manila Bay'}</h6>
-                      <small className="text-muted">{departureTime}</small>
-                    </Col>
-                    <Col xs={2} className="d-flex align-items-center justify-content-center">
-                      <i className="fas fa-arrow-right text-muted"></i>
-                    </Col>
-                    <Col xs={5}>
-                      <h6 className="fw-bold mb-0">{ticket.trip?.destination || 'Bataan'}</h6>
-                      <small className="text-muted">{arrivalTime}</small>
-                    </Col>
-                  </Row>
-
-                  {/* Ferry Info */}
-                  <div className="text-center mt-2 mb-2">
-                    <small className="text-muted">Ferry: {
-                      typeof ticket.trip?.ferry_boat === 'object' ? 
-                      (ticket.trip.ferry_boat.name || ticket.trip.ferry_boat.slug || 'N/A') : 
-                      ticket.trip?.ferry_boat || 'N/A'
-                    }</small>
-                  </div>
-
-                  {/* QR Code Section */}
-                  <div className="text-center mb-2 compact-qrcode">
-                    <QRCode 
-                      value={ticket.ticket_number || `T-${Date.now()}`} 
-                      size={100}
-                      level="M"
-                      includeMargin={true}
-                      bgColor="#fff"
-                      fgColor="#000000"
-                      renderAs="svg"
-                      style={{imageRendering: 'crisp-edges'}}
-                    />
-                    <div className="mt-1">
-                      <small>{ticket.ticket_number}</small>
+                
+                {/* Separation line for cutting */}
+                <div className="ticket-separation"></div>
+                
+                {/* Staff Section - Navy header with compact layout */}
+                <div className="staff-section">
+                  <div className="staff-header">
+                    <div className="company-logo">
+                      <i className="fas fa-ship"></i> KCQ EXPRESS
+                    </div>
+                    <div className="ticket-id">
+                      {ticket.ticket_number}
                     </div>
                   </div>
                   
-                  <div className="text-center">
-                    <small>PASSENGER COPY</small>
-                  </div>
-                </div>
-              </div>
-
-              {/* Staff Section */}
-              <div className="staff-section">
-                <div style={{ 
-                  background: THEME.primary,
-                  color: "white",
-                  padding: "10px",
-                  borderBottom: `1px solid ${THEME.primary}`
-                }}>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div className="d-flex align-items-center">
-                      <i className="fas fa-ship fa-lg me-2"></i>
-                      <div>
-                        <h4 className="mb-0 fw-bold">KCQ EXPRESS</h4>
-                        <small>Ferry Ticketing System</small>
+                  <div className="staff-content">
+                    <div className="staff-info">
+                      <div className="staff-row">
+                        <div className="staff-label">Passenger:</div>
+                        <div className="staff-value">{getPassengerName(ticket)}</div>
+                      </div>
+                      <div className="staff-row">
+                        <div className="staff-label">Trip:</div>
+                        <div className="staff-value">{ticket.trip?.origin} to {ticket.trip?.destination}</div>
+                      </div>
+                      <div className="staff-row">
+                        <div className="staff-label">Date:</div>
+                        <div className="staff-value">{date}</div>
+                      </div>
+                      <div className="staff-row">
+                        <div className="staff-label">Time:</div>
+                        <div className="staff-value">{departureTime}</div>
+                      </div>
+                      <div className="staff-row">
+                        <div className="staff-label">Seat:</div>
+                        <div className="staff-value">{ticket.seat_number}</div>
+                      </div>
+                      <div className="staff-row">
+                        <div className="staff-label">Type:</div>
+                        <div className="staff-value text-capitalize">{ticket.age_group}</div>
                       </div>
                     </div>
-                    <Badge 
-                      style={{ 
-                        background: "white", 
-                        color: THEME.primary, 
-                        padding: "6px 10px",
-                        borderRadius: "4px",
-                        fontWeight: "600"
-                      }}
-                    >
-                      {ticket.ticket_number}
-                    </Badge>
-                  </div>
-                </div>
-
-                <div className="card-body-compact">
-                  {/* Compact Staff Copy */}
-                  <Row className="compact-row">
-                    <Col xs={12}>
-                      <div className="d-flex justify-content-between mb-1">
-                        <span className="detail-text text-muted">Passenger:</span>
-                        <span className="detail-text fw-bold">{getPassengerName(ticket)}</span>
-                      </div>
-                      
-                      <div className="d-flex justify-content-between mb-1">
-                        <span className="detail-text text-muted">Route:</span>
-                        <span className="detail-text fw-bold">{ticket.trip?.origin} → {ticket.trip?.destination}</span>
-                      </div>
-                      
-                      <div className="d-flex justify-content-between mb-1">
-                        <span className="detail-text text-muted">Time:</span>
-                        <span className="detail-text fw-bold">{departureTime} - {arrivalTime}</span>
-                      </div>
-                      
-                      <div className="d-flex justify-content-between mb-1">
-                        <span className="detail-text text-muted">Date:</span>
-                        <span className="detail-text fw-bold">{date}</span>
-                      </div>
-                      
-                      <div className="d-flex justify-content-between mb-1">
-                        <span className="detail-text text-muted">Seat:</span>
-                        <span className="detail-text fw-bold">{ticket.seat_number}</span>
-                      </div>
-                      
-                      <div className="d-flex justify-content-between mb-1">
-                        <span className="detail-text text-muted">Type:</span>
-                        <span className="detail-text fw-bold text-capitalize">{ticket.age_group}</span>
-                      </div>
-                    </Col>
-                  </Row>
-
-                  {/* QR Code Section */}
-                  <div className="text-center mb-2 compact-qrcode">
-                    <QRCode 
-                      value={ticket.ticket_number || `T-${Date.now()}`} 
-                      size={80}
-                      level="M"
-                      includeMargin={true}
-                      bgColor="#fff"
-                      fgColor="#000000"
-                      renderAs="svg"
-                      style={{imageRendering: 'crisp-edges'}}
-                    />
-                    <div className="mt-1">
-                      <small>{ticket.ticket_number}</small>
+                    <div className="staff-qr">
+                      <QRCode 
+                        value={ticket.ticket_number || `T-${Date.now()}`} 
+                        size={50}
+                        level="M"
+                        includeMargin={false}
+                        bgColor="#fff"
+                        fgColor="#000000"
+                        renderAs="svg"
+                      />
                     </div>
-                  </div>
-                  
-                  <div className="text-center">
-                    <small>STAFF COPY</small>
                   </div>
                 </div>
               </div>
@@ -281,16 +236,7 @@ const Ticket = () => {
                 <Button 
                   onClick={handlePrint}
                   variant="primary"
-                  style={{ 
-                    background: THEME.primary,
-                    border: 'none',
-                    padding: '10px 20px',
-                    borderRadius: '5px',
-                    fontWeight: '600',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}
+                  className="print-btn"
                 >
                   <i className="fas fa-print"></i> Print Ticket
                 </Button>

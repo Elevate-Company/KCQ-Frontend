@@ -15,61 +15,185 @@
 .ticket-container {
   display: flex;
   flex-direction: column;
-  max-width: 450px;
+  max-width: 400px;
   margin: 0 auto;
+  font-family: 'Roboto', 'Arial', sans-serif;
 }
 
-/* Make both passenger and staff tickets similar height */
-.passenger-section,
-.staff-section {
+/* Main Ticket Styling */
+.ticket-main {
+  width: 100%;
+  overflow: hidden;
+  background-color: #fff;
+  position: relative;
   border: 1px solid #0a215a;
   border-radius: 8px;
-  margin-bottom: 8px;
-  overflow: hidden;
 }
 
-/* Remove extra spacing */
-.card-body-compact {
-  padding: 12px !important;
+/* Passenger Section */
+.passenger-section {
+  padding: 0;
+  border-bottom: 0;
 }
 
-/* Compact rows */
-.compact-row {
-  margin-bottom: 8px !important;
+.passenger-header {
+  text-align: center;
+  padding: 8px;
+  background-color: #fff;
+  color: #0a215a;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-bottom: 1px solid #0a215a;
 }
 
-/* Compact section headers */
-.section-header {
-  margin-bottom: 6px !important;
-  font-size: 0.85rem !important;
+.passenger-name {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #0a215a;
+  padding: 8px 10px;
+  border-bottom: 1px solid #0a215a;
 }
 
-/* Smaller text for details */
-.detail-text {
-  font-size: 0.8rem !important;
-  margin-bottom: 2px !important;
+.passenger-details {
+  padding: 0 10px;
 }
 
-/* Compact the divider */
-.compact-divider {
-  margin: 10px 0 !important;
+.detail-row {
+  display: flex;
+  border-bottom: 1px dotted #ccc;
+  padding: 6px 0;
 }
 
-/* Smaller QR codes */
-.compact-qrcode svg {
-  max-height: 100px !important;
-  image-rendering: -webkit-optimize-contrast !important;
-  image-rendering: crisp-edges !important;
+.detail-row:last-child {
+  border-bottom: none;
 }
 
-/* QR code background and padding */
-.compact-qrcode {
-  background-color: white !important;
-  padding: 8px !important;
+.detail-cell {
+  flex: 1;
 }
-  
+
+.detail-cell.full-width {
+  width: 100%;
+}
+
+.detail-label {
+  font-size: 0.75rem;
+  color: #666;
+  margin-bottom: 2px;
+}
+
+.detail-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0a215a;
+}
+
+/* Separation line for cutting */
+.ticket-separation {
+  height: 1px;
+  border: none;
+  border-top: 2px dashed #0a215a;
+  margin: 0;
+  position: relative;
+}
+
+.ticket-separation::after {
+  content: "✂";
+  position: absolute;
+  right: 10px;
+  top: -10px;
+  color: #0a215a;
+  font-size: 16px;
+}
+
+/* Staff Section */
+.staff-section {
+  background-color: #fff;
+  padding: 0;
+}
+
+.staff-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0a215a;
+  color: white;
+  padding: 7px 10px;
+}
+
+.company-logo {
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+.ticket-id {
+  background-color: white;
+  color: #0a215a;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.staff-content {
+  display: flex;
+  padding: 8px 10px;
+}
+
+.staff-info {
+  flex: 1;
+}
+
+.staff-row {
+  display: flex;
+  margin-bottom: 3px;
+  font-size: 0.75rem;
+}
+
+.staff-label {
+  color: #666;
+  font-weight: 600;
+  min-width: 65px;
+}
+
+.staff-value {
+  color: #000;
+  font-weight: 500;
+}
+
+.staff-qr {
+  margin-left: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.staff-qr svg {
+  height: 50px;
+  width: 50px;
+}
+
+/* Print Button */
+.print-btn {
+  background: #0a215a;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+}
+
 /* Thermal Printer Specific Styles */
 @media print {
+  /* Reset basics for printing */
+  @page {
+    size: auto;
+    margin: 0;
+  }
+  
   /* Hide unnecessary elements when printing */
   body * {
     visibility: hidden;
@@ -85,43 +209,184 @@
     position: absolute;
     left: 0;
     top: 0;
-    width: 76mm; /* 80mm roll with small margins */
+    width: 100%;
+    max-width: 100%;
     margin: 0;
     padding: 0;
   }
   
-  /* Remove shadows, rounded corners for cleaner print */
-  .printable-ticket .card {
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    margin: 0 !important;
-    width: 100% !important;
-    max-width: none !important;
+  /* Ensure the ticket container has appropriate dimensions */
+  .ticket-container {
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
   }
   
-  /* Keep borders for both sections */
-  .passenger-section, 
+  /* Main ticket container - remove border for printing */
+  .ticket-main {
+    border: none;
+    border-radius: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0 8px; /* Add side margins */
+  }
+  
+  /* Passenger section printing */
+  .passenger-section {
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .passenger-header {
+    padding: 5px 3px;
+    font-size: 9pt;
+    font-weight: 900; /* Extra bold */
+    border-bottom: 1px solid #000;
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+    color: #000;
+  }
+  
+  .passenger-name {
+    font-size: 11pt;
+    font-weight: 900; /* Extra bold */
+    padding: 5px 3px;
+    border-bottom: 1px solid #000;
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+    color: #000;
+  }
+  
+  .passenger-details {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 2px 0;
+  }
+  
+  .detail-row {
+    padding: 4px 0;
+    width: 100%;
+    display: flex;
+    box-sizing: border-box;
+    border-bottom: 1px dotted #000; /* darker dotted line */
+  }
+  
+  .detail-row:last-child {
+    border-bottom: none;
+  }
+  
+  .detail-cell {
+    flex: 1;
+    box-sizing: border-box;
+  }
+  
+  .detail-label {
+    font-size: 8pt; /* Larger */
+    font-weight: 700; /* Bold */
+    margin-bottom: 1px;
+    color: #000; /* Black for better contrast */
+  }
+  
+  .detail-value {
+    font-size: 9pt; /* Larger */
+    font-weight: 900; /* Extra bold */
+    color: #000;
+  }
+  
+  /* Staff section printing */
   .staff-section {
-    border: 1px solid #0a215a !important;
-    margin-bottom: 4px !important;
-    page-break-inside: avoid !important;
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
+    border-top: 2px dashed #000;
   }
   
-  /* Adjust font sizes for thermal printer */
-  .printable-ticket h4 {
-    font-size: 12pt !important;
+  .staff-header {
+    padding: 3px 5px;
+    background-color: #fff !important; /* White background instead of dark */
+    border-bottom: 1px solid #000; /* Add border instead */
+    width: 100%;
+    box-sizing: border-box;
   }
   
-  .printable-ticket h5 {
-    font-size: 10pt !important;
+  .company-logo {
+    font-size: 9pt; /* Larger */
+    font-weight: 900; /* Extra bold */
+    color: #000 !important; /* Black text instead of white */
   }
   
-  .printable-ticket h6 {
-    font-size: 9pt !important;
+  .company-logo i {
+    font-weight: 900; /* Bold icon */
+    color: #000 !important; /* Ensure black color for icon */
   }
   
-  .printable-ticket p, .printable-ticket span, .printable-ticket small {
-    font-size: 8pt !important;
+  .ticket-id {
+    font-size: 8pt; /* Larger */
+    font-weight: 900; /* Extra bold */
+    padding: 1px 4px;
+    background-color: #fff !important;
+    color: #000 !important;
+    border: 1px solid #000;
+  }
+  
+  .staff-content {
+    padding: 5px;
+    width: 100%;
+    display: flex;
+    box-sizing: border-box;
+  }
+  
+  .staff-info {
+    flex: 1;
+    padding-right: 5px;
+  }
+  
+  .staff-row {
+    margin-bottom: 3px; /* More spacing */
+    font-size: 8pt; /* Larger */
+    width: 100%;
+    display: flex;
+    box-sizing: border-box;
+  }
+  
+  .staff-label {
+    min-width: 62px; /* Slightly wider */
+    font-weight: 700; /* Bold */
+    color: #000;
+  }
+  
+  .staff-value {
+    font-weight: 900; /* Extra bold */
+    color: #000;
+  }
+  
+  .staff-qr {
+    margin-left: 5px;
+  }
+  
+  .staff-qr svg {
+    height: 50px; /* Slightly larger */
+    width: 50px;
+  }
+  
+  /* Cutting line */
+  .ticket-separation {
+    margin: 0;
+    border-top: 2px dashed #000; /* Thicker dashed line */
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .ticket-separation::after {
+    font-size: 10pt; /* Larger */
+    font-weight: 900; /* Extra bold */
+    top: -9px;
+    color: #000; /* Ensure black color */
   }
   
   /* Hide the print button when printing */
@@ -129,27 +394,105 @@
     display: none !important;
   }
   
-  /* Ensure container takes full width */
+  /* Fix for container width in Bootstrap */
   .container {
     max-width: 100% !important;
+    width: 100% !important;
     padding: 0 !important;
+    margin: 0 !important;
   }
   
-  /* Optimize QR code for thermal printer */
-  .printable-ticket svg {
-    max-width: 100% !important;
-    height: auto !important;
-    image-rendering: -webkit-optimize-contrast !important;
-    image-rendering: crisp-edges !important;
+  /* Additional fixes for full width */
+  html, body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Force all text to be black for better visibility */
+  * {
+    color: #000 !important;
+  }
+}
+
+/* Add compact layout styling */
+.compact-ticket-content {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+}
+
+.compact-details {
+  flex: 1;
+}
+
+.compact-row {
+  display: flex;
+  margin-bottom: 3px;
+  font-size: 0.8rem;
+  line-height: 1.1;
+}
+
+.compact-label {
+  color: #555;
+  font-weight: 600;
+  min-width: 65px;
+  font-size: 0.75rem;
+}
+
+.compact-value {
+  color: #000;
+  font-weight: 600;
+  flex: 1;
+  font-size: 0.8rem;
+}
+
+.compact-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 8px;
+}
+
+.compact-qr svg {
+  height: 60px;
+  width: 60px;
+  display: block;
+  background: white;
+  padding: 2px;
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Update print styles for compact layout */
+@media print {
+  .compact-row {
+    margin-bottom: 1px !important;
+    font-size: 7pt !important;
   }
   
-  /* Optimize space by reducing padding */
-  .card-body-compact {
-    padding: 8px !important;
+  .compact-label {
+    font-size: 7pt !important;
+    min-width: 55px !important;
+    color: black !important;
+    font-weight: 700 !important;
   }
   
-  /* Ensure each section fits on its own part of receipt */
-  .printable-ticket {
-    page-break-inside: avoid !important;
+  .compact-value {
+    font-size: 7pt !important;
+    color: black !important;
+    font-weight: 700 !important;
+  }
+  
+  .compact-qr svg {
+    height: 45px !important;
+    width: 45px !important;
+    padding: 2px !important;
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+  
+  .compact-ticket-content {
+    padding: 2px 0 !important;
   }
 }
