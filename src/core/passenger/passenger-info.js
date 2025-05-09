@@ -12,6 +12,10 @@ function PassengerInfo() {
   const navigate = useNavigate();
   const [passenger, setPassenger] = useState(null);
   const [tickets, setTickets] = useState([]);
+  const [tripCounts, setTripCounts] = useState({
+    completed: 0,
+    upcoming: 0
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const apiUrl = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000';
@@ -46,7 +50,123 @@ function PassengerInfo() {
             },
           });
           
-          setTickets(ticketsResponse.data || []);
+          const ticketsData = ticketsResponse.data || [];
+          
+          // Process tickets to get trip details if not already included
+          const ticketsWithTrips = await Promise.all(
+            ticketsData.map(async (ticket) => {
+              // If trip is already an object, use it
+              if (ticket.trip && typeof ticket.trip === 'object') {
+                return ticket;
+              }
+              
+              // If trip is just an ID, fetch the trip details
+              if (ticket.trip && typeof ticket.trip === 'number') {
+                try {
+                  const tripResponse = await axios.get(`${apiUrl}/api/trips/${ticket.trip}/`, {
+                    headers: {
+                      Authorization: `Token ${token}`,
+                    },
+                  });
+                  return { ...ticket, trip: tripResponse.data };
+                } catch (err) {
+                  console.error(`Error fetching trip ${ticket.trip}:`, err);
+                  return ticket;
+                }
+              }
+              
+              return ticket;
+            })
+          );
+          
+          // Set tickets first
+          setTickets(ticketsWithTrips);
+          
+          // Count completed and upcoming trips
+          const now = new Date();
+          let completedCount = 0;
+          let upcomingCount = 0;
+          
+          ticketsWithTrips.forEach(ticket => {
+            if (!ticket.trip) return;
+            
+            const tripData = ticket.trip;
+            const departureTime = tripData.departure_time ? new Date(tripData.departure_time) : null;
+            const arrivalTime = tripData.arrival_time ? new Date(tripData.arrival_time) : null;
+            
+            // First check explicit trip status if available
+            if (tripData.status) {
+              const status = tripData.status.toUpperCase();
+              if (status === 'COMPLETED' || status === 'FINISHED') {
+                completedCount++;
+                return;
+              }
+              
+              if (['SCHEDULED', 'ACTIVE', 'UPCOMING', 'ONGOING'].includes(status)) {
+                upcomingCount++;
+                return;
+              }
+              
+              // If status is 'CANCELLED', don't count it
+              if (status === 'CANCELLED') {
+                return;
+              }
+            }
+            
+            // If no status, check boarding status
+            if (ticket.boarding_status) {
+              if (ticket.boarding_status.toUpperCase() === 'BOARDED') {
+                // If boarded and trip should be completed (arrival time in past)
+                if (arrivalTime && now > arrivalTime) {
+                  completedCount++;
+                  return;
+                }
+                
+                // If boarded but trip still ongoing
+                if (departureTime && now > departureTime) {
+                  upcomingCount++;
+                  return;
+                }
+              }
+            }
+            
+            // If no helpful status, determine based on dates
+            if (departureTime && arrivalTime) {
+              if (now > arrivalTime) {
+                // Trip has completed
+                completedCount++;
+              } else if (now < departureTime) {
+                // Trip is upcoming
+                upcomingCount++;
+              } else if (now >= departureTime && now <= arrivalTime) {
+                // Trip is active (also count as upcoming)
+                upcomingCount++;
+              }
+            } else if (departureTime) {
+              // If only departure time is available
+              if (now < departureTime) {
+                // Trip is upcoming
+                upcomingCount++;
+              } else {
+                // Trip has likely started or completed
+                // Assume completed if departure time was more than 4 hours ago
+                const fourHoursInMs = 4 * 60 * 60 * 1000;
+                if (now - departureTime > fourHoursInMs) {
+                  completedCount++;
+                } else {
+                  upcomingCount++;
+                }
+              }
+            }
+          });
+          
+          console.log('Trip counts:', { completed: completedCount, upcoming: upcomingCount });
+          
+          setTripCounts({
+            completed: completedCount,
+            upcoming: upcomingCount
+          });
+          
         } catch (ticketError) {
           console.error('Error fetching passenger tickets:', ticketError);
           setTickets([]);
@@ -231,15 +351,13 @@ function PassengerInfo() {
                   </div>
                   <div className="stat-card">
                     <div className="stat-value">
-                      {tickets.filter(ticket => ticket.trip?.status === 'COMPLETED').length || 0}
+                      {tripCounts.completed || 0}
                     </div>
                     <div className="stat-label">Completed Trips</div>
                   </div>
                   <div className="stat-card">
                     <div className="stat-value">
-                      {tickets.filter(ticket => 
-                        ticket.trip?.status === 'SCHEDULED' || ticket.trip?.status === 'ACTIVE'
-                      ).length || 0}
+                      {tripCounts.upcoming || 0}
                     </div>
                     <div className="stat-label">Upcoming Trips</div>
                   </div>

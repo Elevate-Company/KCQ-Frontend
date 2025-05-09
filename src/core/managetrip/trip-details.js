@@ -20,8 +20,9 @@ const THEME = {
 function TripDetails() {
   const { id } = useParams();
   const [trip, setTrip] = useState(null);
-  const [error, setError] = useState('');
+  const [passengers, setPassengers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,6 +36,106 @@ function TripDetails() {
           },
         });
         setTrip(response.data);
+        
+        // Fetch tickets for this trip to get passenger information
+        try {
+          // Try the by-trip endpoint first
+          try {
+            const ticketsResponse = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/tickets/by-trip/${id}/`, {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Token ${token}`,
+              },
+            });
+            
+            // Process ticket data to get passenger information
+            const ticketsWithPassengers = await Promise.all(
+              ticketsResponse.data.map(async (ticket) => {
+                // If passenger is already included, use it
+                if (ticket.passenger && typeof ticket.passenger === 'object') {
+                  return { ...ticket };
+                }
+                
+                // If only passenger ID is available, fetch passenger details
+                if (ticket.passenger && typeof ticket.passenger === 'number') {
+                  try {
+                    const passengerResponse = await axios.get(
+                      `${process.env.REACT_APP_API_BASE_URL}/api/passengers/${ticket.passenger}/`,
+                      {
+                        headers: {
+                          'Content-Type': 'application/json',
+                          Authorization: `Token ${token}`,
+                        },
+                      }
+                    );
+                    return { ...ticket, passenger: passengerResponse.data };
+                  } catch (err) {
+                    console.error(`Error fetching passenger ${ticket.passenger}:`, err);
+                    return { ...ticket, passenger: { id: ticket.passenger, name: 'Unknown' } };
+                  }
+                }
+                
+                return ticket;
+              })
+            );
+            
+            setPassengers(ticketsWithPassengers);
+          } catch (byTripError) {
+            // If the by-trip endpoint fails, fall back to fetching all tickets and filtering
+            console.warn('By-trip endpoint failed, fetching all tickets as fallback:', byTripError);
+            
+            // Fetch all tickets and filter by trip ID
+            const allTicketsResponse = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/tickets/`, {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Token ${token}`,
+              },
+            });
+            
+            // Filter tickets for this trip
+            const tripTickets = allTicketsResponse.data.filter(ticket => {
+              return (ticket.trip === parseInt(id) || 
+                      (ticket.trip && ticket.trip.id === parseInt(id)));
+            });
+            
+            // Process ticket data to get passenger information
+            const ticketsWithPassengers = await Promise.all(
+              tripTickets.map(async (ticket) => {
+                // If passenger is already included, use it
+                if (ticket.passenger && typeof ticket.passenger === 'object') {
+                  return { ...ticket };
+                }
+                
+                // If only passenger ID is available, fetch passenger details
+                if (ticket.passenger && typeof ticket.passenger === 'number') {
+                  try {
+                    const passengerResponse = await axios.get(
+                      `${process.env.REACT_APP_API_BASE_URL}/api/passengers/${ticket.passenger}/`,
+                      {
+                        headers: {
+                          'Content-Type': 'application/json',
+                          Authorization: `Token ${token}`,
+                        },
+                      }
+                    );
+                    return { ...ticket, passenger: passengerResponse.data };
+                  } catch (err) {
+                    console.error(`Error fetching passenger ${ticket.passenger}:`, err);
+                    return { ...ticket, passenger: { id: ticket.passenger, name: 'Unknown' } };
+                  }
+                }
+                
+                return ticket;
+              })
+            );
+            
+            setPassengers(ticketsWithPassengers);
+          }
+        } catch (err) {
+          console.error('Error fetching tickets for trip:', err);
+          setPassengers([]);
+        }
+        
         setLoading(false);
       } catch (error) {
         console.error('Error fetching trip details:', error);
@@ -73,6 +174,25 @@ function TripDetails() {
     return (
       <Badge bg={variant} className="px-3 py-2 fs-6">
         {status.toUpperCase()}
+      </Badge>
+    );
+  };
+  
+  const getBoardingStatusBadge = (status) => {
+    let variant = 'secondary';
+    let text = 'Not Boarded';
+    
+    if (status === 'BOARDED') {
+      variant = 'success';
+      text = 'Boarded';
+    } else if (status === 'CANCELLED') {
+      variant = 'danger';
+      text = 'Cancelled';
+    }
+    
+    return (
+      <Badge bg={variant} className="py-1 px-2">
+        {text}
       </Badge>
     );
   };
@@ -244,6 +364,62 @@ function TripDetails() {
                 </Card.Body>
               </Card>
             )}
+            
+            {/* Passenger List Section */}
+            <Card className="border-0 shadow-sm mb-4">
+              <Card.Body>
+                <h5 className="mb-3 fw-bold" style={{ color: THEME.primary }}>
+                  <i className="fas fa-users me-2"></i> Passengers
+                  <Badge bg="secondary" className="ms-2 px-3 py-1">
+                    {passengers.length}
+                  </Badge>
+                </h5>
+                
+                {passengers.length === 0 ? (
+                  <div className="text-center py-4">
+                    <p className="text-muted mb-0">No passengers booked for this trip yet</p>
+                  </div>
+                ) : (
+                  <div className="table-responsive">
+                    <Table hover className="passenger-table">
+                      <thead>
+                        <tr>
+                          <th>Ticket #</th>
+                          <th>Passenger</th>
+                          <th>Seat</th>
+                          <th>Type</th>
+                          <th>Status</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {passengers.map((ticket) => (
+                          <tr key={ticket.id}>
+                            <td>{ticket.ticket_number}</td>
+                            <td>
+                              {ticket.passenger?.name || 'Unknown'}
+                            </td>
+                            <td>{ticket.seat_number || 'N/A'}</td>
+                            <td>{ticket.age_group || 'Regular'}</td>
+                            <td>{getBoardingStatusBadge(ticket.boarding_status)}</td>
+                            <td>
+                              <Button 
+                                variant="outline-primary"
+                                size="sm"
+                                className="me-2"
+                                onClick={() => navigate(`/passenger-info/${ticket.passenger?.id}`)}
+                              >
+                                <i className="fas fa-user me-1"></i> View Passenger
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  </div>
+                )}
+              </Card.Body>
+            </Card>
           </Card.Body>
         </Card>
       </Container>
