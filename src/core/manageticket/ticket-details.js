@@ -156,7 +156,22 @@ function TicketDetails() {
                   <div className="me-3 mb-2">
                     <i className="fas fa-calendar-alt me-2 text-muted"></i>
                     <span className="text-muted">
-                      {ticket.trip?.departure_time ? new Date(ticket.trip.departure_time).toLocaleDateString() : 'N/A'}
+                      {ticket.trip?.departure_time ? (
+                        <>
+                          <span className="fw-medium">
+                            {new Date(ticket.trip.departure_time).toLocaleDateString('en-PH', { 
+                              timeZone: 'Asia/Manila',
+                              year: 'numeric', month: 'long', day: 'numeric'
+                            })}
+                          </span>
+                          <span className="text-muted ms-2">
+                            {new Date(ticket.trip.departure_time).toLocaleTimeString('en-PH', { 
+                              timeZone: 'Asia/Manila', 
+                              hour: '2-digit', minute: '2-digit'
+                            })}
+                          </span>
+                        </>
+                      ) : 'N/A'}
                     </span>
                   </div>
                   <div className="me-3 mb-2">
@@ -317,8 +332,13 @@ function TicketDetails() {
                             <i className="fas fa-ship me-2 text-primary"></i>
                             {ticket.trip?.departure_time ? (
                               <div>
-                                <p className="fw-bold mb-0">{new Date(ticket.trip.departure_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                                <small>{new Date(ticket.trip.departure_time).toLocaleDateString()}</small>
+                                <p className="fw-bold mb-0">{new Date(ticket.trip.departure_time).toLocaleTimeString('en-PH', { 
+                                  hour: '2-digit', minute: '2-digit',
+                                  timeZone: 'Asia/Manila'
+                                })}</p>
+                                <small>{new Date(ticket.trip.departure_time).toLocaleDateString('en-PH', {
+                                  timeZone: 'Asia/Manila'
+                                })}</small>
                               </div>
                             ) : (
                               <p className="fw-medium">N/A</p>
@@ -332,8 +352,13 @@ function TicketDetails() {
                             <i className="fas fa-ship me-2 text-success"></i>
                             {ticket.trip?.arrival_time ? (
                               <div>
-                                <p className="fw-bold mb-0">{new Date(ticket.trip.arrival_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                                <small>{new Date(ticket.trip.arrival_time).toLocaleDateString()}</small>
+                                <p className="fw-bold mb-0">{new Date(ticket.trip.arrival_time).toLocaleTimeString('en-PH', { 
+                                  hour: '2-digit', minute: '2-digit',
+                                  timeZone: 'Asia/Manila'
+                                })}</p>
+                                <small>{new Date(ticket.trip.arrival_time).toLocaleDateString('en-PH', {
+                                  timeZone: 'Asia/Manila'
+                                })}</small>
                               </div>
                             ) : (
                               <p className="fw-medium">N/A</p>

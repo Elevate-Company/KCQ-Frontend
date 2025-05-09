@@ -69,10 +69,6 @@ function ManageTickets() {
         return ticket.boarding_status === 'NOT_BOARDED' && 
                new Date(ticket.trip.departure_time) > currentDate;
       });
-    } else if (filter === 'checkin') {
-      filtered = tickets.filter(ticket => 
-        ticket.boarding_status === 'CHECKED_IN'
-      );
     } else if (filter === 'completed') {
       filtered = tickets.filter(ticket => 
         ticket.boarding_status === 'BOARDED'
@@ -154,7 +150,6 @@ function ManageTickets() {
             >
               <option value="all">All</option>
               <option value="upcoming">Upcoming</option>
-              <option value="checkin">Checked In</option>
               <option value="completed">Completed</option>
               <option value="cancelled">Cancelled</option>
             </select>

@@ -25,11 +25,27 @@ function ManageTripCard({ trip }) {
     status
   } = trip;
 
-  const departureDate = new Date(departure_time).toLocaleDateString();
-  const departureTime = new Date(departure_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const departureDateTime = new Date(departure_time);
+  const arrivalDateTime = arrival_time ? new Date(arrival_time) : null;
   
-  const arrivalDate = arrival_time ? new Date(arrival_time).toLocaleDateString() : null;
-  const arrivalTime = arrival_time ? new Date(arrival_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : null;
+  // Format dates and times for display with Philippines timezone
+  const departureDate = departureDateTime.toLocaleDateString('en-PH', { 
+    year: 'numeric', month: 'short', day: 'numeric',
+    timeZone: 'Asia/Manila'
+  });
+  const departureTime = departureDateTime.toLocaleTimeString('en-PH', { 
+    hour: '2-digit', minute: '2-digit',
+    timeZone: 'Asia/Manila'
+  });
+  
+  const arrivalDate = arrival_time ? arrivalDateTime.toLocaleDateString('en-PH', { 
+    year: 'numeric', month: 'short', day: 'numeric',
+    timeZone: 'Asia/Manila'
+  }) : null;
+  const arrivalTime = arrival_time ? arrivalDateTime.toLocaleTimeString('en-PH', { 
+    hour: '2-digit', minute: '2-digit',
+    timeZone: 'Asia/Manila'
+  }) : null;
   
   const boatType = typeof ferry_boat === 'object' 
     ? (ferry_boat.name || ferry_boat.slug || 'N/A') 
@@ -51,9 +67,6 @@ function ManageTripCard({ trip }) {
 
   // Check if trip is upcoming, ongoing, or completed
   const currentDate = new Date();
-  const departureDateTime = new Date(departure_time);
-  const arrivalDateTime = arrival_time ? new Date(arrival_time) : null;
-
   let tripStatus = status || 'scheduled';
   
   if (status === 'cancelled') {

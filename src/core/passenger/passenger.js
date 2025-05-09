@@ -170,7 +170,6 @@ function PassengerList() {
               <Table responsive hover className="align-middle passenger-table">
                 <thead>
                   <tr>
-                    <th style={{ width: '5%' }}>ID</th>
                     <th style={{ width: '20%' }}>Name</th>
                     <th style={{ width: '20%' }}>Email</th>
                     <th style={{ width: '15%' }}>Phone</th>
@@ -182,14 +181,13 @@ function PassengerList() {
                 <tbody>
                   {filteredPassengers.length === 0 ? (
                     <tr>
-                      <td colSpan="7" className="text-center py-4">
+                      <td colSpan="6" className="text-center py-4">
                         {searchTerm ? "No passengers match your search" : "No passengers found"}
                       </td>
                     </tr>
                   ) : (
                     filteredPassengers.map((passenger) => (
                       <tr key={passenger.id}>
-                        <td>{passenger.id}</td>
                         <td>{passenger.name}</td>
                         <td>{passenger.email || 'N/A'}</td>
                         <td>{passenger.phone || passenger.contact || 'N/A'}</td>
@@ -203,7 +201,7 @@ function PassengerList() {
                             {passenger.total_checked_tickets || 0}
                           </Badge>
                         </td>
-                        <td>{new Date(passenger.updated_at).toLocaleDateString()}</td>
+                        <td>{new Date(passenger.updated_at).toLocaleDateString('en-PH', { timeZone: 'Asia/Manila' })}</td>
                         <td>
                           <div className="action-buttons">
                             <Button

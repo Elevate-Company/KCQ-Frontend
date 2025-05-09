@@ -91,18 +91,35 @@
 
 /* Separation line for cutting */
 .ticket-separation {
-  height: 1px;
-  border: none;
-  border-top: 2px dashed #0a215a;
-  margin: 0;
+  height: 10px;
+  margin: 10px 0;
   position: relative;
+  background-image: repeating-linear-gradient(
+    to right,
+    #0a215a 0px,
+    #0a215a 5px,
+    transparent 5px,
+    transparent 10px
+  );
+  background-size: 10px 1px;
+  background-repeat: repeat-x;
+  background-position: center;
+}
+
+.ticket-separation::before {
+  content: "✂";
+  position: absolute;
+  left: 10px;
+  top: -7px;
+  color: #0a215a;
+  font-size: 16px;
 }
 
 .ticket-separation::after {
   content: "✂";
   position: absolute;
   right: 10px;
-  top: -10px;
+  top: -7px;
   color: #0a215a;
   font-size: 16px;
 }
@@ -374,19 +391,28 @@
     width: 50px;
   }
   
-  /* Cutting line */
+  /* Enhanced perforation for physical tearing */
   .ticket-separation {
-    margin: 0;
-    border-top: 2px dashed #000; /* Thicker dashed line */
-    width: 100%;
-    box-sizing: border-box;
+    height: 10px;
+    margin: 5px 0;
+    background-image: repeating-linear-gradient(
+      to right,
+      #000 0px,
+      #000 2px,
+      transparent 2px,
+      transparent 10px
+    );
+    background-size: 10px 1px;
+    background-repeat: repeat-x;
+    background-position: center;
+    page-break-after: avoid;
   }
   
+  .ticket-separation::before,
   .ticket-separation::after {
-    font-size: 10pt; /* Larger */
-    font-weight: 900; /* Extra bold */
-    top: -9px;
-    color: #000; /* Ensure black color */
+    display: block;
+    font-size: 14px;
+    color: #000;
   }
   
   /* Hide the print button when printing */

@@ -128,6 +128,7 @@ function AddTrip() {
               <h2 className="mb-0 fw-bold">Create a Trip</h2>
               <Button 
                 variant="outline-light"
+                style={{ width: "150px" }}
                 onClick={() => navigate('/manage-trips')}
               >
                 <i className="fas fa-arrow-left me-2"></i>

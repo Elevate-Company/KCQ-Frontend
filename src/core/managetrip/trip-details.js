@@ -277,8 +277,8 @@ function TripDetails() {
                             <div className="d-flex align-items-center">
                               <i className="fas fa-ship me-2" style={{ color: THEME.primary }}></i>
                               <div>
-                                <p className="mb-0 fw-bold">{departureTime.toLocaleDateString()}</p>
-                                <p className="mb-0">{departureTime.toLocaleTimeString()}</p>
+                                <p className="mb-0 fw-bold">{departureTime.toLocaleDateString('en-PH', { timeZone: 'Asia/Manila' })}</p>
+                                <p className="mb-0">{departureTime.toLocaleTimeString('en-PH', { timeZone: 'Asia/Manila', hour: '2-digit', minute: '2-digit' })}</p>
                               </div>
                             </div>
                           </Card.Body>
@@ -292,10 +292,10 @@ function TripDetails() {
                               <i className="fas fa-ship me-2" style={{ color: THEME.primary }}></i>
                               <div>
                                 <p className="mb-0 fw-bold">
-                                  {arrivalTime ? arrivalTime.toLocaleDateString() : 'Not specified'}
+                                  {arrivalTime ? arrivalTime.toLocaleDateString('en-PH', { timeZone: 'Asia/Manila' }) : 'Not specified'}
                                 </p>
                                 <p className="mb-0">
-                                  {arrivalTime ? arrivalTime.toLocaleTimeString() : ''}
+                                  {arrivalTime ? arrivalTime.toLocaleTimeString('en-PH', { timeZone: 'Asia/Manila', hour: '2-digit', minute: '2-digit' }) : ''}
                                 </p>
                               </div>
                             </div>
@@ -345,7 +345,7 @@ function TripDetails() {
                         
                         <h6 className="text-muted mb-1">Creation Date</h6>
                         <p className="fw-bold">
-                          {new Date(trip.created_at).toLocaleDateString()}
+                          {new Date(trip.created_at).toLocaleDateString('en-PH', { timeZone: 'Asia/Manila' })}
                         </p>
                       </Col>
                     </Row>

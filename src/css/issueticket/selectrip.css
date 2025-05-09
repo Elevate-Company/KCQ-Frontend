@@ -82,12 +82,23 @@
 
 .date-section h4,
 .boat-number-section h4,
-.boat-type-section h4 {
+.boat-type-section h4,
+.seats-section h4 {
     font-size: 14px;
     color: #091057;
     margin-top: 5px;
     font-weight: normal;
     margin-left: 5px;
+}
+
+.available-seats-badge {
+    padding: 3px 8px;
+    background-color: #e8f0fe;
+    color: #091057;
+    border-radius: 4px;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
 }
 
 .price-section h4 {

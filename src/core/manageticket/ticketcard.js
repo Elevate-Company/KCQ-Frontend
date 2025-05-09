@@ -39,13 +39,17 @@ function TicketCard({ ticket }) {
   };
 
   // Format departure time for display
-  const formatTripTime = (dateTimeString) => {
-    if (!dateTimeString) return 'N/A';
-    
-    const dateTime = new Date(dateTimeString);
-    const date = dateTime.toLocaleDateString();
-    const time = dateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    
+  const formatDateTime = (dateTimeStr) => {
+    if (!dateTimeStr) return { date: 'N/A', time: 'N/A' };
+    const dateTime = new Date(dateTimeStr);
+    const date = dateTime.toLocaleDateString('en-PH', { 
+      year: 'numeric', month: 'short', day: 'numeric',
+      timeZone: 'Asia/Manila' 
+    });
+    const time = dateTime.toLocaleTimeString('en-PH', { 
+      hour: '2-digit', minute: '2-digit',
+      timeZone: 'Asia/Manila'
+    });
     return { date, time };
   };
 
@@ -142,8 +146,8 @@ function TicketCard({ ticket }) {
   const typeBoat = typeof ferryBoat === 'object' ? (ferryBoat.name || ferryBoat.slug || 'N/A') : ferryBoat;
   
   // Format trip time
-  const departureInfo = trip?.departure_time ? formatTripTime(trip.departure_time) : { date: 'N/A', time: 'N/A' };
-  const arrivalInfo = trip?.arrival_time ? formatTripTime(trip.arrival_time) : { date: 'N/A', time: 'N/A' };
+  const departureInfo = trip?.departure_time ? formatDateTime(trip.departure_time) : { date: 'N/A', time: 'N/A' };
+  const arrivalInfo = trip?.arrival_time ? formatDateTime(trip.arrival_time) : { date: 'N/A', time: 'N/A' };
 
   return (
     <div className="ticket-card mb-3">

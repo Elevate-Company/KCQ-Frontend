@@ -285,6 +285,15 @@ function IssueTicket() {
       return;
     }
     
+    // Check if the trip still has available seats (using the actualAvailableSeats if available)
+    const availableSeats = storedTrip.actualAvailableSeats !== undefined ? 
+      storedTrip.actualAvailableSeats : storedTrip.available_seats;
+    
+    if (availableSeats <= 0) {
+      toast.error('This trip has no available seats left. Please select another trip.');
+      return;
+    }
+    
     const newTicket = {
       passenger: {
         ...storedPassenger,
@@ -294,7 +303,11 @@ function IssueTicket() {
       seat_number: seatNumber,
       age_group: passengerType.toLowerCase(),
       price: price,
-      trip: storedTrip,
+      trip: {
+        ...storedTrip,
+        // Update available seats to reflect this new booking
+        actual_available_seats: availableSeats - 1
+      },
       amount: calculateAmount(passengerType),
       baggage_ticket: false,
       boarding_status: 'NOT_BOARDED',
@@ -332,6 +345,19 @@ function IssueTicket() {
 
   const handleAddPassenger = () => {
     navigate('/add-passenger');
+  };
+
+  const formatDateTime = (dateStr) => {
+    if (!dateStr) return { date: 'N/A', time: 'N/A' };
+    const dateObj = new Date(dateStr);
+    return {
+      date: dateObj.toLocaleDateString('en-PH', { timeZone: 'Asia/Manila' }),
+      time: dateObj.toLocaleTimeString('en-PH', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        timeZone: 'Asia/Manila'
+      })
+    };
   };
 
   return (
