@@ -24,13 +24,15 @@ function IssueTicket() {
   const [passengers, setPassengers] = useState([]);
   const [username, setUsername] = useState('');
   const [availablePassengers, setAvailablePassengers] = useState([]);
+  const [availableSeats, setAvailableSeats] = useState([]);
   const navigate = useNavigate();
+  const apiUrl = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000';
 
   useEffect(() => {
     const fetchTrips = async () => {
       const token = localStorage.getItem('accessToken');
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/trips/`, {
+        const response = await axios.get(`${apiUrl}/api/trips/`, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Token ${token}`,
@@ -54,7 +56,7 @@ function IssueTicket() {
     const fetchPassengers = async () => {
       const token = localStorage.getItem('accessToken');
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/passengers/`, {
+        const response = await axios.get(`${apiUrl}/api/passengers/`, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Token ${token}`,
@@ -69,7 +71,7 @@ function IssueTicket() {
             try {
               // Get tickets issued to this passenger
               const ticketsResponse = await axios.get(
-                `${process.env.REACT_APP_API_BASE_URL}/api/tickets/by-passenger/${passenger.id}/`,
+                `${apiUrl}/api/tickets/by-passenger/${passenger.id}/`,
                 {
                   headers: {
                     Authorization: `Token ${token}`,
@@ -117,6 +119,7 @@ function IssueTicket() {
 
   useEffect(() => {
     if (selectedTrip) {
+      generateAvailableSeats();
       filterAvailablePassengers();
     } else {
       setAvailablePassengers([]);
@@ -127,6 +130,50 @@ function IssueTicket() {
       localStorage.removeItem('selectedPassenger');
     }
   }, [selectedTrip, passengers]);
+
+  const generateAvailableSeats = () => {
+    if (!selectedTrip) return;
+    
+    // Get the total number of seats from the selected trip
+    const totalSeats = selectedTrip.available_seats || 0;
+    
+    // Generate an array of seat numbers (1 to totalSeats)
+    const seatNumbers = Array.from({ length: totalSeats }, (_, i) => String(i + 1));
+    
+    // Get already booked seats for this trip to exclude them
+    fetchBookedSeats(selectedTrip.id)
+      .then(bookedSeats => {
+        // Filter out already booked seats
+        const availableSeats = seatNumbers.filter(seat => !bookedSeats.includes(seat));
+        setAvailableSeats(availableSeats);
+        
+        // Clear selected seat number
+        setSeatNumber('');
+      })
+      .catch(error => {
+        console.error('Error fetching booked seats:', error);
+        setAvailableSeats(seatNumbers); // Fallback to all seats
+      });
+  };
+
+  const fetchBookedSeats = async (tripId) => {
+    if (!tripId) return [];
+    
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await axios.get(`${apiUrl}/api/trips/${tripId}/booked-seats/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${token}`,
+        },
+      });
+      
+      return response.data.booked_seats || [];
+    } catch (error) {
+      console.error('Error fetching booked seats:', error);
+      return [];
+    }
+  };
 
   const filterAvailablePassengers = () => {
     if (!selectedTrip) {
@@ -215,6 +262,7 @@ function IssueTicket() {
     setPassengerEmail('');
     setPassengerPhone('');
     localStorage.removeItem('selectedPassenger');
+    setSeatNumber(''); // Clear selected seat
   };
 
   const handlePassengerSelect = (e) => {
@@ -441,12 +489,28 @@ function IssueTicket() {
                 </label>
                 <label>
                   Seat Number:
-                  <input
-                    type="text"
-                    placeholder="Seat Number"
+                  <select 
                     value={seatNumber}
                     onChange={(e) => setSeatNumber(e.target.value)}
-                  />
+                    disabled={!selectedTrip}
+                  >
+                    <option value="">Select a seat</option>
+                    {availableSeats.map(seat => (
+                      <option key={seat} value={seat}>
+                        Seat {seat}
+                      </option>
+                    ))}
+                  </select>
+                  {!selectedTrip && (
+                    <div className="small text-warning mt-1">
+                      Please select a trip to see available seats.
+                    </div>
+                  )}
+                  {selectedTrip && availableSeats.length === 0 && (
+                    <div className="small text-danger mt-1">
+                      No available seats for this trip.
+                    </div>
+                  )}
                 </label>
                 <label>
                   Passenger Type:

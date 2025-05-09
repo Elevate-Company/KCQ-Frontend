@@ -6,6 +6,7 @@ import { createScannerDetector } from '../../utils/scannerDetector';
 import '../../css/scanner/scanner.css';
 import '../../css/scanner/scanner-fixes.css'; // Import the fixes CSS
 import Navbar from '../navbar/navbar';
+import { useNavigate } from 'react-router-dom';
 
 // Define consistent colors to match the sidebar
 const THEME = {
@@ -27,6 +28,7 @@ function Scanner() {
   const [recentScans, setRecentScans] = useState([]);
   const [isScanning, setIsScanning] = useState(false);
   
+  const navigate = useNavigate();
   const inputRef = useRef(null);
   const scannerRef = useRef(null);
   const apiUrl = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000';
@@ -218,6 +220,10 @@ function Scanner() {
     );
   };
 
+  const handleViewTicket = (ticketNumber) => {
+    navigate(`/ticket-details/${ticketNumber}`);
+  };
+
   return (
     <div>
       <Navbar />
@@ -313,6 +319,18 @@ function Scanner() {
                               <p className="mb-1"><strong>Issued:</strong> {formatDate(lastScanned.ticket.issue_date)}</p>
                             </Col>
                           </Row>
+                          <Row className="mt-3">
+                            <Col>
+                              <Button 
+                                variant="primary" 
+                                size="sm"
+                                onClick={() => handleViewTicket(lastScanned.ticket.ticket_number)}
+                                style={{ backgroundColor: THEME.primary, borderColor: THEME.primary }}
+                              >
+                                <i className="fas fa-eye me-1"></i> View Ticket
+                              </Button>
+                            </Col>
+                          </Row>
                         </div>
                       )}
                     </Card.Body>
@@ -335,6 +353,7 @@ function Scanner() {
                             <th>Passenger</th>
                             <th>Status</th>
                             <th>Result</th>
+                            <th>Action</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -353,6 +372,18 @@ function Scanner() {
                                 </td>
                                 <td>
                                   {renderValidationBadge(scan.valid)}
+                                </td>
+                                <td>
+                                  {scan.ticket && (
+                                    <Button 
+                                      variant="link" 
+                                      size="sm" 
+                                      onClick={() => handleViewTicket(scan.ticket.ticket_number)}
+                                      className="p-0"
+                                    >
+                                      <i className="fas fa-eye"></i>
+                                    </Button>
+                                  )}
                                 </td>
                               </tr>
                             ))
