@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import '../css/dashboard/dashboard.css';
 import '../css/components.css';
@@ -19,51 +19,86 @@ function Components() {
   const [isSidebarClosed, setIsSidebarClosed] = useState(false);
 
   // Function to toggle sidebar between expanded and collapsed states
-  const toggleSidebar = () => {
+  const toggleSidebar = useCallback(() => {
     if (isMobileView) {
-      setIsSidebarClosed(!isSidebarClosed);
-      setIsSidebarExpanded(!isSidebarClosed);
+      // In mobile view, toggle between fully closed and expanded
+      setIsSidebarClosed(prevClosed => !prevClosed);
+      setIsSidebarExpanded(prevClosed => !prevClosed);
     } else {
-      setIsSidebarExpanded(!isSidebarExpanded);
+      // In desktop view, toggle between collapsed (mini) and expanded
+      setIsSidebarExpanded(prevExpanded => !prevExpanded);
+      setIsSidebarClosed(false); // Always ensure it's not fully closed on desktop
     }
-  };
+  }, [isMobileView]);
 
   // Function to close the sidebar completely
-  const closeSidebar = () => {
+  const closeSidebar = useCallback(() => {
     setIsSidebarExpanded(false);
     setIsSidebarClosed(true);
-  };
+  }, []);
 
   // Resize handler to adjust sidebar state based on screen width
-  const handleResize = () => {
-    setIsMobileView(window.innerWidth <= 768);
+  const handleResize = useCallback(() => {
+    const newIsMobileView = window.innerWidth <= 768;
+    setIsMobileView(newIsMobileView);
+    
     if (window.innerWidth > 768) {
       setIsSidebarExpanded(true);
       setIsSidebarClosed(false);
     } else {
       setIsSidebarExpanded(false);
     }
-  };
+  }, []);
 
   // Close sidebar when overlay is clicked on mobile view
-  const handleOverlayClick = () => {
+  const handleOverlayClick = useCallback(() => {
     if (isMobileView) {
       closeSidebar();
     }
-  };
+  }, [isMobileView, closeSidebar]);
 
+  // Setup event listeners including custom toggleSidebar event from navbar
   useEffect(() => {
     window.addEventListener('resize', handleResize);
+    
+    // Listen for the custom toggleSidebar event from navbar
+    const handleCustomToggle = () => {
+      toggleSidebar();
+    };
+    
+    document.addEventListener('toggleSidebar', handleCustomToggle);
+    
     return () => {
       window.removeEventListener('resize', handleResize);
+      document.removeEventListener('toggleSidebar', handleCustomToggle);
     };
-  }, []);
+  }, [toggleSidebar]); // Add toggleSidebar as a dependency
+  
+  // Setup menu icon click handler - this is a fallback in case the navbar event doesn't work
+  useEffect(() => {
+    // Add event listener for the menu icon in navbar
+    const menuIcon = document.querySelector('.sidebar-toggle');
+    if (menuIcon) {
+      const handleMenuClick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleSidebar();
+      };
+      
+      // Remove previous event listener to avoid duplicates
+      menuIcon.removeEventListener('click', handleMenuClick);
+      // Add new event listener
+      menuIcon.addEventListener('click', handleMenuClick);
+      
+      return () => {
+        // Clean up event listener
+        menuIcon.removeEventListener('click', handleMenuClick);
+      };
+    }
+  }, [isSidebarExpanded, isSidebarClosed, isMobileView, toggleSidebar]); // Add toggleSidebar to dependencies
 
   return (
     <div className="container-fluid">
-      <button onClick={toggleSidebar} className="btn-toggle-sidebar">
-        <i className="fa fa-bars" aria-hidden="true"></i>
-      </button>
       {isMobileView && isSidebarExpanded && (
         <div className="overlay visible" onClick={handleOverlayClick}></div>
       )}

@@ -254,10 +254,31 @@ function TripDetails() {
       setTrip(response.data);
       setUpdateSuccess(true);
       
+      // Dispatch a custom event for the notification system
+      const tripUpdateEvent = new CustomEvent('tripScheduleUpdated', {
+        detail: {
+          trip: {
+            ...response.data,
+            // Ensure these properties are always included
+            id: response.data.id,
+            origin: response.data.origin || trip.origin || 'Origin',
+            destination: response.data.destination || trip.destination || 'Destination'
+          },
+          previousDeparture: trip.departure_time,
+          previousArrival: trip.arrival_time,
+          newDeparture: formatDateForAPI(departureTime),
+          newArrival: formatDateForAPI(arrivalTime)
+        }
+      });
+      window.dispatchEvent(tripUpdateEvent);
+      
       // Close the modal after a short delay
       setTimeout(() => {
         setShowScheduleModal(false);
-        setUpdateSuccess(false);
+        // Wait a bit more before resetting success state to avoid flashing
+        setTimeout(() => {
+          setUpdateSuccess(false);
+        }, 200);
       }, 1500);
     } catch (error) {
       console.error('Error updating trip schedule:', error);

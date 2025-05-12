@@ -31,22 +31,6 @@
   margin-bottom: 30px;
 }
 
-/* Reduced size of the toggle sidebar button */
-.btn-toggle-sidebar {
-  background: none;
-  border: none;
-  color: white; /* Make the burger icon white on desktop */
-  font-size: 20px; /* Reduced font size */
-  cursor: pointer;
-  transition: transform 0.3s;
-  position: absolute;
-  top: 30px;
-  left: 10px; /* Reduced left padding */
-  z-index: 1001;
-  padding: 10px 12px; /* Adjusted padding to reduce width */
-  margin: 0;
-}
-
 /* Sidebar logo */
 .sidebar-logo {
   width: 50px;
@@ -173,19 +157,6 @@
     margin-left: 0;
   }
 
-  /* Adjusted size for the toggle sidebar button */
-  .btn-toggle-sidebar {
-    display: block;
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 1001;
-    padding: 8px 12px; /* Reduced padding to make the button smaller */
-    margin: 0;
-    color: transparent;
-    font-size: 20px; /* Adjusted font size */
-  }
-
   .btn-close-sidebar {
     display: none;
   }
@@ -208,10 +179,6 @@
 
 /* Desktop view handling */
 @media (min-width: 769px) {
-  .btn-toggle-sidebar {
-    display: block;
-  }
-
   .btn-close-sidebar {
     display: none;
   }
