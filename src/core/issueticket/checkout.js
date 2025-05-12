@@ -34,6 +34,8 @@ function Checkout() {
   const [tickets, setTickets] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
   const [baggageTickets, setBaggageTickets] = useState([]);
+  const [baggageWeights, setBaggageWeights] = useState([]);
+  const [baggageFees, setBaggageFees] = useState([]);
   const [username, setUsername] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState(null);
@@ -41,6 +43,10 @@ function Checkout() {
   const [referenceNumber, setReferenceNumber] = useState('');
   const [cashAmount, setCashAmount] = useState('');
   const navigate = useNavigate();
+
+  // Baggage settings
+  const FREE_BAGGAGE_LIMIT = 7.0;  // 7kg free limit
+  const EXCESS_FEE_PER_KG = 50.0;  // PHP 50 per excess kg
 
   useEffect(() => {
     const savedTickets = localStorage.getItem('tickets');
@@ -70,6 +76,8 @@ function Checkout() {
       
       setTickets(validatedTickets);
       setBaggageTickets(validatedTickets.map((ticket) => ticket.baggage_ticket || false));
+      setBaggageWeights(validatedTickets.map(() => FREE_BAGGAGE_LIMIT));
+      setBaggageFees(validatedTickets.map(() => 0));
       console.log('Processed tickets:', validatedTickets);
     }
     if (savedTotalAmount) {
@@ -79,6 +87,27 @@ function Checkout() {
     }
   }, []);
 
+  // Calculate baggage fee based on weight
+  const calculateBaggageFee = (weight) => {
+    if (weight <= FREE_BAGGAGE_LIMIT) {
+      return 0;
+    }
+    // Calculate excess weight, round to 2 decimal places to avoid precision issues
+    const excessWeight = Number((weight - FREE_BAGGAGE_LIMIT).toFixed(2));
+    // Calculate fee, round to 2 decimal places
+    return Number((excessWeight * EXCESS_FEE_PER_KG).toFixed(2));
+  };
+
+  // Update total amount whenever tickets or baggage fees change
+  useEffect(() => {
+    if (tickets.length > 0) {
+      const ticketTotal = Number(tickets.reduce((sum, ticket) => sum + parseFloat(ticket.price || 0), 0).toFixed(2));
+      const baggageTotal = Number(baggageFees.reduce((sum, fee) => sum + fee, 0).toFixed(2));
+      setTotalAmount(Number((ticketTotal + baggageTotal).toFixed(2)));
+      setCashAmount((ticketTotal + baggageTotal).toFixed(2));
+    }
+  }, [tickets, baggageFees]);
+
   const handleBaggageTicketChange = (index) => {
     const updatedBaggageTickets = [...baggageTickets];
     updatedBaggageTickets[index] = !updatedBaggageTickets[index];
@@ -87,6 +116,27 @@ function Checkout() {
     const updatedTickets = [...tickets];
     updatedTickets[index].baggage_ticket = updatedBaggageTickets[index];
     setTickets(updatedTickets);
+    
+    // Update baggage fees
+    const updatedBaggageFees = [...baggageFees];
+    updatedBaggageFees[index] = updatedBaggageTickets[index] ? calculateBaggageFee(baggageWeights[index]) : 0;
+    setBaggageFees(updatedBaggageFees);
+  };
+
+  const handleBaggageWeightChange = (index, weight) => {
+    // Ensure weight is valid and formatted with 2 decimal places
+    const validWeight = Math.max(0, Number(parseFloat(weight || 0).toFixed(2)));
+    
+    const updatedBaggageWeights = [...baggageWeights];
+    updatedBaggageWeights[index] = validWeight;
+    setBaggageWeights(updatedBaggageWeights);
+    
+    // Update baggage fees if baggage is enabled
+    if (baggageTickets[index]) {
+      const updatedBaggageFees = [...baggageFees];
+      updatedBaggageFees[index] = calculateBaggageFee(validWeight);
+      setBaggageFees(updatedBaggageFees);
+    }
   };
 
   const calculateDiscount = (price) => {
@@ -161,8 +211,9 @@ function Checkout() {
           seat_number: ticket.seat_number || '',
           age_group: normalizeAgeGroup(ticket.age_group || 'adult'),
           price: parseFloat(ticket.price || STANDARD_PRICE),
-          discount: parseFloat(calculateDiscount(ticket.price || STANDARD_PRICE)),
+          discount: parseFloat(calculateDiscount(ticket.price || STANDARD_PRICE).toFixed(2)),
           baggage_ticket: Boolean(baggageTickets[i]),
+          baggage_weight: baggageTickets[i] ? parseFloat(baggageWeights[i].toFixed(2)) : null,
           payment_method: paymentMethod,
           payment_reference: paymentMethod !== 'CASH' ? referenceNumber : null,
           cash_amount: paymentMethod === 'CASH' ? parseFloat(cashAmount) : null
@@ -227,6 +278,11 @@ function Checkout() {
       default:
         return <i className="fas fa-money-bill-wave" style={{ color: THEME.success }}></i>;
     }
+  };
+
+  // Format currency values to always show 2 decimal places
+  const formatCurrency = (value) => {
+    return Number(parseFloat(value || 0).toFixed(2));
   };
 
   return (
@@ -326,14 +382,49 @@ function Checkout() {
                                 }}></i>
                               </label>
                             </div>
+                            {baggageTickets[index] && (
+                              <div className="mt-2">
+                                <div className="input-group input-group-sm">
+                                  <input 
+                                    type="number" 
+                                    className="form-control form-control-sm" 
+                                    placeholder="Weight in kg"
+                                    value={baggageWeights[index]}
+                                    onChange={(e) => handleBaggageWeightChange(index, e.target.value)}
+                                    min="0"
+                                    step="0.1"
+                                  />
+                                  <span className="input-group-text">kg</span>
+                                </div>
+                                <small className="d-block mt-1">
+                                  {baggageWeights[index] <= FREE_BAGGAGE_LIMIT ? (
+                                    <span className="text-success">Within free allowance</span>
+                                  ) : (
+                                    <span className="text-danger">
+                                      Excess: {(baggageWeights[index] - FREE_BAGGAGE_LIMIT).toFixed(2)}kg
+                                    </span>
+                                  )}
+                                </small>
+                              </div>
+                            )}
                           </td>
                         </tr>
                       ))}
                     </tbody>
                     <tfoot style={{ background: THEME.accent }}>
                       <tr>
-                        <td colSpan="4" className="text-end fw-bold">Total:</td>
-                        <td colSpan="2" className="fw-bold" style={{ color: THEME.primary }}>PHP {totalAmount}</td>
+                        <td colSpan="4" className="text-end fw-bold">Ticket Total:</td>
+                        <td colSpan="2" className="fw-bold">PHP {tickets.reduce((sum, ticket) => sum + parseFloat(ticket.price || 0), 0).toFixed(2)}</td>
+                      </tr>
+                      {baggageFees.some(fee => fee > 0) && (
+                        <tr>
+                          <td colSpan="4" className="text-end fw-bold">Baggage Fees:</td>
+                          <td colSpan="2" className="fw-bold text-danger">PHP {baggageFees.reduce((sum, fee) => sum + fee, 0).toFixed(2)}</td>
+                        </tr>
+                      )}
+                      <tr>
+                        <td colSpan="4" className="text-end fw-bold">Grand Total:</td>
+                        <td colSpan="2" className="fw-bold" style={{ color: THEME.primary }}>PHP {totalAmount.toFixed(2)}</td>
                       </tr>
                     </tfoot>
                   </table>

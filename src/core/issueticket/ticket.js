@@ -76,6 +76,11 @@ const Ticket = () => {
     return ticket.trip;
   };
 
+  // Helper function to format decimal values to 2 places
+  const formatDecimal = (value) => {
+    return parseFloat(value || 0).toFixed(2);
+  };
+
   // Function to handle printing ticket
   const handlePrint = () => {
     // Set a slight delay to ensure all styles are applied
@@ -166,12 +171,34 @@ const Ticket = () => {
                       </div>
                     </div>
                     
-                    <div className="detail-row">
-                      <div className="detail-cell full-width">
-                        <div className="detail-label">Vessel</div>
-                        <div className="detail-value">KCQ Express</div>
+                    {ticket.baggage_ticket && (
+                      <div className="detail-row">
+                        <div className="detail-cell">
+                          <div className="detail-label">Baggage</div>
+                          <div className="detail-value">
+                            {ticket.baggage ? 
+                              `${formatDecimal(ticket.baggage.weight)}kg ${parseFloat(ticket.baggage.excess_weight) > 0 ? 
+                                `(Excess: ${formatDecimal(ticket.baggage.excess_weight)}kg)` : 
+                                '(Within free allowance)'}` : 
+                              'Yes'}
+                          </div>
+                        </div>
+                        <div className="detail-cell">
+                          <div className="detail-label">Vessel</div>
+                          <div className="detail-value">KCQ Express</div>
+                        </div>
                       </div>
-                    </div>
+                    )}
+                    
+                    {!ticket.baggage_ticket && (
+                      <div className="detail-row">
+                        <div className="detail-cell full-width">
+                          <div className="detail-label">Vessel</div>
+                          <div className="detail-value">KCQ Express</div>
+                        </div>
+                      </div>
+                    )}
+                    
                   </div>
                 </div>
                 
@@ -215,7 +242,20 @@ const Ticket = () => {
                         <div className="staff-label">Type:</div>
                         <div className="staff-value text-capitalize">{ticket.age_group}</div>
                       </div>
+                      {ticket.baggage_ticket && (
+                        <div className="staff-row">
+                          <div className="staff-label">Baggage:</div>
+                          <div className="staff-value">
+                            {ticket.baggage ? 
+                              `${formatDecimal(ticket.baggage.weight)}kg ${parseFloat(ticket.baggage.excess_weight) > 0 ? 
+                                `(Excess: ${formatDecimal(ticket.baggage.excess_weight)}kg)` : 
+                                ''}` : 
+                              'Yes'}
+                          </div>
+                        </div>
+                      )}
                     </div>
+                    
                     <div className="staff-qr">
                       <QRCode 
                         value={ticket.ticket_number || `T-${Date.now()}`} 

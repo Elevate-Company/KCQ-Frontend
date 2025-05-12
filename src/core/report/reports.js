@@ -8,6 +8,7 @@ function Reports() {
   const [filter, setFilter] = useState('daily'); 
   const [totalTicketsSold, setTotalTicketsSold] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
+  const [totalBaggageFees, setTotalBaggageFees] = useState(0);
   const [totalPassengers, setTotalPassengers] = useState(0);
   const [totalTripsCompleted, setTotalTripsCompleted] = useState(0);
   const [passengerStats, setPassengerStats] = useState({
@@ -52,38 +53,61 @@ function Reports() {
             end_date: endDate,
           },
         });
-        const data = response.data;
-        setTotalTicketsSold(data.length); // Assuming the API returns an array of tickets
-        const total = data.reduce((sum, ticket) => sum + parseFloat(ticket.price), 0);
-        setTotalRevenue(total);
-
-        // Calculate passenger statistics
+        
+        const tickets = response.data;
+        console.log('Tickets data:', tickets);
+        
+        setTotalTicketsSold(tickets.length);
+        let revenue = 0;
+        let baggageFees = 0;
+        
         const stats = {
           adults: 0,
           children: 0,
-          students: 0,  // Added student category
+          students: 0,
           seniors: 0,
           infants: 0,
         };
+        
         const routeStats = {};
-        data.forEach(ticket => {
-          if (ticket.age_group === 'adult') stats.adults++;
-          if (ticket.age_group === 'child') stats.children++;
-          if (ticket.age_group === 'student') stats.students++;  // Added student counting
-          if (ticket.age_group === 'senior') stats.seniors++;
-          if (ticket.age_group === 'infant') stats.infants++;
-
-          const route = `${ticket.trip.origin} ↔ ${ticket.trip.destination}`;
+        
+        tickets.forEach(ticket => {
+          revenue += parseFloat(ticket.price);
+          
+          // Add baggage fees to total baggage revenue if available
+          if (ticket.baggage_ticket && ticket.baggage && ticket.baggage.total_fee) {
+            baggageFees += parseFloat(ticket.baggage.total_fee);
+          }
+          
+          // Update passenger stats
+          const ageGroup = ticket.age_group?.toLowerCase();
+          if (ageGroup === 'adult') stats.adults++;
+          else if (ageGroup === 'child') stats.children++;
+          else if (ageGroup === 'student') stats.students++;
+          else if (ageGroup === 'senior') stats.seniors++;
+          else if (ageGroup === 'infant') stats.infants++;
+          
+          // Update route stats
+          const route = `${ticket.trip.origin} to ${ticket.trip.destination}`;
           if (!routeStats[route]) {
             routeStats[route] = {
               ticketsSold: 0,
               revenue: 0,
+              baggageFees: 0,
               availableSeats: ticket.trip.available_seats,
             };
           }
           routeStats[route].ticketsSold++;
           routeStats[route].revenue += parseFloat(ticket.price);
+          
+          // Add baggage fees to route stats
+          if (ticket.baggage_ticket && ticket.baggage && ticket.baggage.total_fee) {
+            routeStats[route].baggageFees += parseFloat(ticket.baggage.total_fee);
+          }
         });
+        
+        setTotalRevenue(revenue);
+        setTotalBaggageFees(baggageFees);
         setPassengerStats(stats);
         setTotalPassengers(stats.adults + stats.children + stats.students + stats.seniors + stats.infants);
 
@@ -92,6 +116,8 @@ function Reports() {
           route,
           ticketsSold: routeStats[route].ticketsSold,
           revenue: routeStats[route].revenue,
+          baggageFees: routeStats[route].baggageFees,
+          totalRevenue: routeStats[route].revenue + routeStats[route].baggageFees,
           occupancy: ((routeStats[route].ticketsSold / routeStats[route].availableSeats) * 100).toFixed(1),
         }));
         routeStatsArray.sort((a, b) => b.ticketsSold - a.ticketsSold);
@@ -143,8 +169,13 @@ function Reports() {
     fetchTotalTripsCompleted();
   }, [filter]);
 
+  // Format decimal values consistently to two decimal places
+  const formatDecimal = (value) => {
+    return parseFloat(value || 0).toFixed(2);
+  };
+
   const calculatePercentage = (count) => {
-    return ((count / totalPassengers) * 100).toFixed(1);
+    return formatDecimal((count / totalPassengers) * 100);
   };
 
   return (
@@ -170,7 +201,9 @@ function Reports() {
           </div>
           <div className="card-body">
             <p><strong>Total Tickets Sold:</strong> {totalTicketsSold}</p>
-            <p><strong>Total Revenue:</strong> ₱{totalRevenue.toFixed(2)}</p>
+            <p><strong>Ticket Revenue:</strong> ₱{formatDecimal(totalRevenue)}</p>
+            <p><strong>Baggage Revenue:</strong> ₱{formatDecimal(totalBaggageFees)}</p>
+            <p><strong>Total Revenue:</strong> ₱{formatDecimal(totalRevenue + totalBaggageFees)}</p>
             <p><strong>Total Passengers:</strong> {totalPassengers}</p>
             <p><strong>Trips Completed:</strong> {totalTripsCompleted}</p>
             {error && <p className="text-danger">{error}</p>}
@@ -189,16 +222,24 @@ function Reports() {
               </thead>
               <tbody>
                 <tr>
-                  <td>Total Revenue</td>
-                  <td>{totalRevenue.toFixed(2)}</td>
+                  <td>Ticket Revenue</td>
+                  <td>{formatDecimal(totalRevenue)}</td>
                 </tr>
                 <tr>
-                  <td>Net Revenue</td>
-                  <td>{totalRevenue.toFixed(2)}</td>
+                  <td>Baggage Revenue</td>
+                  <td>{formatDecimal(totalBaggageFees)}</td>
+                </tr>
+                <tr>
+                  <td>Total Revenue</td>
+                  <td>{formatDecimal(totalRevenue + totalBaggageFees)}</td>
                 </tr>
                 <tr>
                   <td>Average Ticket Price</td>
-                  <td>{(totalRevenue / totalTicketsSold).toFixed(2)}</td>
+                  <td>{totalTicketsSold > 0 ? formatDecimal(totalRevenue / totalTicketsSold) : '0.00'}</td>
+                </tr>
+                <tr>
+                  <td>Average Total Revenue per Passenger</td>
+                  <td>{totalTicketsSold > 0 ? formatDecimal((totalRevenue + totalBaggageFees) / totalTicketsSold) : '0.00'}</td>
                 </tr>
               </tbody>
             </table>
@@ -255,7 +296,9 @@ function Reports() {
                 <tr>
                   <th>Route</th>
                   <th>Tickets Sold</th>
-                  <th>Revenue (₱)</th>
+                  <th>Ticket Revenue (₱)</th>
+                  <th>Baggage Revenue (₱)</th>
+                  <th>Total Revenue (₱)</th>
                   <th>Average Occupancy</th>
                 </tr>
               </thead>
@@ -264,7 +307,9 @@ function Reports() {
                   <tr key={index}>
                     <td>{routeStat.route}</td>
                     <td>{routeStat.ticketsSold}</td>
-                    <td>{routeStat.revenue.toFixed(2)}</td>
+                    <td>{formatDecimal(routeStat.revenue)}</td>
+                    <td>{formatDecimal(routeStat.baggageFees)}</td>
+                    <td>{formatDecimal(routeStat.totalRevenue)}</td>
                     <td>{routeStat.occupancy}%</td>
                   </tr>
                 ))}

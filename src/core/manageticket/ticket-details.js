@@ -65,6 +65,11 @@ function TicketDetails() {
     }
   };
 
+  // Helper function to format numbers to 2 decimal places
+  const formatNumber = (value) => {
+    return parseFloat(value || 0).toFixed(2);
+  };
+
   if (error) {
     return (
       <>
@@ -208,7 +213,7 @@ function TicketDetails() {
                         </tr>
                         <tr>
                           <td className="text-muted">Price</td>
-                          <td className="fw-medium">₱{ticket.price || 'N/A'}</td>
+                          <td className="fw-medium">₱{formatNumber(ticket.price)}</td>
                         </tr>
                         <tr>
                           <td className="text-muted">Ticket Type</td>
@@ -218,6 +223,25 @@ function TicketDetails() {
                           <td className="text-muted">Baggage Included</td>
                           <td className="fw-medium">{ticket.baggage_ticket ? 'Yes' : 'No'}</td>
                         </tr>
+                        {ticket.baggage_ticket && ticket.baggage && (
+                          <>
+                            <tr>
+                              <td className="text-muted">Baggage Weight</td>
+                              <td className="fw-medium">{formatNumber(ticket.baggage.weight)} kg</td>
+                            </tr>
+                            {parseFloat(ticket.baggage.excess_weight) > 0 ? (
+                              <tr>
+                                <td className="text-muted">Excess Weight</td>
+                                <td className="fw-medium">{formatNumber(ticket.baggage.excess_weight)} kg</td>
+                              </tr>
+                            ) : (
+                              <tr>
+                                <td className="text-muted">Status</td>
+                                <td className="fw-medium text-success">Within free allowance</td>
+                              </tr>
+                            )}
+                          </>
+                        )}
                         <tr>
                           <td className="text-muted">Boarding Status</td>
                           <td className="fw-medium">
