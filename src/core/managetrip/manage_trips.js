@@ -58,10 +58,21 @@ function ManageTrips() {
         const departureDate = new Date(trip.departure_time);
         return departureDate > currentDate;
       });
-    } else if (filter === 'completed') {
+    } else if (filter === 'ongoing') {
       filtered = filtered.filter((trip) => {
         const departureDate = new Date(trip.departure_time);
-        return departureDate < currentDate;
+        const arrivalDate = trip.arrival_time ? new Date(trip.arrival_time) : null;
+        
+        return (
+          departureDate <= currentDate && 
+          (arrivalDate ? currentDate <= arrivalDate : true) &&
+          trip.status !== 'cancelled'
+        );
+      });
+    } else if (filter === 'completed') {
+      filtered = filtered.filter((trip) => {
+        const arrivalDate = trip.arrival_time ? new Date(trip.arrival_time) : null;
+        return arrivalDate && currentDate > arrivalDate && trip.status !== 'cancelled';
       });
     } else if (filter === 'cancelled') {
       filtered = filtered.filter((trip) => trip.status === 'cancelled');
@@ -150,6 +161,7 @@ function ManageTrips() {
             >
               <option value="all">All</option>
               <option value="upcoming">Upcoming</option>
+              <option value="ongoing">Ongoing</option>
               <option value="completed">Completed</option>
               <option value="cancelled">Cancelled</option>
             </select>

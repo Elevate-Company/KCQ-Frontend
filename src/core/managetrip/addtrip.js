@@ -87,14 +87,49 @@ function AddTrip() {
     
     try {
       const token = localStorage.getItem('accessToken');
+
+      // Convert to Manila time (UTC+8) before sending to API
+      const formatDateForAPI = (localDateString) => {
+        // Create a date object with the given string (already in local time)
+        const localDate = new Date(localDateString);
+        
+        // Create a formatter that will output in Asia/Manila timezone
+        const formatter = new Intl.DateTimeFormat('en-US', {
+          timeZone: 'Asia/Manila',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false
+        });
+        
+        // Get parts and construct ISO string with Manila timezone offset (+08:00)
+        const parts = formatter.formatToParts(localDate);
+        const partValues = parts.reduce((acc, part) => {
+          acc[part.type] = part.value;
+          return acc;
+        }, {});
+        
+        const year = partValues.year;
+        const month = partValues.month;
+        const day = partValues.day;
+        const hour = partValues.hour;
+        const minute = partValues.minute;
+        const second = partValues.second;
+        
+        return `${year}-${month}-${day}T${hour}:${minute}:${second}+08:00`;
+      };
+      
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/api/trips/`,
         {
           ferry_boat: { slug: boat },
           origin,
           destination,
-          departure_time: departure,
-          arrival_time: arrival,
+          departure_time: formatDateForAPI(departure),
+          arrival_time: formatDateForAPI(arrival),
           available_seats: parseInt(availableSeats, 10),
           created_by: createdBy,
         },
