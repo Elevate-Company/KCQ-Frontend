@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Container, Row, Col, Card, Button, Table, Badge, Spinner, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Table, Badge, Spinner, Alert, Modal, Form } from 'react-bootstrap';
 import axios from 'axios';
 import Navbar from '../navbar/navbar';
 import '../../css/components.css';
+import '../../css/managetrip/tripdetails.css';
 import boatLogo from '../../assets/boatlogo.png';
 
 // Define theme colors
@@ -23,6 +24,12 @@ function TripDetails() {
   const [passengers, setPassengers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [departureTime, setDepartureTime] = useState('');
+  const [arrivalTime, setArrivalTime] = useState('');
+  const [updateLoading, setUpdateLoading] = useState(false);
+  const [updateError, setUpdateError] = useState('');
+  const [updateSuccess, setUpdateSuccess] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -147,6 +154,119 @@ function TripDetails() {
     fetchTripDetails();
   }, [id]);
 
+  const formatDateTimeForInput = (dateString) => {
+    if (!dateString) return '';
+    
+    // Create a date object with the given string
+    const date = new Date(dateString);
+    
+    // Convert to Manila time (UTC+8)
+    const manilaDate = new Date(date.getTime() + (date.getTimezoneOffset() * 60000) + (8 * 60 * 60 * 1000));
+    
+    // Format to YYYY-MM-DDThh:mm (required format for datetime-local inputs)
+    const year = manilaDate.getFullYear();
+    const month = String(manilaDate.getMonth() + 1).padStart(2, '0');
+    const day = String(manilaDate.getDate()).padStart(2, '0');
+    const hours = String(manilaDate.getHours()).padStart(2, '0');
+    const minutes = String(manilaDate.getMinutes()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
+  const handleOpenScheduleModal = () => {
+    if (trip) {
+      // Check if trip is completed or ongoing
+      const currentDate = new Date();
+      const departureDateTime = new Date(trip.departure_time);
+      const arrivalDateTime = trip.arrival_time ? new Date(trip.arrival_time) : null;
+      
+      // Don't allow editing if trip is completed or ongoing
+      if ((arrivalDateTime && currentDate > arrivalDateTime) || // completed
+          (currentDate > departureDateTime)) { // ongoing
+        return;
+      }
+      
+      setDepartureTime(formatDateTimeForInput(trip.departure_time));
+      setArrivalTime(formatDateTimeForInput(trip.arrival_time));
+      setShowScheduleModal(true);
+      setUpdateError('');
+      setUpdateSuccess(false);
+    }
+  };
+
+  const handleCloseScheduleModal = () => {
+    setShowScheduleModal(false);
+    setUpdateError('');
+  };
+
+  const validateScheduleForm = () => {
+    if (!departureTime) return 'Departure time is required';
+    if (!arrivalTime) return 'Arrival time is required';
+    
+    const departureDate = new Date(departureTime);
+    const arrivalDate = new Date(arrivalTime);
+    
+    if (arrivalDate <= departureDate) {
+      return 'Arrival time must be after departure time';
+    }
+    
+    return null;
+  };
+
+  const handleUpdateSchedule = async () => {
+    const validationError = validateScheduleForm();
+    if (validationError) {
+      setUpdateError(validationError);
+      return;
+    }
+    
+    setUpdateLoading(true);
+    setUpdateError('');
+    
+    try {
+      const token = localStorage.getItem('accessToken');
+      
+      // Convert local datetimes to UTC for the API
+      const formatDateForAPI = (localDateString) => {
+        const localDate = new Date(localDateString);
+        return localDate.toISOString();
+      };
+      
+      // We need to keep the rest of the trip data unchanged
+      const updatedTripData = {
+        ...trip,
+        departure_time: formatDateForAPI(departureTime),
+        arrival_time: formatDateForAPI(arrivalTime)
+      };
+      
+      const response = await axios.put(
+        `${process.env.REACT_APP_API_BASE_URL}/api/trips/${id}/`,
+        updatedTripData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token}`,
+          },
+        }
+      );
+      
+      console.log('Trip schedule updated:', response.data);
+      setTrip(response.data);
+      setUpdateSuccess(true);
+      
+      // Close the modal after a short delay
+      setTimeout(() => {
+        setShowScheduleModal(false);
+        setUpdateSuccess(false);
+      }, 1500);
+    } catch (error) {
+      console.error('Error updating trip schedule:', error);
+      setUpdateError('Failed to update schedule. Please check your inputs and try again.');
+    } finally {
+      setUpdateLoading(false);
+    }
+  };
+
   const getTripStatusBadge = (tripData) => {
     if (!tripData) return null;
     
@@ -197,6 +317,41 @@ function TripDetails() {
     );
   };
 
+  const getTripStatusText = (tripData) => {
+    if (!tripData) return '';
+    
+    const currentDate = new Date();
+    const departureDateTime = new Date(tripData.departure_time);
+    const arrivalDateTime = tripData.arrival_time ? new Date(tripData.arrival_time) : null;
+
+    if (tripData.status === 'cancelled') {
+      return 'Trip is cancelled';
+    } else if (arrivalDateTime && currentDate > arrivalDateTime) {
+      return 'Cannot edit completed trip';
+    } else if (currentDate > departureDateTime) {
+      return 'Cannot edit ongoing trip';
+    }
+    
+    return '';
+  };
+
+  const isTripEditable = (tripData) => {
+    if (!tripData) return false;
+    
+    const currentDate = new Date();
+    const departureDateTime = new Date(tripData.departure_time);
+    const arrivalDateTime = tripData.arrival_time ? new Date(tripData.arrival_time) : null;
+
+    // Allow editing only if the trip is upcoming (not ongoing or completed)
+    if (tripData.status === 'cancelled' || 
+        (arrivalDateTime && currentDate > arrivalDateTime) || // completed
+        (currentDate > departureDateTime)) { // ongoing
+      return false;
+    }
+    
+    return true; // upcoming
+  };
+
   if (error) {
     return (
       <>
@@ -219,8 +374,8 @@ function TripDetails() {
     );
   }
 
-  const departureTime = new Date(trip.departure_time);
-  const arrivalTime = trip.arrival_time ? new Date(trip.arrival_time) : null;
+  const displayDepartureTime = new Date(trip.departure_time);
+  const displayArrivalTime = trip.arrival_time ? new Date(trip.arrival_time) : null;
 
   return (
     <>
@@ -266,9 +421,26 @@ function TripDetails() {
               <Col md={6}>
                 <Card className="h-100 border-0 shadow-sm">
                   <Card.Body>
-                    <h5 className="mb-3 fw-bold text-primary" style={{ color: THEME.primary }}>
-                      <i className="fas fa-calendar-alt me-2"></i> Schedule Information
-                    </h5>
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                      <h5 className="mb-0 fw-bold text-primary" style={{ color: THEME.primary }}>
+                        <i className="fas fa-calendar-alt me-2"></i> Schedule Information
+                      </h5>
+                      {isTripEditable(trip) ? (
+                        <Button 
+                          variant="outline-primary" 
+                          size="sm"
+                          onClick={handleOpenScheduleModal}
+                          className="edit-schedule-btn py-1"
+                        >
+                          <i className="far fa-edit me-1"></i> Edit Schedule
+                        </Button>
+                      ) : (
+                        <div className="status-indicator">
+                          <i className="fas fa-info-circle me-1"></i> 
+                          CANNOT EDIT COMPLETED TRIP
+                        </div>
+                      )}
+                    </div>
                     <Row>
                       <Col md={6} className="mb-3">
                         <Card className="border-0 bg-light">
@@ -277,8 +449,8 @@ function TripDetails() {
                             <div className="d-flex align-items-center">
                               <i className="fas fa-ship me-2" style={{ color: THEME.primary }}></i>
                               <div>
-                                <p className="mb-0 fw-bold">{departureTime.toLocaleDateString('en-PH', { timeZone: 'Asia/Manila' })}</p>
-                                <p className="mb-0">{departureTime.toLocaleTimeString('en-PH', { timeZone: 'Asia/Manila', hour: '2-digit', minute: '2-digit' })}</p>
+                                <p className="mb-0 fw-bold">{displayDepartureTime.toLocaleDateString('en-PH', { timeZone: 'Asia/Manila' })}</p>
+                                <p className="mb-0">{displayDepartureTime.toLocaleTimeString('en-PH', { timeZone: 'Asia/Manila', hour: '2-digit', minute: '2-digit' })}</p>
                               </div>
                             </div>
                           </Card.Body>
@@ -292,10 +464,10 @@ function TripDetails() {
                               <i className="fas fa-ship me-2" style={{ color: THEME.primary }}></i>
                               <div>
                                 <p className="mb-0 fw-bold">
-                                  {arrivalTime ? arrivalTime.toLocaleDateString('en-PH', { timeZone: 'Asia/Manila' }) : 'Not specified'}
+                                  {displayArrivalTime ? displayArrivalTime.toLocaleDateString('en-PH', { timeZone: 'Asia/Manila' }) : 'Not specified'}
                                 </p>
                                 <p className="mb-0">
-                                  {arrivalTime ? arrivalTime.toLocaleTimeString('en-PH', { timeZone: 'Asia/Manila', hour: '2-digit', minute: '2-digit' }) : ''}
+                                  {displayArrivalTime ? displayArrivalTime.toLocaleTimeString('en-PH', { timeZone: 'Asia/Manila', hour: '2-digit', minute: '2-digit' }) : ''}
                                 </p>
                               </div>
                             </div>
@@ -307,8 +479,8 @@ function TripDetails() {
                     <div className="mb-3">
                       <h6 className="text-muted mb-1">Journey Duration</h6>
                       <p className="mb-0 fw-bold">
-                        {arrivalTime ? 
-                          `${Math.round((arrivalTime - departureTime) / (1000 * 60 * 60))} hours` : 
+                        {displayArrivalTime ? 
+                          `${Math.round((displayArrivalTime - displayDepartureTime) / (1000 * 60 * 60))} hours` : 
                           'Not specified'
                         }
                       </p>
@@ -423,6 +595,119 @@ function TripDetails() {
           </Card.Body>
         </Card>
       </Container>
+      
+      {/* Edit Schedule Modal */}
+      <Modal show={showScheduleModal} onHide={handleCloseScheduleModal} centered className="schedule-modal">
+        <Modal.Header className="border-0" style={{ backgroundColor: THEME.primary, color: 'white' }}>
+          <div className="d-flex align-items-center w-100">
+            <i className="fas fa-calendar-alt me-2"></i>
+            <span className="fw-bold">Edit Trip Schedule</span>
+          </div>
+        </Modal.Header>
+        <Modal.Body className="p-4">
+          {updateError && (
+            <Alert variant="danger" className="mb-4">
+              <i className="fas fa-exclamation-circle me-2"></i>
+              {updateError}
+            </Alert>
+          )}
+          
+          {updateSuccess && (
+            <Alert variant="success" className="mb-4">
+              <i className="fas fa-check-circle me-2"></i>
+              Schedule updated successfully!
+            </Alert>
+          )}
+          
+          <Form>
+            <Form.Group className="mb-4" controlId="formDeparture">
+              <Form.Label className="fw-medium">
+                Departure Time <span className="text-danger">*</span>
+              </Form.Label>
+              <div className="input-with-icon">
+                <Form.Control
+                  type="datetime-local"
+                  value={departureTime}
+                  onChange={(e) => setDepartureTime(e.target.value)}
+                  required
+                  className="date-input"
+                />
+                <i className="fas fa-calendar-alt"></i>
+              </div>
+              <Form.Text className="text-muted">
+                When the trip will depart from the origin.
+              </Form.Text>
+            </Form.Group>
+            
+            <Form.Group className="mb-4" controlId="formArrival">
+              <Form.Label className="fw-medium">
+                Arrival Time <span className="text-danger">*</span>
+              </Form.Label>
+              <div className="input-with-icon">
+                <Form.Control
+                  type="datetime-local"
+                  value={arrivalTime}
+                  onChange={(e) => setArrivalTime(e.target.value)}
+                  required
+                  className="date-input"
+                />
+                <i className="fas fa-calendar-alt"></i>
+              </div>
+              <Form.Text className="text-muted">
+                Estimated time of arrival at the destination.
+              </Form.Text>
+            </Form.Group>
+            
+            {/* Duration preview */}
+            {departureTime && arrivalTime && (
+              <div className="duration-preview">
+                <h6 className="fw-bold mb-2">Duration Preview</h6>
+                <div className="d-flex align-items-center">
+                  <i className="fas fa-clock me-2"></i>
+                  <span>
+                    {Math.round((new Date(arrivalTime) - new Date(departureTime)) / (1000 * 60 * 60))} hours
+                  </span>
+                </div>
+              </div>
+            )}
+          </Form>
+        </Modal.Body>
+        <Modal.Footer className="border-0 pt-0 pb-4 px-4">
+          <Button 
+            variant="secondary" 
+            onClick={handleCloseScheduleModal}
+            className="px-4 cancel-btn"
+            disabled={updateLoading}
+          >
+            Cancel
+          </Button>
+          <Button 
+            variant="primary" 
+            onClick={handleUpdateSchedule}
+            className="px-4 save-btn"
+            disabled={updateLoading}
+          >
+            {updateLoading ? (
+              <>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                  className="me-2"
+                />
+                Updating...
+              </>
+            ) : (
+              <>
+                <i className="fas fa-save me-2"></i>
+                Save Changes
+              </>
+            )}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }
